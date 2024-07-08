@@ -3,7 +3,7 @@
   <entry>
     <title>ContactME</title>
     <url>/2023/03/12/ContactME/</url>
-    <content><![CDATA[<p>Email: <a class="link" href="mailto:&#115;&#101;&#114;&#x65;&#110;&#x64;&#x79;&#108;&#x69;&#x6e;&#64;&#x6f;&#117;&#116;&#108;&#111;&#111;&#107;&#x2e;&#x63;&#111;&#109;">&#115;&#101;&#114;&#x65;&#110;&#x64;&#x79;&#108;&#x69;&#x6e;&#64;&#x6f;&#117;&#116;&#108;&#111;&#111;&#107;&#x2e;&#x63;&#111;&#109; <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+    <content><![CDATA[<p>Email: <a class="link" href="mailto:&#115;&#x65;&#x72;&#101;&#x6e;&#x64;&#121;&#x6c;&#105;&#x6e;&#x40;&#111;&#x75;&#116;&#108;&#111;&#x6f;&#x6b;&#x2e;&#x63;&#111;&#x6d;">&#115;&#x65;&#x72;&#101;&#x6e;&#x64;&#121;&#x6c;&#105;&#x6e;&#x40;&#111;&#x75;&#116;&#108;&#111;&#x6f;&#x6b;&#x2e;&#x63;&#111;&#x6d; <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p>QQ: 15993469631 (备注博客)</p>
 ]]></content>
   </entry>
@@ -363,6 +363,150 @@
       </tags>
   </entry>
   <entry>
+    <title>加密算法逆向实践</title>
+    <url>/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/</url>
+    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><strong>问题-1</strong>：找到开头“This program cannot be run …” 这个字符串的内存起始地址（即字符串的指针），并准确计算该字符串的长度；</p>
+<p><strong>问题-2</strong>：需要结合具体的加密操作逻辑，说明所发现的加密算法。</p>
+<p>输入正确 flag 后的运行截图如下：</p>
+<img lazyload src="/images/loading.svg" data-src="https://fileucloud.bupt.edu.cn/bupt/upload/20230422/6b6a1856b38e98db2bb0f0d80a5fe12b.png" alt="img" style="zoom:50%;">
+
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><h3 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h3><p>首先找到——FOR FUN—–的位置，使用IDA Pro</p>
+<p>Shift+F12进行字符串定位</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111417280.png" class title="image-20230428111417280">
+
+<p>追入</p>
+<p>发现有一个%s夹在两行———-中间，可以判断这个输入的%s就是“This program cannot be run …”</p>
+<p>查看main函数</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111553144.png" class title="image-20230428111553144">
+
+<p>发现在调用<code>printf</code>函数时输入了一个参数，其地址为<code>40004Eh</code></p>
+<p>==因此我们就找到了字符串“This program cannot be run …”的起始地址<code>40004Eh</code>==</p>
+<p>接下来找字符串长度，此时使用x32dbg进行动态调试</p>
+<p>因为我们已经知道了该字符串的起始地址，因此我们可以在程序运行到Entrypoint时直接定位到该字符串：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132011451.png" class title="image-20230511132011451">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132055593.png" class title="image-20230511132055593">
+
+<p>==数一数字符串长度 可知该字符串长度是43个字节==</p>
+<h3 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h3><p>首先发现exe文件在输入错误的flag之后直接结束或者退出了，因此我们只能直接看汇编代码对该程序进行研究</p>
+<p>首先看提示的字符串” ———FOR FUN———-“以及”Please input your flag below:”，可以从这两个提示字符串入手研究该程序</p>
+<p>先看main函数的整体结构：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503144347708.png" class title="image-20230503144347708">
+
+<p>首先调用了函数<code>sub_402320</code>，随后输出提示信息————–FOR FUN——————，接着连续调用了三个函数，因此可以从一个一个函数入手研究这个程序</p>
+<h4 id="第1个函数"><a href="#第1个函数" class="headerlink" title="第1个函数"></a>第1个函数</h4><p>发现在调用<code>printf</code>函数输出——-FOR FUN——–之前调用了一个函数<code>sub_402320</code></p>
+<p>追入该函数查看，利用IDA Pro的反汇编功能研究该函数：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230501231323379.png" class title="image-20230501231323379">
+
+<p>解读这段反汇编代码：这段代码的功能是执行一个函数表中的一系列函数，并在程序退出时再次执行一个特定函数。它的基本思路是：如果全局变量dword_407080的值为0，则将其设为1，然后执行一个函数表中的一系列函数，最后调用sub_4014C0函数，该函数的参数是sub_402290函数的地址。如果dword_407080的值不是0，则直接返回它（result）。</p>
+<p>具体来说，下面是每个步骤的解释：</p>
+<ol>
+<li><p>result = dword_407080;<br>将dword_407080的值赋给result变量。</p>
+</li>
+<li><p>if (!dword_407080)<br>如果dword_407080的值为0，执行以下代码块，否则跳过该代码块。</p>
+</li>
+<li><p>dword_407080 = 1;<br>将dword_407080的值设为1。</p>
+</li>
+<li><p>for (i = 0; dword_4033E0[i + 1]; ++i)<br>查找函数表dword_4033E0中最后一个函数的索引。该函数表是一个由地址组成的数组，最后一个地址为0，以便循环能够停止。</p>
+</li>
+<li><p>for (; i; –i)<br>执行函数表dword_4033E0中的函数，从最后一个函数开始一直到第一个函数。</p>
+</li>
+<li><p>((void (*)(void))dword_4033E0[i])();<br>将函数表dword_4033E0中第i个元素的地址强制转换为void (*)(void)类型的函数指针，然后执行该函数。</p>
+</li>
+<li><p>return sub_4014C0((_onexit_t)sub_402290);<br>调用sub_4014C0函数，并将sub_402290函数的地址转换为_onexit_t类型的函数指针作为参数。_onexit_t是一个函数指针类型，它指向一个函数，该函数在程序退出时执行。</p>
+</li>
+<li><p>return result;<br>如果dword_407080的值不为0，则直接返回该值。</p>
+</li>
+</ol>
+<p><u><strong>这段函数的功能是调用函数表</strong></u></p>
+<h4 id="第2个函数"><a href="#第2个函数" class="headerlink" title="第2个函数"></a>第2个函数</h4><p>追入<code>sub_4015C0</code>这个函数</p>
+<p>查看其汇编代码，这个函数的功能上，首先输出了提示信息：“Please input your flag below:”</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143435814.png" class title="image-20230503143435814">
+
+<p>接下来函数调用了scanf函数接收我们输入的flag：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143727587.png" class title="image-20230503143727587">
+
+<p>可以看到这个scanf函数是用于接收一个长度不小于9个字符的字符串输入，**<code>byte_407444</code>就是输入的字符串**</p>
+<p>接下来，该函数计算了输入的字符串长度，并将其与存储在内存地址 <code>byte_4040E4</code> 处的值进行比较：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145208387.png" class title="image-20230503145208387">
+
+<p>可以看到，如果输入的字符串长度不相等，则跳转到loc_40160F处，loc_40160F的功能是恢复函数栈寄存器并退出程序；如果相等则返回</p>
+<p>因此我们需要知道byte_4040E4的值，追入查看byte_4040E4</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145115142.png" class title="image-20230503145115142">
+
+<p>可以看到<code>4040E4</code>的值是9，也就是说，输入的字符串长度应当是<strong>9</strong></p>
+<p>因此，<strong>第二个函数的功能是输出提示信息，接收输入的字符串并将输入字符串的长度与预设的长度值9进行比较</strong>，如果长度不相等则退出程序</p>
+<h4 id="第3个函数"><a href="#第3个函数" class="headerlink" title="第3个函数"></a>第3个函数</h4><p>回到main函数，继续研究下一个函数<code>sub_401770</code></p>
+<p>查看其反汇编函数：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503150657627.png" class title="image-20230503150657627">
+
+<p>可以看到，本段代码的功能是对字符串进行合法性判断</p>
+<p>以下是代码注释：</p>
+<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; (<span class="type">unsigned</span> __int8)byte_4040E4 != i; ++i) <span class="comment">// 对每个字符，循环直到字符为0x00</span></span><br><span class="line">{</span><br><span class="line">  v1 = (<span class="type">unsigned</span> __int8)byte_407444[i]; <span class="comment">// 取出当前字符</span></span><br><span class="line">  v2 = <span class="number">48</span>; <span class="comment">// v2 为 ASCII 码 48，即字符 '0'</span></span><br><span class="line">  <span class="keyword">while</span> (v1 != v2 &amp;&amp; byte_407444[i] != <span class="number">95</span>) <span class="comment">// 如果当前字符不是 '0' 且不是下划线 '_'</span></span><br><span class="line">  {</span><br><span class="line">    <span class="keyword">if</span> (++v2 == <span class="number">58</span>) <span class="comment">// 如果 v2 递增后等于 ASCII 码 58，即字符 '9'+1，说明当前字符为大写字母</span></span><br><span class="line">    {</span><br><span class="line">      v3 = <span class="number">65</span>; <span class="comment">// v3 为 ASCII 码 65，即字符 'A'</span></span><br><span class="line">      <span class="keyword">while</span> (v1 != v3) <span class="comment">// 如果当前字符不是大写字母</span></span><br><span class="line">      {</span><br><span class="line">        <span class="keyword">if</span> (++v3 == <span class="number">91</span>) <span class="comment">// 如果 v3 递增后等于 ASCII 码 91，即字符 'Z'+1，说明当前字符不合法</span></span><br><span class="line">          <span class="built_in">exit</span>(<span class="number">100876</span>); <span class="comment">// 结束程序并返回错误码 100876</span></span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">if</span> ((<span class="type">unsigned</span> __int8)byte_4040E4 - <span class="number">1</span> == i) <span class="comment">// 如果遍历完字符串后还未结束循环，则结束循环</span></span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">return</span> sub_401700(); <span class="comment">// 调用 sub_401700() 函数并返回结果</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>因此，<strong>这个函数的目的是遍历一个字符串，并检查字符串中的每个字符是否是数字、大写字母或下划线，如果不是，则结束程序并返回错误码。</strong></p>
+<h4 id="第3个函数调用的函数"><a href="#第3个函数调用的函数" class="headerlink" title="第3个函数调用的函数"></a>第3个函数调用的函数</h4><p>如果字符串合法，则会跳转到<code>sub_401700</code>我们追入这个函数查看</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503151526462.png" class title="image-20230503151526462">
+
+<p>查看其反汇编代码，发现这个函数就是<strong>关键的进行字符串比较的函数</strong></p>
+<p>这个函数的功能是将输入的字符串<code>byte_407444</code>与 <code>a1234567890Abcd</code> 字符串数组进行比较，如果相等，则将 <code>dword_4040C0</code> 数组中对应的元素设置为 <code>v3</code>并返回</p>
+<p>此时我们发现，关键的数组出现了，就是这个<code>a1234567890Abcd</code></p>
+<p>追入查看：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152011515.png" class title="image-20230503152011515">
+
+<p>它的值是：<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></p>
+<h4 id="第4个函数"><a href="#第4个函数" class="headerlink" title="第4个函数"></a>第4个函数</h4><p>回到main函数，继续查看第四个函数：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152426933.png" class title="image-20230503152426933">
+
+<p>看到：<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153124833.png" class title="image-20230503153124833"></p>
+<p>发现这里对字符串进行了<strong>仿射加密</strong>：对输入的明文字符串利用<code>a1234567890Abcd</code>的字符集<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code>进行仿射加密</p>
+<p>其中仿射加密的密钥<code>a=v6=9, b=v1=3</code></p>
+<h4 id="第4个函数调用的函数"><a href="#第4个函数调用的函数" class="headerlink" title="第4个函数调用的函数"></a>第4个函数调用的函数</h4><p>随后调用了一个函数<code>sub_40210C</code>，追入查看，并定位到关键代码段：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153420750.png" class title="image-20230503153420750">
+
+<p>这段代码中：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153741551.png" class title="image-20230503153741551">
+
+<p>将字符串合并为了一个长度为32字符长度的定长字符串，因此我们可以判断这个函数是一个<strong>哈希算法</strong>，用以输出定长的256位散列值</p>
+<p>随后定位到前面的关键函数<code>sub_401A14</code>，推测这个函数就是用来进行哈希的函数，追入查看：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154219688.png" class title="image-20230503154219688">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154238457.png" class title="image-20230503154238457">
+
+<p><strong>可以判断这是一个MD5加密算法！！</strong></p>
+<p>因此函数<code>sub_40210C</code>的功能是将<code>Block</code> 变量分成多个32 字节的块，然后每个块都通过 <code>sub_401A14</code> 函数计算出其哈希值。最后，将所有块的哈希值合并成一个 128 位的哈希值，并将其转换为字符串格式写入 <code>Buffer</code> 变量中。</p>
+<p>回到函数<code>sub_40161C</code>，接下来函数进行了一个字符串比较：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154525848.png" class title="image-20230503154525848">
+
+<p>Str1是<code>sub_40120C</code>加密过后得到的散列值，因此判断<strong>Str2就是所比较的密文（散列值）</strong>，追入查看：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154746972.png" class title="image-20230503154746972">
+
+<p>Str2的值是：<code>f8728f24e01c1aaf54e23f7f0d591384</code></p>
+<p>如果比较成功，即输入的值加密后和预设的密文散列值相同，进入下一个比较，如果<code>byte_407449</code>的值为<code>32Z2</code>，则比较成功，跳出成功得到flag的消息框</p>
+<p>我们发现<code>byte_407449</code>和输入字符串的<code>byte_407444</code>相差5，因此v4的strcmp**<code>407449</code>所比较的字符串就是输入字符串的后4个字节，因此我们可以知道flag的后四个字节是<code>32Z2</code>**</p>
+<h4 id="解密思路"><a href="#解密思路" class="headerlink" title="解密思路"></a>解密思路</h4><p>在网上找了个MD5解密轮子（Link:<a class="link" href="https://www.somd5.com/%EF%BC%89%EF%BC%8C%E8%A7%A3%E5%AF%86MD5%E5%BE%97%E5%88%B0%E6%98%8E%E6%96%87%EF%BC%9A%60K502G%60">https://www.somd5.com/），解密MD5得到明文：`K502G` <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后我们就可以奖字符串进行拼接进行仿射解密了：<code>K502G32Z2</code></p>
+<p>仿射解密脚本如下（Python）：</p>
+<p>其中注意，由于解密是逆变换，所以密钥<code>a=3, b=9 </code></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    c = <span class="built_in">input</span>(<span class="string">'输入密文：'</span>)</span><br><span class="line">    a = <span class="number">3</span> <span class="comment">#根据逆向结果得到的密钥</span></span><br><span class="line">    b = <span class="number">9</span></span><br><span class="line"></span><br><span class="line">    p = affine_decrypt(c, a, b)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"解密结果："</span> + p)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">affine_decrypt</span>(<span class="params">ciphertext, a, b</span>):</span><br><span class="line">    plaintext = <span class="string">""</span></span><br><span class="line">    m = <span class="built_in">len</span>(<span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>)</span><br><span class="line">    a_inv = <span class="number">0</span></span><br><span class="line">    <span class="comment"># 计算 a 的逆元素</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, m):</span><br><span class="line">        <span class="keyword">if</span> (i * a) % m == <span class="number">1</span>:</span><br><span class="line">            a_inv = i</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># 对密文进行解密</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> ciphertext:</span><br><span class="line">        <span class="keyword">if</span> char == <span class="string">'_'</span>:</span><br><span class="line">            char = <span class="string">' '</span></span><br><span class="line">        <span class="keyword">elif</span> char == <span class="string">'-'</span>:</span><br><span class="line">            char = <span class="string">'.'</span></span><br><span class="line">        <span class="comment"># 将字符映射到数字</span></span><br><span class="line">        num = <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>.index(char)</span><br><span class="line">        <span class="comment"># 计算解密后的数字</span></span><br><span class="line">        num = (a_inv * (num - b)) % m</span><br><span class="line">        <span class="comment"># 将数字映射回字符</span></span><br><span class="line">        plaintext += <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>[num]</span><br><span class="line">    <span class="keyword">return</span> plaintext</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></div>
+
+<p>然后把这个字符串拼接起来得到flag：<code>5M1LE_LOL</code></p>
+<p>输入这个flag，得到成功的提示:</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511124146592.png" class title="image-20230511124146592">
+
+<h5 id="第一次尝试："><a href="#第一次尝试：" class="headerlink" title="第一次尝试："></a>第一次尝试：</h5><p>因此可以得到flag：<code>3WC9H32Z2</code>–&gt;它不对…. o(TヘTo)</p>
+<p>难道是md5解错了？还是仿射回去的时候错了?</p>
+<p>笑死 原来是仿射解密的密钥搞反了 解密是逆变换 密钥要反过来</p>
+<p>而且32Z2也要一起丢进去仿射解密</p>
+]]></content>
+      <categories>
+        <category>Project</category>
+      </categories>
+      <tags>
+        <tag>汇编逆向</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《亲密关系》读书笔记</title>
     <url>/2024/03/16/%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h2 id="1-人际关系的构成"><a href="#1-人际关系的构成" class="headerlink" title="1 人际关系的构成"></a>1 人际关系的构成</h2><ol>
@@ -620,150 +764,6 @@
       </tags>
   </entry>
   <entry>
-    <title>加密算法逆向实践</title>
-    <url>/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/</url>
-    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><strong>问题-1</strong>：找到开头“This program cannot be run …” 这个字符串的内存起始地址（即字符串的指针），并准确计算该字符串的长度；</p>
-<p><strong>问题-2</strong>：需要结合具体的加密操作逻辑，说明所发现的加密算法。</p>
-<p>输入正确 flag 后的运行截图如下：</p>
-<img lazyload src="/images/loading.svg" data-src="https://fileucloud.bupt.edu.cn/bupt/upload/20230422/6b6a1856b38e98db2bb0f0d80a5fe12b.png" alt="img" style="zoom:50%;">
-
-<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><h3 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h3><p>首先找到——FOR FUN—–的位置，使用IDA Pro</p>
-<p>Shift+F12进行字符串定位</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111417280.png" class title="image-20230428111417280">
-
-<p>追入</p>
-<p>发现有一个%s夹在两行———-中间，可以判断这个输入的%s就是“This program cannot be run …”</p>
-<p>查看main函数</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111553144.png" class title="image-20230428111553144">
-
-<p>发现在调用<code>printf</code>函数时输入了一个参数，其地址为<code>40004Eh</code></p>
-<p>==因此我们就找到了字符串“This program cannot be run …”的起始地址<code>40004Eh</code>==</p>
-<p>接下来找字符串长度，此时使用x32dbg进行动态调试</p>
-<p>因为我们已经知道了该字符串的起始地址，因此我们可以在程序运行到Entrypoint时直接定位到该字符串：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132011451.png" class title="image-20230511132011451">
-
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132055593.png" class title="image-20230511132055593">
-
-<p>==数一数字符串长度 可知该字符串长度是43个字节==</p>
-<h3 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h3><p>首先发现exe文件在输入错误的flag之后直接结束或者退出了，因此我们只能直接看汇编代码对该程序进行研究</p>
-<p>首先看提示的字符串” ———FOR FUN———-“以及”Please input your flag below:”，可以从这两个提示字符串入手研究该程序</p>
-<p>先看main函数的整体结构：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503144347708.png" class title="image-20230503144347708">
-
-<p>首先调用了函数<code>sub_402320</code>，随后输出提示信息————–FOR FUN——————，接着连续调用了三个函数，因此可以从一个一个函数入手研究这个程序</p>
-<h4 id="第1个函数"><a href="#第1个函数" class="headerlink" title="第1个函数"></a>第1个函数</h4><p>发现在调用<code>printf</code>函数输出——-FOR FUN——–之前调用了一个函数<code>sub_402320</code></p>
-<p>追入该函数查看，利用IDA Pro的反汇编功能研究该函数：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230501231323379.png" class title="image-20230501231323379">
-
-<p>解读这段反汇编代码：这段代码的功能是执行一个函数表中的一系列函数，并在程序退出时再次执行一个特定函数。它的基本思路是：如果全局变量dword_407080的值为0，则将其设为1，然后执行一个函数表中的一系列函数，最后调用sub_4014C0函数，该函数的参数是sub_402290函数的地址。如果dword_407080的值不是0，则直接返回它（result）。</p>
-<p>具体来说，下面是每个步骤的解释：</p>
-<ol>
-<li><p>result = dword_407080;<br>将dword_407080的值赋给result变量。</p>
-</li>
-<li><p>if (!dword_407080)<br>如果dword_407080的值为0，执行以下代码块，否则跳过该代码块。</p>
-</li>
-<li><p>dword_407080 = 1;<br>将dword_407080的值设为1。</p>
-</li>
-<li><p>for (i = 0; dword_4033E0[i + 1]; ++i)<br>查找函数表dword_4033E0中最后一个函数的索引。该函数表是一个由地址组成的数组，最后一个地址为0，以便循环能够停止。</p>
-</li>
-<li><p>for (; i; –i)<br>执行函数表dword_4033E0中的函数，从最后一个函数开始一直到第一个函数。</p>
-</li>
-<li><p>((void (*)(void))dword_4033E0[i])();<br>将函数表dword_4033E0中第i个元素的地址强制转换为void (*)(void)类型的函数指针，然后执行该函数。</p>
-</li>
-<li><p>return sub_4014C0((_onexit_t)sub_402290);<br>调用sub_4014C0函数，并将sub_402290函数的地址转换为_onexit_t类型的函数指针作为参数。_onexit_t是一个函数指针类型，它指向一个函数，该函数在程序退出时执行。</p>
-</li>
-<li><p>return result;<br>如果dword_407080的值不为0，则直接返回该值。</p>
-</li>
-</ol>
-<p><u><strong>这段函数的功能是调用函数表</strong></u></p>
-<h4 id="第2个函数"><a href="#第2个函数" class="headerlink" title="第2个函数"></a>第2个函数</h4><p>追入<code>sub_4015C0</code>这个函数</p>
-<p>查看其汇编代码，这个函数的功能上，首先输出了提示信息：“Please input your flag below:”</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143435814.png" class title="image-20230503143435814">
-
-<p>接下来函数调用了scanf函数接收我们输入的flag：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143727587.png" class title="image-20230503143727587">
-
-<p>可以看到这个scanf函数是用于接收一个长度不小于9个字符的字符串输入，**<code>byte_407444</code>就是输入的字符串**</p>
-<p>接下来，该函数计算了输入的字符串长度，并将其与存储在内存地址 <code>byte_4040E4</code> 处的值进行比较：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145208387.png" class title="image-20230503145208387">
-
-<p>可以看到，如果输入的字符串长度不相等，则跳转到loc_40160F处，loc_40160F的功能是恢复函数栈寄存器并退出程序；如果相等则返回</p>
-<p>因此我们需要知道byte_4040E4的值，追入查看byte_4040E4</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145115142.png" class title="image-20230503145115142">
-
-<p>可以看到<code>4040E4</code>的值是9，也就是说，输入的字符串长度应当是<strong>9</strong></p>
-<p>因此，<strong>第二个函数的功能是输出提示信息，接收输入的字符串并将输入字符串的长度与预设的长度值9进行比较</strong>，如果长度不相等则退出程序</p>
-<h4 id="第3个函数"><a href="#第3个函数" class="headerlink" title="第3个函数"></a>第3个函数</h4><p>回到main函数，继续研究下一个函数<code>sub_401770</code></p>
-<p>查看其反汇编函数：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503150657627.png" class title="image-20230503150657627">
-
-<p>可以看到，本段代码的功能是对字符串进行合法性判断</p>
-<p>以下是代码注释：</p>
-<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; (<span class="type">unsigned</span> __int8)byte_4040E4 != i; ++i) <span class="comment">// 对每个字符，循环直到字符为0x00</span></span><br><span class="line">{</span><br><span class="line">  v1 = (<span class="type">unsigned</span> __int8)byte_407444[i]; <span class="comment">// 取出当前字符</span></span><br><span class="line">  v2 = <span class="number">48</span>; <span class="comment">// v2 为 ASCII 码 48，即字符 '0'</span></span><br><span class="line">  <span class="keyword">while</span> (v1 != v2 &amp;&amp; byte_407444[i] != <span class="number">95</span>) <span class="comment">// 如果当前字符不是 '0' 且不是下划线 '_'</span></span><br><span class="line">  {</span><br><span class="line">    <span class="keyword">if</span> (++v2 == <span class="number">58</span>) <span class="comment">// 如果 v2 递增后等于 ASCII 码 58，即字符 '9'+1，说明当前字符为大写字母</span></span><br><span class="line">    {</span><br><span class="line">      v3 = <span class="number">65</span>; <span class="comment">// v3 为 ASCII 码 65，即字符 'A'</span></span><br><span class="line">      <span class="keyword">while</span> (v1 != v3) <span class="comment">// 如果当前字符不是大写字母</span></span><br><span class="line">      {</span><br><span class="line">        <span class="keyword">if</span> (++v3 == <span class="number">91</span>) <span class="comment">// 如果 v3 递增后等于 ASCII 码 91，即字符 'Z'+1，说明当前字符不合法</span></span><br><span class="line">          <span class="built_in">exit</span>(<span class="number">100876</span>); <span class="comment">// 结束程序并返回错误码 100876</span></span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">if</span> ((<span class="type">unsigned</span> __int8)byte_4040E4 - <span class="number">1</span> == i) <span class="comment">// 如果遍历完字符串后还未结束循环，则结束循环</span></span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">return</span> sub_401700(); <span class="comment">// 调用 sub_401700() 函数并返回结果</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<p>因此，<strong>这个函数的目的是遍历一个字符串，并检查字符串中的每个字符是否是数字、大写字母或下划线，如果不是，则结束程序并返回错误码。</strong></p>
-<h4 id="第3个函数调用的函数"><a href="#第3个函数调用的函数" class="headerlink" title="第3个函数调用的函数"></a>第3个函数调用的函数</h4><p>如果字符串合法，则会跳转到<code>sub_401700</code>我们追入这个函数查看</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503151526462.png" class title="image-20230503151526462">
-
-<p>查看其反汇编代码，发现这个函数就是<strong>关键的进行字符串比较的函数</strong></p>
-<p>这个函数的功能是将输入的字符串<code>byte_407444</code>与 <code>a1234567890Abcd</code> 字符串数组进行比较，如果相等，则将 <code>dword_4040C0</code> 数组中对应的元素设置为 <code>v3</code>并返回</p>
-<p>此时我们发现，关键的数组出现了，就是这个<code>a1234567890Abcd</code></p>
-<p>追入查看：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152011515.png" class title="image-20230503152011515">
-
-<p>它的值是：<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></p>
-<h4 id="第4个函数"><a href="#第4个函数" class="headerlink" title="第4个函数"></a>第4个函数</h4><p>回到main函数，继续查看第四个函数：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152426933.png" class title="image-20230503152426933">
-
-<p>看到：<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153124833.png" class title="image-20230503153124833"></p>
-<p>发现这里对字符串进行了<strong>仿射加密</strong>：对输入的明文字符串利用<code>a1234567890Abcd</code>的字符集<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code>进行仿射加密</p>
-<p>其中仿射加密的密钥<code>a=v6=9, b=v1=3</code></p>
-<h4 id="第4个函数调用的函数"><a href="#第4个函数调用的函数" class="headerlink" title="第4个函数调用的函数"></a>第4个函数调用的函数</h4><p>随后调用了一个函数<code>sub_40210C</code>，追入查看，并定位到关键代码段：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153420750.png" class title="image-20230503153420750">
-
-<p>这段代码中：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153741551.png" class title="image-20230503153741551">
-
-<p>将字符串合并为了一个长度为32字符长度的定长字符串，因此我们可以判断这个函数是一个<strong>哈希算法</strong>，用以输出定长的256位散列值</p>
-<p>随后定位到前面的关键函数<code>sub_401A14</code>，推测这个函数就是用来进行哈希的函数，追入查看：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154219688.png" class title="image-20230503154219688">
-
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154238457.png" class title="image-20230503154238457">
-
-<p><strong>可以判断这是一个MD5加密算法！！</strong></p>
-<p>因此函数<code>sub_40210C</code>的功能是将<code>Block</code> 变量分成多个32 字节的块，然后每个块都通过 <code>sub_401A14</code> 函数计算出其哈希值。最后，将所有块的哈希值合并成一个 128 位的哈希值，并将其转换为字符串格式写入 <code>Buffer</code> 变量中。</p>
-<p>回到函数<code>sub_40161C</code>，接下来函数进行了一个字符串比较：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154525848.png" class title="image-20230503154525848">
-
-<p>Str1是<code>sub_40120C</code>加密过后得到的散列值，因此判断<strong>Str2就是所比较的密文（散列值）</strong>，追入查看：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154746972.png" class title="image-20230503154746972">
-
-<p>Str2的值是：<code>f8728f24e01c1aaf54e23f7f0d591384</code></p>
-<p>如果比较成功，即输入的值加密后和预设的密文散列值相同，进入下一个比较，如果<code>byte_407449</code>的值为<code>32Z2</code>，则比较成功，跳出成功得到flag的消息框</p>
-<p>我们发现<code>byte_407449</code>和输入字符串的<code>byte_407444</code>相差5，因此v4的strcmp**<code>407449</code>所比较的字符串就是输入字符串的后4个字节，因此我们可以知道flag的后四个字节是<code>32Z2</code>**</p>
-<h4 id="解密思路"><a href="#解密思路" class="headerlink" title="解密思路"></a>解密思路</h4><p>在网上找了个MD5解密轮子（Link:<a class="link" href="https://www.somd5.com/%EF%BC%89%EF%BC%8C%E8%A7%A3%E5%AF%86MD5%E5%BE%97%E5%88%B0%E6%98%8E%E6%96%87%EF%BC%9A%60K502G%60">https://www.somd5.com/），解密MD5得到明文：`K502G` <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后我们就可以奖字符串进行拼接进行仿射解密了：<code>K502G32Z2</code></p>
-<p>仿射解密脚本如下（Python）：</p>
-<p>其中注意，由于解密是逆变换，所以密钥<code>a=3, b=9 </code></p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    c = <span class="built_in">input</span>(<span class="string">'输入密文：'</span>)</span><br><span class="line">    a = <span class="number">3</span> <span class="comment">#根据逆向结果得到的密钥</span></span><br><span class="line">    b = <span class="number">9</span></span><br><span class="line"></span><br><span class="line">    p = affine_decrypt(c, a, b)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"解密结果："</span> + p)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">affine_decrypt</span>(<span class="params">ciphertext, a, b</span>):</span><br><span class="line">    plaintext = <span class="string">""</span></span><br><span class="line">    m = <span class="built_in">len</span>(<span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>)</span><br><span class="line">    a_inv = <span class="number">0</span></span><br><span class="line">    <span class="comment"># 计算 a 的逆元素</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, m):</span><br><span class="line">        <span class="keyword">if</span> (i * a) % m == <span class="number">1</span>:</span><br><span class="line">            a_inv = i</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># 对密文进行解密</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> ciphertext:</span><br><span class="line">        <span class="keyword">if</span> char == <span class="string">'_'</span>:</span><br><span class="line">            char = <span class="string">' '</span></span><br><span class="line">        <span class="keyword">elif</span> char == <span class="string">'-'</span>:</span><br><span class="line">            char = <span class="string">'.'</span></span><br><span class="line">        <span class="comment"># 将字符映射到数字</span></span><br><span class="line">        num = <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>.index(char)</span><br><span class="line">        <span class="comment"># 计算解密后的数字</span></span><br><span class="line">        num = (a_inv * (num - b)) % m</span><br><span class="line">        <span class="comment"># 将数字映射回字符</span></span><br><span class="line">        plaintext += <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>[num]</span><br><span class="line">    <span class="keyword">return</span> plaintext</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></div>
-
-<p>然后把这个字符串拼接起来得到flag：<code>5M1LE_LOL</code></p>
-<p>输入这个flag，得到成功的提示:</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511124146592.png" class title="image-20230511124146592">
-
-<h5 id="第一次尝试："><a href="#第一次尝试：" class="headerlink" title="第一次尝试："></a>第一次尝试：</h5><p>因此可以得到flag：<code>3WC9H32Z2</code>–&gt;它不对…. o(TヘTo)</p>
-<p>难道是md5解错了？还是仿射回去的时候错了?</p>
-<p>笑死 原来是仿射解密的密钥搞反了 解密是逆变换 密钥要反过来</p>
-<p>而且32Z2也要一起丢进去仿射解密</p>
-]]></content>
-      <categories>
-        <category>Project</category>
-      </categories>
-      <tags>
-        <tag>汇编逆向</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>博客优化和更新</title>
     <url>/2023/07/18/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96%E5%92%8C%E6%9B%B4%E6%96%B0/</url>
     <content><![CDATA[<p>最近正好在不断优化和更新自己的博客，我就想着可不可以试试给自己的博客多选几个主题，之后可以随时更换（看心情），然后就挑了下面几个主题：</p>
@@ -945,6 +945,288 @@
       </categories>
       <tags>
         <tag>homework</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据库技术与应用</title>
+    <url>/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/</url>
+    <content><![CDATA[<h1 id="1-绪论"><a href="#1-绪论" class="headerlink" title="1 绪论"></a>1 绪论</h1><h2 id="1-2-数据模型"><a href="#1-2-数据模型" class="headerlink" title="1.2 数据模型"></a>1.2 数据模型</h2><p>在数据库中用数据模型这个工具来<strong>抽象、表示和处理</strong>现实世界中的事物。</p>
+<p>通俗地讲数据模型就是现实世界的抽象和模拟。</p>
+<p>数据模型应满足三方面要求</p>
+<p><strong>能比较真实地模拟现实世界</strong></p>
+<p><strong>容易为人所理解</strong></p>
+<p><strong>便于在计算机上 实现</strong></p>
+<h3 id="两大类数据模型"><a href="#两大类数据模型" class="headerlink" title="两大类数据模型"></a>两大类数据模型</h3><p>(1) <strong>概念模型</strong>   也称信息模型，它是按用户的观点来对数据和信息建模，用于数据库设计。<br>(2) <strong>逻辑模型和物理模型</strong>   按计算机系统的观点对数据建模，用于DBMS的实现。<br>        逻辑模型主要包括网状模型、层次模型、关系模型、面向对象模型等，按计算机系统的观点对数据建模，用于DBMS实现。<br>        物理模型是对数据最底层的抽象，描述数据在系统内部的表示方式和存取方法，在磁盘或磁带上的存储方式和存取方法。</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228192613246-16781980135701.png" alt="image-20230228192613246" style="zoom:50%;">
+
+<h3 id="概念模型"><a href="#概念模型" class="headerlink" title="概念模型"></a>概念模型</h3><p><strong>概念模型的用途</strong><br>概念模型用于信息世界的建模<br>是现实世界到机器世界的一个中间层次<br>是数据库设计的有力工具<br>数据库设计人员和用户之间进行交流的语言<br><strong>对概念模型的基本要求</strong><br>较强的语义表达能力<br>能够方便、直接地表达应用中的各种语义知识<br>简单、清晰、易于用户理解</p>
+<h3 id="信息世界中的基本概念"><a href="#信息世界中的基本概念" class="headerlink" title="信息世界中的基本概念"></a>信息世界中的基本概念</h3><p><strong>(1) 实体（Entity）</strong></p>
+<p>客观存在并可相互区别的事物称为实体。可以是具体的人、事、物或抽象的概念。</p>
+<p><strong>(2) 属性（Attribute）</strong></p>
+<p>实体所具有的某一特性称为属性。一个实体可以由若干个属性来刻画。 </p>
+<p><strong>(3) 码（Key）</strong> </p>
+<p>唯一标识实体的属性集称为码</p>
+<p><strong>(4) 域（Domain）</strong> </p>
+<p>属性的取值范围称为该属性的域。 </p>
+<p><strong>(5) 实体型（Entity Type）</strong> </p>
+<p>用实体名及其属性名集合来抽象和刻画同类实体称为实体型</p>
+<p>例子：学生（学号、姓名、性别、出生年月）</p>
+<p><strong>(6) 实体集（Entity Set）</strong><br>同一类型实体的集合称为实体集：</p>
+<table>
+<thead>
+<tr>
+<th><strong>学号</strong></th>
+<th><strong>姓名</strong></th>
+<th><strong>性别</strong></th>
+<th><strong>出生日期</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>20021001</td>
+<td>张三</td>
+<td>男</td>
+<td>1978-5-6</td>
+</tr>
+<tr>
+<td>20021003</td>
+<td>李四</td>
+<td>女</td>
+<td>1980-1-24</td>
+</tr>
+<tr>
+<td>20021004</td>
+<td>王五</td>
+<td>男</td>
+<td>1979-11-12</td>
+</tr>
+</tbody></table>
+<p><strong>(7) 联系（Relationship）</strong>  </p>
+<p>现实世界：事物内部以及事物之间的联系<br>信息世界：实体内部的联系和实体之间的联系</p>
+<h3 id="两个实体型之间的联系"><a href="#两个实体型之间的联系" class="headerlink" title="两个实体型之间的联系"></a>两个实体型之间的联系</h3><h4 id="一对一联系（1-1）"><a href="#一对一联系（1-1）" class="headerlink" title="一对一联系（1 : 1）"></a>一对一联系（1 : 1）</h4><p><strong>实例</strong><br>一个班级只有一个正班长，一个班长只在一个班中任职<br><strong>定义：</strong><br>    如果对于实体集A中的每一个实体，实体集B中至多有一个（也可以没有）实体与之联系，反之亦然，<strong>则称实体集A与实体集B具有一对一联系，记为1:1</strong> </p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193153537-16781980135712.png" alt="image-20230228193153537" style="zoom:33%;">
+
+<h4 id="一对多联系（1-n）"><a href="#一对多联系（1-n）" class="headerlink" title="一对多联系（1 : n）"></a>一对多联系（1 : n）</h4><p><strong>实例</strong><br>一个班级中有若干名学生，每个学生只在一个班级中学习<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中至多只有一个实体与之联系，则称<strong>实体集A与实体集B</strong>有一对多联系，记为1:n</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193321227-16781980135713.png" alt="image-20230228193321227" style="zoom:33%;">
+
+<p>注意一对多联系图中<strong>1</strong>的位置</p>
+<h4 id="多对多联系（m-n）"><a href="#多对多联系（m-n）" class="headerlink" title="多对多联系（m : n）"></a>多对多联系（m : n）</h4><p><strong>实例</strong><br>课程与学生之间的联系：<br>一门课程同时有若干个学生选修<br>一个学生可以同时选修多门课程<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中也有m个实体（m≥0）与之联系，则称实体集A与实体B具有多对多联系，记为m:n</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193313680-16781980135714.png" alt="image-20230228193313680" style="zoom:33%;">
+
+<h4 id="用图形来表示两个实体型之间的三类联系"><a href="#用图形来表示两个实体型之间的三类联系" class="headerlink" title="用图形来表示两个实体型之间的三类联系"></a>用图形来表示两个实体型之间的三类联系</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193406567-16781980135715.png" alt="image-20230228193406567" style="zoom:50%;">
+
+<h3 id="两个以上实体型之间的联系"><a href="#两个以上实体型之间的联系" class="headerlink" title="两个以上实体型之间的联系"></a>两个以上实体型之间的联系</h3><p>若实体型E1，E2，…，En存在联系，对于实体型Ej（j&#x3D;1，2，…，i-1，i+1，…，n）中的给定实体，最多只和Ei中的一个实体相联系，则我们说Ei与E1，E2，…，Ei-1，Ei+1，…，En之间的联系是<strong>一对多</strong>的</p>
+<p><strong>实例</strong></p>
+<p>课程、教师与参考书三个实体型</p>
+<p>每一个教师可以讲授若干门课程，每门课程可以使用若干本参考书</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193534803-16781980135716.png" alt="image-20230228193534803" style="zoom:50%;">
+
+<p><strong>两个以上实体型间的一对一联系</strong></p>
+<p><strong>两个以上实体型间的多对多联系</strong></p>
+<h3 id="单个实体型内的联系"><a href="#单个实体型内的联系" class="headerlink" title="单个实体型内的联系"></a>单个实体型内的联系</h3><p>同一实体集内的各实体之间的关系<br><strong>一对多联系</strong><br><strong>实例</strong><br>职工实体型内部具有领导与被领导的联系<br>某一职工（干部）“领导”若干名职工<br>一个职工仅被另外一个职工直接领导<br>这是一对多的联系</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193653846-16781980135717.png" alt="image-20230228193653846" style="zoom:50%;">
+
+<p><strong>一对一联系和多对多联系</strong></p>
+<h3 id="概念模型的一种表示方法"><a href="#概念模型的一种表示方法" class="headerlink" title="概念模型的一种表示方法"></a>概念模型的一种表示方法</h3><p><strong>实体－联系方法(E-R方法)</strong></p>
+<h4 id="E-R图"><a href="#E-R图" class="headerlink" title="E-R图"></a>E-R图</h4><p><strong>实体型</strong><br>用矩形表示，矩形框内写明实体名。</p>
+<p><strong>属性</strong><br>用椭圆形表示，并用无向边将其与相应的实体连接起来</p>
+<p><strong>联系</strong><br>联系本身：<br>   用菱形表示，菱形框内写明联系名，并用无向边分别与有关实体连接起来，同时在无向边旁标上联系的类型（1:1、1:n或m:n）</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193805948-16781980135718.png" alt="image-20230228193805948" style="zoom:50%;">
+
+<h4 id="联系的表示方法"><a href="#联系的表示方法" class="headerlink" title="联系的表示方法"></a>联系的表示方法</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193826047-16781980135719.png" alt="image-20230228193826047" style="zoom:50%;">
+
+<h4 id="联系的属性"><a href="#联系的属性" class="headerlink" title="联系的属性"></a>联系的属性</h4><p>联系本身也是一种实体型，也   可以有属性。如果一个联系具有属性，则这些属性也要用无向边与该联系连接起来 </p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193848342-167819801357110.png" alt="image-20230228193848342" style="zoom:50%;">
+
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>用E-R图表示某个工厂物资管理的概念模型<br>实体：<br>        仓库： 仓库号、面积、电话号码<br>        零件 ：零件号、名称、规格、单价、描述<br>        供应商：供应商号、姓名、地址、电话号码、帐号<br>        项目：项目号、预算、开工日期<br>        职工：职工号、姓名、年龄、职称<br>实体之间的联系如下：<br>        一个仓库可以存放多种零件，一种零件可以存放在多个仓库中。用库存量来表示某种零件在某个仓库中的数量<br>        一个仓库有多个职工当仓库保管员，一个职工只能在一个仓库工作<br>        职工之间具有领导-被领导关系。即仓库主任领导若干保管员</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194000378-167819801357111.png" alt="image-20230228194000378" style="zoom:67%;">
+
+<h3 id="数据模型的组成要素"><a href="#数据模型的组成要素" class="headerlink" title="数据模型的组成要素"></a>数据模型的组成要素</h3><h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p><strong>描述数据库的组成对象，以及对象之间的联系</strong></p>
+<p><strong>描述的内容</strong><br>与数据类型、内容、性质有关的对象<br>与数据之间联系有关的对象</p>
+<p><strong>数据结构是对系统静态特性的描述</strong></p>
+<h4 id="数据操作"><a href="#数据操作" class="headerlink" title="数据操作"></a>数据操作</h4><p>**对数据库中各种对象(型)的实例(值)允许执行的操作及有关的操作规则</p>
+<p><strong>数据操作的类型</strong><br>查询<br>更新(包括插入、删除、修改)</p>
+<p><strong>数据模型对操作的定义</strong><br>操作的确切含义<br>操作符号<br>操作规则（如优先级）<br>实现操作的语言</p>
+<p><strong>数据操作是对系统动态特性的描述</strong></p>
+<h4 id="完整性约束条件"><a href="#完整性约束条件" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h4><p><strong>一组完整性规则的集合。</strong><br>完整性规则：给定的数据模型中数据及其联系所具有的制约和储存规则，用以限定符合数据模型的数据库状态以及状态的变化，以保证数据的正确、有效、相容。</p>
+<p><strong>数据模型对完整性约束条件的定义</strong><br>必须遵守的基本的通用的完整性约束条件。<br>例如，关系模型中，任何关系必须满足实体完整性和参照完整性两个条件。</p>
+<p><strong>反映具体应用所涉及的特定的约束条件。</strong><br>例子：学校数据库中规定博士学生的年龄必须小于45岁<br>例子：银行的系统中规定帐号的余额不能小于1元</p>
+<h3 id="常用的数据模型"><a href="#常用的数据模型" class="headerlink" title="常用的数据模型"></a>常用的数据模型</h3><p>格式化模型<br>        层次模型(Hierarchical Model)<br>        网状模型(Network Model)</p>
+<p>关系模型(Relational Model)  </p>
+<p>面向对象模型(Object Oriented Model）</p>
+<p>对象关系模型(Object Relational Model)</p>
+<h4 id="层次模型"><a href="#层次模型" class="headerlink" title="层次模型"></a>层次模型</h4><p>层次模型用树形结构来表示各类实体以及实体间的联系 </p>
+<h5 id="层次模型-1"><a href="#层次模型-1" class="headerlink" title="层次模型"></a><strong>层次模型</strong></h5><p> 满足下面两个条件的基本层次联系的集合为层次模型</p>
+<p>1.有且只有一个结点没有双亲结点，这个结点称为根结点</p>
+<p>2.根以外的其它结点有且只有一个双亲结点</p>
+<h5 id="层次模型中的几个术语"><a href="#层次模型中的几个术语" class="headerlink" title="层次模型中的几个术语"></a><strong>层次模型中的几个术语</strong></h5><p>根结点，双亲结点，兄弟结点，叶结点</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194651033-167819801357112.png" alt="image-20230228194651033" style="zoom:50%;">
+
+<h5 id="表示方法"><a href="#表示方法" class="headerlink" title="表示方法"></a><strong>表示方法</strong></h5><p><strong>实体型：</strong>用记录类型描述，每个结点表示一个记录类型（实体）</p>
+<p><strong>属性：</strong>用字段描述，每个记录类型可包含若干个字段</p>
+<p><strong>联系：</strong>用结点之间的连线表示记录类型（实体）之间的<strong>一对多</strong>的父子联系</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194729758-167819801357113.png" alt="image-20230228194729758" style="zoom: 50%;">
+
+<h5 id="层次模型的数据操纵"><a href="#层次模型的数据操纵" class="headerlink" title="层次模型的数据操纵"></a><strong>层次模型的数据操纵</strong></h5><p>查询 插入 删除 更新</p>
+<h5 id="层次模型的完整性约束条件"><a href="#层次模型的完整性约束条件" class="headerlink" title="层次模型的完整性约束条件"></a><strong>层次模型的完整性约束条件</strong></h5><p>无相应的双亲结点值就不能插入子女结点值<br>如果删除双亲结点值，则相应的子女结点值也被同时删除</p>
+<h5 id="层次数据模型的存储结构"><a href="#层次数据模型的存储结构" class="headerlink" title="层次数据模型的存储结构"></a><strong>层次数据模型的存储结构</strong></h5><p><strong>邻接法</strong><br>按照层次树前序遍历的顺序把所有记录值依次邻接存放，即通过物理空间的位置相邻来实现层次顺序</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194950487-167819801357115.png" alt="image-20230228194950487" style="zoom:50%;">
+
+<p><strong>链接法</strong><br>用指引来反映数据之间的层次联系<br>子女－兄弟链接法<br>层次序列链接法</p>
+<p><strong>子女-兄弟链接法</strong><br>每个记录设两类指针，分别指向最左边的子女（每个记录型对应一个）和最近的兄弟</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195024242-167819801357114.png" alt="image-20230228195024242" style="zoom:50%;">
+
+<p><strong>层次序列链接法</strong></p>
+<p>按树的前序穿越顺序链接各记录值</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195039461-167819801357116.png" alt="image-20230228195039461" style="zoom:50%;">
+
+<h5 id="层次模型的优缺点"><a href="#层次模型的优缺点" class="headerlink" title="层次模型的优缺点"></a><strong>层次模型的优缺点</strong></h5><p><strong>优点</strong><br>层次模型的数据结构比较简单清晰<br>查询效率高，性能优于关系模型，不低于网状模型<br>层次数据模型提供了良好的完整性支持</p>
+<p><strong>缺点</strong><br>多对多联系表示不自然<br>对插入和删除操作的限制多，应用程序的编写比较复杂<br>查询子女结点必须通过双亲结点</p>
+<h4 id="网状模型"><a href="#网状模型" class="headerlink" title="网状模型"></a>网状模型</h4><p>满足下面两个条件的基本层次联系的集合：</p>
+<ol>
+<li>允许一个以上的结点无双亲；</li>
+<li>一个结点可以有多于一个的双亲。<br>允许两个结点之间有多种联系（复合联系）<br>网状模型可以更直接地去描述现实世界，层次模型实际上是网状模型的一个特例</li>
+</ol>
+<h5 id="多对多联系在网状模型中的表示"><a href="#多对多联系在网状模型中的表示" class="headerlink" title="多对多联系在网状模型中的表示"></a><strong>多对多联系在网状模型中的表示</strong></h5><p>​		用网状模型间接表示多对多联系<br>​		方法：将多对多联系直接分解成一对多联系</p>
+<h5 id="数据操作-1"><a href="#数据操作-1" class="headerlink" title="数据操作"></a><strong>数据操作</strong></h5><p>网状数据库系统（如DBTG）对数据操纵加了一些限制，提供了一定的完整性约束<br>码：唯一标识记录的数据项的集合<br>支持双亲记录和子女记录之间某些约束条件<br>    有些子女记录要求双亲记录存在才能插入，双亲记录删除时也连同删除。例如学生选课记录</p>
+<h5 id="网状数据模型的存储结构"><a href="#网状数据模型的存储结构" class="headerlink" title="网状数据模型的存储结构"></a>网状数据模型的存储结构</h5><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195613303-167819801357117.png" alt="image-20230228195613303" style="zoom:50%;">
+
+<h5 id="网状数据模型的优缺点"><a href="#网状数据模型的优缺点" class="headerlink" title="网状数据模型的优缺点"></a>网状数据模型的优缺点</h5><p><strong>优点</strong><br>能更为直接地描述现实世界，如一个结点可以有多个双亲</p>
+<p>具有良好的性能，存取效率较高</p>
+<p><strong>缺点</strong><br>结构比较复杂，而且随着应用环境的扩大，数据库的结构就变得越来越复杂，不利于最终用户掌握</p>
+<p>DDL、DML语言复杂，用户不容易使用</p>
+<p>记录类型联系变动后涉及链接指针的调整，扩充和维护都比较复杂 </p>
+<h4 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h4><p>在用户观点下，关系模型中数据的逻辑结构是一张二维表，它由行和列组成。</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195759196-167819801357118.png" alt="image-20230228195759196" style="zoom: 50%;">
+
+<p><strong>关系（Relation）</strong><br>一个关系对应通常说的一张表<br><strong>元组（Tuple）</strong><br>表中的一行即为一个元组<br><strong>属性（Attribute）</strong><br>表中的一列即为一个属性，给每一个属性起一个名称即属性名</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195837826-167819801357119.png" alt="image-20230228195837826" style="zoom:50%;">
+
+<p><strong>主码（Key）</strong><br>表中的某个属性组，它可以唯一确定一个元组。<br><strong>域（Domain）</strong><br>属性的取值范围。<br><strong>分量</strong><br>元组中的一个属性值。<br><strong>关系模式</strong><br>对关系的描述<br>关系名（属性1，属性2，…，属性n）<br>学生（学号，姓名，年龄，性别，系，年级）</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200117047-167819801357220.png" alt="image-20230228200117047" style="zoom:50%;">
+
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200133118-167819801357221.png" alt="image-20230228200133118" style="zoom:50%;">
+
+<h5 id="数据操作是集合操作，操作对象和结果都是关系"><a href="#数据操作是集合操作，操作对象和结果都是关系" class="headerlink" title="数据操作是集合操作，操作对象和结果都是关系"></a>数据操作是集合操作，操作对象和结果都是关系</h5><p>查询 插入 删除 更新</p>
+<h5 id="完整性约束条件-1"><a href="#完整性约束条件-1" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h5><p>实体完整性<br>参照完整性<br>用户定义的完整性</p>
+<h5 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h5><p>实体及实体间的联系都用表来表示<br>表以文件形式存储<br>有的DBMS一个表对应一个操作系统文件<br>有的DBMS自己设计文件结构</p>
+<h5 id="关系数据模型的优缺点"><a href="#关系数据模型的优缺点" class="headerlink" title="关系数据模型的优缺点"></a>关系数据模型的优缺点</h5><p><strong>优点</strong><br>建立在严格的数学概念的基础上<br>可以描述一对一、一对多和多对多的联系<br>概念单一<br>        实体和各类联系都用关系来表示<br>        对数据的检索结果也是关系<br>存取路径对用户透明<br>        用户只要指出“干什么”，不必详细说明“怎么干”<br>        具有更高的数据独立性，更好的安全保密性<br>        简化了程序员的工作和数据库开发建立的工作</p>
+<p><strong>缺点</strong><br>存取路径对用户透明导致查询效率往往不如非关系数据模型<br>为提高性能，必须对用户的查询请求进行优化增加了开发DBMS的难度</p>
+<h4 id="关系模式-ER图"><a href="#关系模式-ER图" class="headerlink" title="关系模式-&gt;ER图"></a>关系模式-&gt;ER图</h4><p>例：<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307214952179.png" alt="image-20230307214952179" style="zoom:67%;"></p>
+<h3 id="E-R模型补充扩展"><a href="#E-R模型补充扩展" class="headerlink" title="E-R模型补充扩展"></a>E-R模型补充扩展</h3><p><strong>Movie database</strong><br><strong>Movie</strong>: title, year, length, genre<br><strong>Stars</strong>: name, address<br><strong>Studios</strong>: name, address</p>
+<p>a studio contracts with a particular start to act in a particular movie for some salary</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215104726.png" alt="image-20230307215104726" style="zoom:50%;">
+
+<h4 id="多实体集联系-多角色实体集"><a href="#多实体集联系-多角色实体集" class="headerlink" title="多实体集联系+多角色实体集"></a>多实体集联系+多角色实体集</h4><p>怎样表示Studio 2从studio 1租借某演员签约出演某电影？</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215135547.png" alt="image-20230307215135547" style="zoom:50%;">
+
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215534821.png" alt="image-20230307215534821" style="zoom: 33%;">
+
+<p>怎样去掉联系Contracts的属性salary？</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215600082.png" alt="image-20230307215600082" style="zoom:50%;">
+
+<h4 id="“Is-a”联系"><a href="#“Is-a”联系" class="headerlink" title="“Is a”联系"></a>“Is a”联系</h4><p>怎样表示电影的两个子类“动画片”和“枪战片”</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215658701.png" alt="image-20230307215658701" style="zoom: 33%;">
+
+<h2 id="1-3-数据库系统结构"><a href="#1-3-数据库系统结构" class="headerlink" title="1.3 数据库系统结构"></a>1.3 数据库系统结构</h2><h4 id="分布式B-S结构数据库系统"><a href="#分布式B-S结构数据库系统" class="headerlink" title="分布式B&#x2F;S结构数据库系统"></a>分布式B&#x2F;S结构数据库系统</h4><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215809913.png" alt="image-20230307215809913" style="zoom:50%;">
+
+<h3 id="数据库系统模式的概念"><a href="#数据库系统模式的概念" class="headerlink" title="数据库系统模式的概念"></a>数据库系统模式的概念</h3><h4 id="“型”-和“值”-的概念"><a href="#“型”-和“值”-的概念" class="headerlink" title="“型” 和“值” 的概念"></a>“型” 和“值” 的概念</h4><p><strong>型(Type)</strong>  对某一类数据的结构和属性的说明<br><strong>值(Value)</strong>  是型的一个具体赋值<br>例如<br>学生记录型：<br>  （学号，姓名，性别，系别，年龄，籍贯）<br>一个记录值：<br>  （900201，李明，男，计算机，22，江苏）</p>
+<p><strong>模式（Schema）</strong><br>数据库逻辑结构和特征的描述<br>是型的描述<br>反映的是数据的结构及其联系<br>模式是相对稳定的</p>
+<p><strong>实例（Instance）</strong><br>模式的一个具体值<br>反映数据库某一时刻的状态<br>同一个模式可以有很多实例<br>实例随数据库中的数据的更新而变动</p>
+<h3 id="数据库系统的三级模式结构"><a href="#数据库系统的三级模式结构" class="headerlink" title="数据库系统的三级模式结构"></a>数据库系统的三级模式结构</h3><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220505091.png" alt="image-20230307220505091" style="zoom: 50%;">
+
+<h4 id="模式（也称逻辑模式）"><a href="#模式（也称逻辑模式）" class="headerlink" title="模式（也称逻辑模式）"></a>模式（也称逻辑模式）</h4><p>​		数据库中全体数据的逻辑结构和特征的描述<br>​		所有用户的公共数据视图，综合了所有用户的需求<br><strong>一个数据库只有一个模式</strong><br><strong>模式的地位：是数据库系统模式结构的中间层</strong><br>​		与数据的物理存储细节和硬件环境无关<br>​		与具体的应用程序、开发工具及高级程序设计语言无关</p>
+<p><strong>模式的定义</strong><br>        数据的逻辑结构（数据项的名字、类型、取值范围等）<br>        数据之间的联系<br>        数据有关的安全性、完整性要求</p>
+<h4 id="外模式（也称子模式或用户模式）"><a href="#外模式（也称子模式或用户模式）" class="headerlink" title="外模式（也称子模式或用户模式）"></a>外模式（也称子模式或用户模式）</h4><p>数据库用户（包括应用程序员和最终用户）使用的局部数据的逻辑结构和特征的描述<br>数据库用户的数据视图，是与某一应用有关的数据的逻辑表示</p>
+<h4 id="内模式（也称存储模式）"><a href="#内模式（也称存储模式）" class="headerlink" title="内模式（也称存储模式）"></a>内模式（也称存储模式）</h4><p>是数据物理结构和存储方式的描述<br>是数据在数据库内部的表示方式</p>
+<p><strong>一个数据库只有一个内模式</strong></p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220519463.png" alt="image-20230307220519463" style="zoom:67%;">
+]]></content>
+      <categories>
+        <category>Note</category>
+      </categories>
+      <tags>
+        <tag>Note</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>林同学喜欢的诗句</title>
+    <url>/2023/09/21/%E6%9E%97%E5%90%8C%E5%AD%A6%E5%96%9C%E6%AC%A2%E7%9A%84%E8%AF%97%E5%8F%A5/</url>
+    <content><![CDATA[<h4 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h4><p>读诗是真的能让自己感受到自由的一件事，很多时候，真的有那么一句诗触动到了心灵，就会发现，原来这个世界上真有能读懂我内心的那么一个人，原来我并不孤独。</p>
+<p>这份内心连接，可以穿越时空，给予自己实实在在的力量。</p>
+<h2 id="01"><a href="#01" class="headerlink" title="01"></a>01</h2><blockquote>
+<p>今宵绝胜无人共，卧看星河尽意明。</p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/z8/wallhaven-z8qqdj.png"></p>
+<p>出自【宋】陈与义《雨晴》</p>
+<p>这句诗感觉就是我想要的生活状态啊！</p>
+<p>就算是一个人，也能够兴致满怀地躺着，安静地欣赏着银河之美，感觉这就是和天地寰宇共脉搏的感觉啊，脑海里已经能够想象出自己在一个安静的夏日，躺在海边草地上看着明月，没有生活杂碎烦扰，放空自身，让自己彻底融入大自然，或许这才是真正的自由吧~</p>
+<p>又或许在现代社会的拥扰中，能够找到属于自己的一隅，用于逃离社会喧嚣，重新找回内心中的真实自我，也是一种卧看星河尽意明吧~</p>
+
+  <div class="note-large blue">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>雨晴</p>
+
+    </div>
+    <div class="notel-content">
+      <p>天缺西南江面清，纤云不动小滩横。<br>墙头语鹊衣犹湿，楼外残雷气未平。<br>尽取微凉供稳睡，急搜奇句报新晴。<br>今宵绝胜无人共，卧看星河尽意明。</p>
+
+    </div>
+  </div>
+
+<p>2023.09.21</p>
+<h2 id="02"><a href="#02" class="headerlink" title="02"></a>02</h2><blockquote>
+<p>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/x6/wallhaven-x69pdo.jpg"></p>
+<p>出自【宋】李持正 《人月圆·小桃枝上春风早》</p>
+<p>好浪漫啊哈哈哈哈哈，与所爱之人携手共游元宵，热烈的节日与爱恋将料峭的春寒融化，我觉得这就是人生的小幸福和小圆满啦。</p>
+<p>写段的时候正好听到《园游会》，谁说这两段文字不是异曲同工之妙呢？</p>
+<p>我顶着大太阳，只想为你撑伞，你靠在我肩膀，深呼吸怕遗忘~</p>
+<p>当然这首词的上片所言“年年乐事”也是将自己的快乐融入了全人间的欢乐，词境阔大，意趣高远。</p>
+<p>其实生活不需要那么多的宏伟与波澜壮阔，在生活中与所爱之人共同享受欢乐时光，不为世俗困境困扰，认真过好每一天，每天都收获生活中的小美好，过好自己的平淡日子，就是最大的幸福~</p>
+
+  <div class="note-large green">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>人月圆·小桃枝上春风早</p>
+
+    </div>
+    <div class="notel-content">
+      <p>小桃枝上春风早，初试薄罗衣。年年乐事，华灯竞处，人月圆时。<br>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
+
+    </div>
+  </div>
+
+<p>2023.09.25</p>
+<h2 id="03"><a href="#03" class="headerlink" title="03"></a>03</h2><blockquote>
+<p>徙倚阑干送落晖，年华冉冉恨依依。</p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/ex/wallhaven-exqpqk.jpg" alt="General 5120x3200 night snow winter road alone white light bright lights lamp path"></p>
+<p>出自【宋】陆游 《晚春感事》</p>
+<p>其实还蛮感慨的，上次更新这篇博客的时候还在浪漫与共，现在也到了焦虑未来，迎接毕业的时候了。</p>
+<p>不得不说时间过得真的太快了，可是大学目标依旧没有完成呀~</p>
+<p>大早上就emo也是很奇怪，但是确实有点感慨了。</p>
+
+  <div class="note-large yellow">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>晚春感事</p>
+
+    </div>
+    <div class="notel-content">
+      <p>徙倚阑干送落晖，年华冉冉恨依依。</p>
+<p>护雏燕子常更出，著雨杨花又嬾飞。 </p>
+<p>已为读书悲眼力，还因揽带叹腰围。 </p>
+<p>亲朋半作荒郊冢，欲话初心泪满衣。 </p>
+
+    </div>
+  </div>
+
+<p>2024.6.15</p>
+]]></content>
+      <categories>
+        <category>Literature</category>
+      </categories>
+      <tags>
+        <tag>一些文学素养</tag>
       </tags>
   </entry>
   <entry>
@@ -1487,288 +1769,6 @@
       </tags>
   </entry>
   <entry>
-    <title>林同学喜欢的诗句</title>
-    <url>/2023/09/21/%E6%9E%97%E5%90%8C%E5%AD%A6%E5%96%9C%E6%AC%A2%E7%9A%84%E8%AF%97%E5%8F%A5/</url>
-    <content><![CDATA[<h4 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h4><p>读诗是真的能让自己感受到自由的一件事，很多时候，真的有那么一句诗触动到了心灵，就会发现，原来这个世界上真有能读懂我内心的那么一个人，原来我并不孤独。</p>
-<p>这份内心连接，可以穿越时空，给予自己实实在在的力量。</p>
-<h2 id="01"><a href="#01" class="headerlink" title="01"></a>01</h2><blockquote>
-<p>今宵绝胜无人共，卧看星河尽意明。</p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/z8/wallhaven-z8qqdj.png"></p>
-<p>出自【宋】陈与义《雨晴》</p>
-<p>这句诗感觉就是我想要的生活状态啊！</p>
-<p>就算是一个人，也能够兴致满怀地躺着，安静地欣赏着银河之美，感觉这就是和天地寰宇共脉搏的感觉啊，脑海里已经能够想象出自己在一个安静的夏日，躺在海边草地上看着明月，没有生活杂碎烦扰，放空自身，让自己彻底融入大自然，或许这才是真正的自由吧~</p>
-<p>又或许在现代社会的拥扰中，能够找到属于自己的一隅，用于逃离社会喧嚣，重新找回内心中的真实自我，也是一种卧看星河尽意明吧~</p>
-
-  <div class="note-large blue">
-    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
-      <p>雨晴</p>
-
-    </div>
-    <div class="notel-content">
-      <p>天缺西南江面清，纤云不动小滩横。<br>墙头语鹊衣犹湿，楼外残雷气未平。<br>尽取微凉供稳睡，急搜奇句报新晴。<br>今宵绝胜无人共，卧看星河尽意明。</p>
-
-    </div>
-  </div>
-
-<p>2023.09.21</p>
-<h2 id="02"><a href="#02" class="headerlink" title="02"></a>02</h2><blockquote>
-<p>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/x6/wallhaven-x69pdo.jpg"></p>
-<p>出自【宋】李持正 《人月圆·小桃枝上春风早》</p>
-<p>好浪漫啊哈哈哈哈哈，与所爱之人携手共游元宵，热烈的节日与爱恋将料峭的春寒融化，我觉得这就是人生的小幸福和小圆满啦。</p>
-<p>写段的时候正好听到《园游会》，谁说这两段文字不是异曲同工之妙呢？</p>
-<p>我顶着大太阳，只想为你撑伞，你靠在我肩膀，深呼吸怕遗忘~</p>
-<p>当然这首词的上片所言“年年乐事”也是将自己的快乐融入了全人间的欢乐，词境阔大，意趣高远。</p>
-<p>其实生活不需要那么多的宏伟与波澜壮阔，在生活中与所爱之人共同享受欢乐时光，不为世俗困境困扰，认真过好每一天，每天都收获生活中的小美好，过好自己的平淡日子，就是最大的幸福~</p>
-
-  <div class="note-large green">
-    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
-      <p>人月圆·小桃枝上春风早</p>
-
-    </div>
-    <div class="notel-content">
-      <p>小桃枝上春风早，初试薄罗衣。年年乐事，华灯竞处，人月圆时。<br>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
-
-    </div>
-  </div>
-
-<p>2023.09.25</p>
-<h2 id="03"><a href="#03" class="headerlink" title="03"></a>03</h2><blockquote>
-<p>徙倚阑干送落晖，年华冉冉恨依依。</p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/ex/wallhaven-exqpqk.jpg" alt="General 5120x3200 night snow winter road alone white light bright lights lamp path"></p>
-<p>出自【宋】陆游 《晚春感事》</p>
-<p>其实还蛮感慨的，上次更新这篇博客的时候还在浪漫与共，现在也到了焦虑未来，迎接毕业的时候了。</p>
-<p>不得不说时间过得真的太快了，可是大学目标依旧没有完成呀~</p>
-<p>大早上就emo也是很奇怪，但是确实有点感慨了。</p>
-
-  <div class="note-large yellow">
-    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
-      <p>晚春感事</p>
-
-    </div>
-    <div class="notel-content">
-      <p>徙倚阑干送落晖，年华冉冉恨依依。</p>
-<p>护雏燕子常更出，著雨杨花又嬾飞。 </p>
-<p>已为读书悲眼力，还因揽带叹腰围。 </p>
-<p>亲朋半作荒郊冢，欲话初心泪满衣。 </p>
-
-    </div>
-  </div>
-
-<p>2024.6.15</p>
-]]></content>
-      <categories>
-        <category>Literature</category>
-      </categories>
-      <tags>
-        <tag>一些文学素养</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数据库技术与应用</title>
-    <url>/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/</url>
-    <content><![CDATA[<h1 id="1-绪论"><a href="#1-绪论" class="headerlink" title="1 绪论"></a>1 绪论</h1><h2 id="1-2-数据模型"><a href="#1-2-数据模型" class="headerlink" title="1.2 数据模型"></a>1.2 数据模型</h2><p>在数据库中用数据模型这个工具来<strong>抽象、表示和处理</strong>现实世界中的事物。</p>
-<p>通俗地讲数据模型就是现实世界的抽象和模拟。</p>
-<p>数据模型应满足三方面要求</p>
-<p><strong>能比较真实地模拟现实世界</strong></p>
-<p><strong>容易为人所理解</strong></p>
-<p><strong>便于在计算机上 实现</strong></p>
-<h3 id="两大类数据模型"><a href="#两大类数据模型" class="headerlink" title="两大类数据模型"></a>两大类数据模型</h3><p>(1) <strong>概念模型</strong>   也称信息模型，它是按用户的观点来对数据和信息建模，用于数据库设计。<br>(2) <strong>逻辑模型和物理模型</strong>   按计算机系统的观点对数据建模，用于DBMS的实现。<br>        逻辑模型主要包括网状模型、层次模型、关系模型、面向对象模型等，按计算机系统的观点对数据建模，用于DBMS实现。<br>        物理模型是对数据最底层的抽象，描述数据在系统内部的表示方式和存取方法，在磁盘或磁带上的存储方式和存取方法。</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228192613246-16781980135701.png" alt="image-20230228192613246" style="zoom:50%;">
-
-<h3 id="概念模型"><a href="#概念模型" class="headerlink" title="概念模型"></a>概念模型</h3><p><strong>概念模型的用途</strong><br>概念模型用于信息世界的建模<br>是现实世界到机器世界的一个中间层次<br>是数据库设计的有力工具<br>数据库设计人员和用户之间进行交流的语言<br><strong>对概念模型的基本要求</strong><br>较强的语义表达能力<br>能够方便、直接地表达应用中的各种语义知识<br>简单、清晰、易于用户理解</p>
-<h3 id="信息世界中的基本概念"><a href="#信息世界中的基本概念" class="headerlink" title="信息世界中的基本概念"></a>信息世界中的基本概念</h3><p><strong>(1) 实体（Entity）</strong></p>
-<p>客观存在并可相互区别的事物称为实体。可以是具体的人、事、物或抽象的概念。</p>
-<p><strong>(2) 属性（Attribute）</strong></p>
-<p>实体所具有的某一特性称为属性。一个实体可以由若干个属性来刻画。 </p>
-<p><strong>(3) 码（Key）</strong> </p>
-<p>唯一标识实体的属性集称为码</p>
-<p><strong>(4) 域（Domain）</strong> </p>
-<p>属性的取值范围称为该属性的域。 </p>
-<p><strong>(5) 实体型（Entity Type）</strong> </p>
-<p>用实体名及其属性名集合来抽象和刻画同类实体称为实体型</p>
-<p>例子：学生（学号、姓名、性别、出生年月）</p>
-<p><strong>(6) 实体集（Entity Set）</strong><br>同一类型实体的集合称为实体集：</p>
-<table>
-<thead>
-<tr>
-<th><strong>学号</strong></th>
-<th><strong>姓名</strong></th>
-<th><strong>性别</strong></th>
-<th><strong>出生日期</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>20021001</td>
-<td>张三</td>
-<td>男</td>
-<td>1978-5-6</td>
-</tr>
-<tr>
-<td>20021003</td>
-<td>李四</td>
-<td>女</td>
-<td>1980-1-24</td>
-</tr>
-<tr>
-<td>20021004</td>
-<td>王五</td>
-<td>男</td>
-<td>1979-11-12</td>
-</tr>
-</tbody></table>
-<p><strong>(7) 联系（Relationship）</strong>  </p>
-<p>现实世界：事物内部以及事物之间的联系<br>信息世界：实体内部的联系和实体之间的联系</p>
-<h3 id="两个实体型之间的联系"><a href="#两个实体型之间的联系" class="headerlink" title="两个实体型之间的联系"></a>两个实体型之间的联系</h3><h4 id="一对一联系（1-1）"><a href="#一对一联系（1-1）" class="headerlink" title="一对一联系（1 : 1）"></a>一对一联系（1 : 1）</h4><p><strong>实例</strong><br>一个班级只有一个正班长，一个班长只在一个班中任职<br><strong>定义：</strong><br>    如果对于实体集A中的每一个实体，实体集B中至多有一个（也可以没有）实体与之联系，反之亦然，<strong>则称实体集A与实体集B具有一对一联系，记为1:1</strong> </p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193153537-16781980135712.png" alt="image-20230228193153537" style="zoom:33%;">
-
-<h4 id="一对多联系（1-n）"><a href="#一对多联系（1-n）" class="headerlink" title="一对多联系（1 : n）"></a>一对多联系（1 : n）</h4><p><strong>实例</strong><br>一个班级中有若干名学生，每个学生只在一个班级中学习<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中至多只有一个实体与之联系，则称<strong>实体集A与实体集B</strong>有一对多联系，记为1:n</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193321227-16781980135713.png" alt="image-20230228193321227" style="zoom:33%;">
-
-<p>注意一对多联系图中<strong>1</strong>的位置</p>
-<h4 id="多对多联系（m-n）"><a href="#多对多联系（m-n）" class="headerlink" title="多对多联系（m : n）"></a>多对多联系（m : n）</h4><p><strong>实例</strong><br>课程与学生之间的联系：<br>一门课程同时有若干个学生选修<br>一个学生可以同时选修多门课程<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中也有m个实体（m≥0）与之联系，则称实体集A与实体B具有多对多联系，记为m:n</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193313680-16781980135714.png" alt="image-20230228193313680" style="zoom:33%;">
-
-<h4 id="用图形来表示两个实体型之间的三类联系"><a href="#用图形来表示两个实体型之间的三类联系" class="headerlink" title="用图形来表示两个实体型之间的三类联系"></a>用图形来表示两个实体型之间的三类联系</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193406567-16781980135715.png" alt="image-20230228193406567" style="zoom:50%;">
-
-<h3 id="两个以上实体型之间的联系"><a href="#两个以上实体型之间的联系" class="headerlink" title="两个以上实体型之间的联系"></a>两个以上实体型之间的联系</h3><p>若实体型E1，E2，…，En存在联系，对于实体型Ej（j&#x3D;1，2，…，i-1，i+1，…，n）中的给定实体，最多只和Ei中的一个实体相联系，则我们说Ei与E1，E2，…，Ei-1，Ei+1，…，En之间的联系是<strong>一对多</strong>的</p>
-<p><strong>实例</strong></p>
-<p>课程、教师与参考书三个实体型</p>
-<p>每一个教师可以讲授若干门课程，每门课程可以使用若干本参考书</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193534803-16781980135716.png" alt="image-20230228193534803" style="zoom:50%;">
-
-<p><strong>两个以上实体型间的一对一联系</strong></p>
-<p><strong>两个以上实体型间的多对多联系</strong></p>
-<h3 id="单个实体型内的联系"><a href="#单个实体型内的联系" class="headerlink" title="单个实体型内的联系"></a>单个实体型内的联系</h3><p>同一实体集内的各实体之间的关系<br><strong>一对多联系</strong><br><strong>实例</strong><br>职工实体型内部具有领导与被领导的联系<br>某一职工（干部）“领导”若干名职工<br>一个职工仅被另外一个职工直接领导<br>这是一对多的联系</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193653846-16781980135717.png" alt="image-20230228193653846" style="zoom:50%;">
-
-<p><strong>一对一联系和多对多联系</strong></p>
-<h3 id="概念模型的一种表示方法"><a href="#概念模型的一种表示方法" class="headerlink" title="概念模型的一种表示方法"></a>概念模型的一种表示方法</h3><p><strong>实体－联系方法(E-R方法)</strong></p>
-<h4 id="E-R图"><a href="#E-R图" class="headerlink" title="E-R图"></a>E-R图</h4><p><strong>实体型</strong><br>用矩形表示，矩形框内写明实体名。</p>
-<p><strong>属性</strong><br>用椭圆形表示，并用无向边将其与相应的实体连接起来</p>
-<p><strong>联系</strong><br>联系本身：<br>   用菱形表示，菱形框内写明联系名，并用无向边分别与有关实体连接起来，同时在无向边旁标上联系的类型（1:1、1:n或m:n）</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193805948-16781980135718.png" alt="image-20230228193805948" style="zoom:50%;">
-
-<h4 id="联系的表示方法"><a href="#联系的表示方法" class="headerlink" title="联系的表示方法"></a>联系的表示方法</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193826047-16781980135719.png" alt="image-20230228193826047" style="zoom:50%;">
-
-<h4 id="联系的属性"><a href="#联系的属性" class="headerlink" title="联系的属性"></a>联系的属性</h4><p>联系本身也是一种实体型，也   可以有属性。如果一个联系具有属性，则这些属性也要用无向边与该联系连接起来 </p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193848342-167819801357110.png" alt="image-20230228193848342" style="zoom:50%;">
-
-<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>用E-R图表示某个工厂物资管理的概念模型<br>实体：<br>        仓库： 仓库号、面积、电话号码<br>        零件 ：零件号、名称、规格、单价、描述<br>        供应商：供应商号、姓名、地址、电话号码、帐号<br>        项目：项目号、预算、开工日期<br>        职工：职工号、姓名、年龄、职称<br>实体之间的联系如下：<br>        一个仓库可以存放多种零件，一种零件可以存放在多个仓库中。用库存量来表示某种零件在某个仓库中的数量<br>        一个仓库有多个职工当仓库保管员，一个职工只能在一个仓库工作<br>        职工之间具有领导-被领导关系。即仓库主任领导若干保管员</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194000378-167819801357111.png" alt="image-20230228194000378" style="zoom:67%;">
-
-<h3 id="数据模型的组成要素"><a href="#数据模型的组成要素" class="headerlink" title="数据模型的组成要素"></a>数据模型的组成要素</h3><h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p><strong>描述数据库的组成对象，以及对象之间的联系</strong></p>
-<p><strong>描述的内容</strong><br>与数据类型、内容、性质有关的对象<br>与数据之间联系有关的对象</p>
-<p><strong>数据结构是对系统静态特性的描述</strong></p>
-<h4 id="数据操作"><a href="#数据操作" class="headerlink" title="数据操作"></a>数据操作</h4><p>**对数据库中各种对象(型)的实例(值)允许执行的操作及有关的操作规则</p>
-<p><strong>数据操作的类型</strong><br>查询<br>更新(包括插入、删除、修改)</p>
-<p><strong>数据模型对操作的定义</strong><br>操作的确切含义<br>操作符号<br>操作规则（如优先级）<br>实现操作的语言</p>
-<p><strong>数据操作是对系统动态特性的描述</strong></p>
-<h4 id="完整性约束条件"><a href="#完整性约束条件" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h4><p><strong>一组完整性规则的集合。</strong><br>完整性规则：给定的数据模型中数据及其联系所具有的制约和储存规则，用以限定符合数据模型的数据库状态以及状态的变化，以保证数据的正确、有效、相容。</p>
-<p><strong>数据模型对完整性约束条件的定义</strong><br>必须遵守的基本的通用的完整性约束条件。<br>例如，关系模型中，任何关系必须满足实体完整性和参照完整性两个条件。</p>
-<p><strong>反映具体应用所涉及的特定的约束条件。</strong><br>例子：学校数据库中规定博士学生的年龄必须小于45岁<br>例子：银行的系统中规定帐号的余额不能小于1元</p>
-<h3 id="常用的数据模型"><a href="#常用的数据模型" class="headerlink" title="常用的数据模型"></a>常用的数据模型</h3><p>格式化模型<br>        层次模型(Hierarchical Model)<br>        网状模型(Network Model)</p>
-<p>关系模型(Relational Model)  </p>
-<p>面向对象模型(Object Oriented Model）</p>
-<p>对象关系模型(Object Relational Model)</p>
-<h4 id="层次模型"><a href="#层次模型" class="headerlink" title="层次模型"></a>层次模型</h4><p>层次模型用树形结构来表示各类实体以及实体间的联系 </p>
-<h5 id="层次模型-1"><a href="#层次模型-1" class="headerlink" title="层次模型"></a><strong>层次模型</strong></h5><p> 满足下面两个条件的基本层次联系的集合为层次模型</p>
-<p>1.有且只有一个结点没有双亲结点，这个结点称为根结点</p>
-<p>2.根以外的其它结点有且只有一个双亲结点</p>
-<h5 id="层次模型中的几个术语"><a href="#层次模型中的几个术语" class="headerlink" title="层次模型中的几个术语"></a><strong>层次模型中的几个术语</strong></h5><p>根结点，双亲结点，兄弟结点，叶结点</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194651033-167819801357112.png" alt="image-20230228194651033" style="zoom:50%;">
-
-<h5 id="表示方法"><a href="#表示方法" class="headerlink" title="表示方法"></a><strong>表示方法</strong></h5><p><strong>实体型：</strong>用记录类型描述，每个结点表示一个记录类型（实体）</p>
-<p><strong>属性：</strong>用字段描述，每个记录类型可包含若干个字段</p>
-<p><strong>联系：</strong>用结点之间的连线表示记录类型（实体）之间的<strong>一对多</strong>的父子联系</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194729758-167819801357113.png" alt="image-20230228194729758" style="zoom: 50%;">
-
-<h5 id="层次模型的数据操纵"><a href="#层次模型的数据操纵" class="headerlink" title="层次模型的数据操纵"></a><strong>层次模型的数据操纵</strong></h5><p>查询 插入 删除 更新</p>
-<h5 id="层次模型的完整性约束条件"><a href="#层次模型的完整性约束条件" class="headerlink" title="层次模型的完整性约束条件"></a><strong>层次模型的完整性约束条件</strong></h5><p>无相应的双亲结点值就不能插入子女结点值<br>如果删除双亲结点值，则相应的子女结点值也被同时删除</p>
-<h5 id="层次数据模型的存储结构"><a href="#层次数据模型的存储结构" class="headerlink" title="层次数据模型的存储结构"></a><strong>层次数据模型的存储结构</strong></h5><p><strong>邻接法</strong><br>按照层次树前序遍历的顺序把所有记录值依次邻接存放，即通过物理空间的位置相邻来实现层次顺序</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194950487-167819801357115.png" alt="image-20230228194950487" style="zoom:50%;">
-
-<p><strong>链接法</strong><br>用指引来反映数据之间的层次联系<br>子女－兄弟链接法<br>层次序列链接法</p>
-<p><strong>子女-兄弟链接法</strong><br>每个记录设两类指针，分别指向最左边的子女（每个记录型对应一个）和最近的兄弟</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195024242-167819801357114.png" alt="image-20230228195024242" style="zoom:50%;">
-
-<p><strong>层次序列链接法</strong></p>
-<p>按树的前序穿越顺序链接各记录值</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195039461-167819801357116.png" alt="image-20230228195039461" style="zoom:50%;">
-
-<h5 id="层次模型的优缺点"><a href="#层次模型的优缺点" class="headerlink" title="层次模型的优缺点"></a><strong>层次模型的优缺点</strong></h5><p><strong>优点</strong><br>层次模型的数据结构比较简单清晰<br>查询效率高，性能优于关系模型，不低于网状模型<br>层次数据模型提供了良好的完整性支持</p>
-<p><strong>缺点</strong><br>多对多联系表示不自然<br>对插入和删除操作的限制多，应用程序的编写比较复杂<br>查询子女结点必须通过双亲结点</p>
-<h4 id="网状模型"><a href="#网状模型" class="headerlink" title="网状模型"></a>网状模型</h4><p>满足下面两个条件的基本层次联系的集合：</p>
-<ol>
-<li>允许一个以上的结点无双亲；</li>
-<li>一个结点可以有多于一个的双亲。<br>允许两个结点之间有多种联系（复合联系）<br>网状模型可以更直接地去描述现实世界，层次模型实际上是网状模型的一个特例</li>
-</ol>
-<h5 id="多对多联系在网状模型中的表示"><a href="#多对多联系在网状模型中的表示" class="headerlink" title="多对多联系在网状模型中的表示"></a><strong>多对多联系在网状模型中的表示</strong></h5><p>​		用网状模型间接表示多对多联系<br>​		方法：将多对多联系直接分解成一对多联系</p>
-<h5 id="数据操作-1"><a href="#数据操作-1" class="headerlink" title="数据操作"></a><strong>数据操作</strong></h5><p>网状数据库系统（如DBTG）对数据操纵加了一些限制，提供了一定的完整性约束<br>码：唯一标识记录的数据项的集合<br>支持双亲记录和子女记录之间某些约束条件<br>    有些子女记录要求双亲记录存在才能插入，双亲记录删除时也连同删除。例如学生选课记录</p>
-<h5 id="网状数据模型的存储结构"><a href="#网状数据模型的存储结构" class="headerlink" title="网状数据模型的存储结构"></a>网状数据模型的存储结构</h5><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195613303-167819801357117.png" alt="image-20230228195613303" style="zoom:50%;">
-
-<h5 id="网状数据模型的优缺点"><a href="#网状数据模型的优缺点" class="headerlink" title="网状数据模型的优缺点"></a>网状数据模型的优缺点</h5><p><strong>优点</strong><br>能更为直接地描述现实世界，如一个结点可以有多个双亲</p>
-<p>具有良好的性能，存取效率较高</p>
-<p><strong>缺点</strong><br>结构比较复杂，而且随着应用环境的扩大，数据库的结构就变得越来越复杂，不利于最终用户掌握</p>
-<p>DDL、DML语言复杂，用户不容易使用</p>
-<p>记录类型联系变动后涉及链接指针的调整，扩充和维护都比较复杂 </p>
-<h4 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h4><p>在用户观点下，关系模型中数据的逻辑结构是一张二维表，它由行和列组成。</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195759196-167819801357118.png" alt="image-20230228195759196" style="zoom: 50%;">
-
-<p><strong>关系（Relation）</strong><br>一个关系对应通常说的一张表<br><strong>元组（Tuple）</strong><br>表中的一行即为一个元组<br><strong>属性（Attribute）</strong><br>表中的一列即为一个属性，给每一个属性起一个名称即属性名</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195837826-167819801357119.png" alt="image-20230228195837826" style="zoom:50%;">
-
-<p><strong>主码（Key）</strong><br>表中的某个属性组，它可以唯一确定一个元组。<br><strong>域（Domain）</strong><br>属性的取值范围。<br><strong>分量</strong><br>元组中的一个属性值。<br><strong>关系模式</strong><br>对关系的描述<br>关系名（属性1，属性2，…，属性n）<br>学生（学号，姓名，年龄，性别，系，年级）</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200117047-167819801357220.png" alt="image-20230228200117047" style="zoom:50%;">
-
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200133118-167819801357221.png" alt="image-20230228200133118" style="zoom:50%;">
-
-<h5 id="数据操作是集合操作，操作对象和结果都是关系"><a href="#数据操作是集合操作，操作对象和结果都是关系" class="headerlink" title="数据操作是集合操作，操作对象和结果都是关系"></a>数据操作是集合操作，操作对象和结果都是关系</h5><p>查询 插入 删除 更新</p>
-<h5 id="完整性约束条件-1"><a href="#完整性约束条件-1" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h5><p>实体完整性<br>参照完整性<br>用户定义的完整性</p>
-<h5 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h5><p>实体及实体间的联系都用表来表示<br>表以文件形式存储<br>有的DBMS一个表对应一个操作系统文件<br>有的DBMS自己设计文件结构</p>
-<h5 id="关系数据模型的优缺点"><a href="#关系数据模型的优缺点" class="headerlink" title="关系数据模型的优缺点"></a>关系数据模型的优缺点</h5><p><strong>优点</strong><br>建立在严格的数学概念的基础上<br>可以描述一对一、一对多和多对多的联系<br>概念单一<br>        实体和各类联系都用关系来表示<br>        对数据的检索结果也是关系<br>存取路径对用户透明<br>        用户只要指出“干什么”，不必详细说明“怎么干”<br>        具有更高的数据独立性，更好的安全保密性<br>        简化了程序员的工作和数据库开发建立的工作</p>
-<p><strong>缺点</strong><br>存取路径对用户透明导致查询效率往往不如非关系数据模型<br>为提高性能，必须对用户的查询请求进行优化增加了开发DBMS的难度</p>
-<h4 id="关系模式-ER图"><a href="#关系模式-ER图" class="headerlink" title="关系模式-&gt;ER图"></a>关系模式-&gt;ER图</h4><p>例：<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307214952179.png" alt="image-20230307214952179" style="zoom:67%;"></p>
-<h3 id="E-R模型补充扩展"><a href="#E-R模型补充扩展" class="headerlink" title="E-R模型补充扩展"></a>E-R模型补充扩展</h3><p><strong>Movie database</strong><br><strong>Movie</strong>: title, year, length, genre<br><strong>Stars</strong>: name, address<br><strong>Studios</strong>: name, address</p>
-<p>a studio contracts with a particular start to act in a particular movie for some salary</p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215104726.png" alt="image-20230307215104726" style="zoom:50%;">
-
-<h4 id="多实体集联系-多角色实体集"><a href="#多实体集联系-多角色实体集" class="headerlink" title="多实体集联系+多角色实体集"></a>多实体集联系+多角色实体集</h4><p>怎样表示Studio 2从studio 1租借某演员签约出演某电影？</p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215135547.png" alt="image-20230307215135547" style="zoom:50%;">
-
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215534821.png" alt="image-20230307215534821" style="zoom: 33%;">
-
-<p>怎样去掉联系Contracts的属性salary？</p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215600082.png" alt="image-20230307215600082" style="zoom:50%;">
-
-<h4 id="“Is-a”联系"><a href="#“Is-a”联系" class="headerlink" title="“Is a”联系"></a>“Is a”联系</h4><p>怎样表示电影的两个子类“动画片”和“枪战片”</p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215658701.png" alt="image-20230307215658701" style="zoom: 33%;">
-
-<h2 id="1-3-数据库系统结构"><a href="#1-3-数据库系统结构" class="headerlink" title="1.3 数据库系统结构"></a>1.3 数据库系统结构</h2><h4 id="分布式B-S结构数据库系统"><a href="#分布式B-S结构数据库系统" class="headerlink" title="分布式B&#x2F;S结构数据库系统"></a>分布式B&#x2F;S结构数据库系统</h4><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215809913.png" alt="image-20230307215809913" style="zoom:50%;">
-
-<h3 id="数据库系统模式的概念"><a href="#数据库系统模式的概念" class="headerlink" title="数据库系统模式的概念"></a>数据库系统模式的概念</h3><h4 id="“型”-和“值”-的概念"><a href="#“型”-和“值”-的概念" class="headerlink" title="“型” 和“值” 的概念"></a>“型” 和“值” 的概念</h4><p><strong>型(Type)</strong>  对某一类数据的结构和属性的说明<br><strong>值(Value)</strong>  是型的一个具体赋值<br>例如<br>学生记录型：<br>  （学号，姓名，性别，系别，年龄，籍贯）<br>一个记录值：<br>  （900201，李明，男，计算机，22，江苏）</p>
-<p><strong>模式（Schema）</strong><br>数据库逻辑结构和特征的描述<br>是型的描述<br>反映的是数据的结构及其联系<br>模式是相对稳定的</p>
-<p><strong>实例（Instance）</strong><br>模式的一个具体值<br>反映数据库某一时刻的状态<br>同一个模式可以有很多实例<br>实例随数据库中的数据的更新而变动</p>
-<h3 id="数据库系统的三级模式结构"><a href="#数据库系统的三级模式结构" class="headerlink" title="数据库系统的三级模式结构"></a>数据库系统的三级模式结构</h3><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220505091.png" alt="image-20230307220505091" style="zoom: 50%;">
-
-<h4 id="模式（也称逻辑模式）"><a href="#模式（也称逻辑模式）" class="headerlink" title="模式（也称逻辑模式）"></a>模式（也称逻辑模式）</h4><p>​		数据库中全体数据的逻辑结构和特征的描述<br>​		所有用户的公共数据视图，综合了所有用户的需求<br><strong>一个数据库只有一个模式</strong><br><strong>模式的地位：是数据库系统模式结构的中间层</strong><br>​		与数据的物理存储细节和硬件环境无关<br>​		与具体的应用程序、开发工具及高级程序设计语言无关</p>
-<p><strong>模式的定义</strong><br>        数据的逻辑结构（数据项的名字、类型、取值范围等）<br>        数据之间的联系<br>        数据有关的安全性、完整性要求</p>
-<h4 id="外模式（也称子模式或用户模式）"><a href="#外模式（也称子模式或用户模式）" class="headerlink" title="外模式（也称子模式或用户模式）"></a>外模式（也称子模式或用户模式）</h4><p>数据库用户（包括应用程序员和最终用户）使用的局部数据的逻辑结构和特征的描述<br>数据库用户的数据视图，是与某一应用有关的数据的逻辑表示</p>
-<h4 id="内模式（也称存储模式）"><a href="#内模式（也称存储模式）" class="headerlink" title="内模式（也称存储模式）"></a>内模式（也称存储模式）</h4><p>是数据物理结构和存储方式的描述<br>是数据在数据库内部的表示方式</p>
-<p><strong>一个数据库只有一个内模式</strong></p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220519463.png" alt="image-20230307220519463" style="zoom:67%;">
-]]></content>
-      <categories>
-        <category>Note</category>
-      </categories>
-      <tags>
-        <tag>Note</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>汇编冒泡排序</title>
     <url>/2023/04/21/%E6%B1%87%E7%BC%96%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/</url>
     <content><![CDATA[<p>PS：由于Redefine主题和Butterfly主题目前都不支持汇编代码高亮，所以如果想要看到更好看的代码可以联系我拿博文的PDF版本</p>
@@ -1847,32 +1847,6 @@
       </categories>
       <tags>
         <tag>汇编逆向</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>用了好久博客了突然碰到一个坑</title>
-    <url>/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/</url>
-    <content><![CDATA[<p>今晚在部署博客的时突然出现了这样的错误：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/image-20230909102159001.png" class title="image-20230909102159001">
-
-<p>网上说的解决方法都是删除.deploy_git文件夹的方法：</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">进入站点根目录</span><br><span class="line">cd E:/hexo</span><br><span class="line"> </span><br><span class="line">删除git提交内容文件夹</span><br><span class="line">rm -rf .deploy_git/</span><br><span class="line"> </span><br><span class="line">执行</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line"> </span><br><span class="line">最后</span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure></div>
-
-<p>但是我尝试多次仍然无效，甚至重新设置了Git的SSHkey啥的，麻烦死了</p>
-<p>最后看到了一个博客，就一行，说了一句是进程阻塞的问题:</p>
-<p><a class="link" href="https://www.cnblogs.com/chendeqiang/p/12861744.html">https://www.cnblogs.com/chendeqiang/p/12861744.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后我重启电脑，问题解决了….</p>
-<p>大无语……😅</p>
-<p>2023.9.13</p>
-<p>又遇到了这个问题，一周后的今天解决了</p>
-<p>这次重启没用了，不是线程占用的问题</p>
-<p>重新设置SSH Key好像也不行</p>
-<p>然后找到一个教程要我删代理：<a class="link" href="https://www.cnblogs.com/Duan2baka/p/17271142.html">https://www.cnblogs.com/Duan2baka/p/17271142.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后就…行了？！而且网站同步速度快了很多！</p>
-<p>神奇！</p>
-]]></content>
-      <tags>
-        <tag>Note</tag>
       </tags>
   </entry>
   <entry>
@@ -2021,41 +1995,29 @@
       </tags>
   </entry>
   <entry>
-    <title>记录第一次搭建个人博客</title>
-    <url>/2023/02/26/%E8%AE%B0%E5%BD%95%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>第一次搭博客，没啥经验，也没有问别人，遇到的一切问题都自己上网查资料解决，算是锻炼了一下自己的自学能力了吧。</p>
-<p>不管怎么说总算是搭好了，很有成就感。先说说遇到的一些问题，下次再搭博客的时候就可以少踩很多雷。</p>
-<p>按照搭建顺序来说说自己的步骤和当中遇到的问题吧，教程连接贴在下面：</p>
-<p>这是主要参考的教程：<a class="link" href="https://www.jianshu.com/p/d78adad4705f">利用Github搭建自己的个人博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>2023.4.14：看到一个更加完整的教程：<a class="link" href="https://cloud.tencent.com/developer/article/2148748">个人博客搭建 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><strong>我真的放弃添加图片了，所以我的博客暂时用来写一些书评影评好了，笔记什么的我还是在本地查看吧o(TヘTo)</strong></p>
-<p>2023.3.7 偶然调了一下，改成了相对路径！图片传上去了！！！！！但是不知道怎么调图片的大小，而且好多图片也都还没放到文件夹里，有时间再弄吧</p>
-<p>教程：<a class="link" href="https://www.cnblogs.com/bzsheng/p/13802829.html">Hexo博客如何插入图片 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>2023.7.14 趁着帮助别人搭博客的契机把自己的博客功能做全了，现在是所有功能都具备的完全体博客啦！（顺便在这篇博文下面加了一首歌</p>
-<h3 id="Day-1-搭建Github个人仓库"><a href="#Day-1-搭建Github个人仓库" class="headerlink" title="Day 1 搭建Github个人仓库"></a>Day 1 搭建Github个人仓库</h3><p>​	一开始这步就已经把我弄的有点难受了，建好了个人仓库BUPT-Serendy.github.io结果点进去是404。我找遍了各种教程，搜了好多问题，试了好多种方法，甚至把自己原来的GitHub号给销了重新注册了一个（虽然原来的号里啥也没有，但是浪费了我一个ID…），最后一看hsp的教程才发现，原来只是没有使用魔法，然后周六就开始找各种魔法，各处打听终于找到了一个还算不错的（一开始系统代理没打开用不了…）。之后也研究了好久的魔法，最后总算是能稳定用了。</p>
-<h3 id="Day-2-开始在本地建博客"><a href="#Day-2-开始在本地建博客" class="headerlink" title="Day 2 开始在本地建博客"></a>Day 2 开始在本地建博客</h3><p>安装node.js和Git这些都没啥，问题不大，就是中间安装Git的时候cmd卡住了一下，后面重新装一次就没有问题了。</p>
-<p>然后博客文件夹啥的都创建好了之后，第一次在hexo d的时候出现了一个问题，就是一直只有一行：</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">INFO Validating config</span><br></pre></td></tr></table></figure></div>
+    <title>用了好久博客了突然碰到一个坑</title>
+    <url>/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/</url>
+    <content><![CDATA[<p>今晚在部署博客的时突然出现了这样的错误：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/image-20230909102159001.png" class title="image-20230909102159001">
 
-<p>这个奇怪的问题我真的找遍全网资料都没有找到跟我一样的问题，过了大概一个小时我又重新试了一次，这次用的hexo deploy，然后成功了，我就天真地以为是我没有把deploy打出来…其实就是不知道出了什么问题，这时就冒出了那个疑问：它为什么能跑？</p>
-<p>不过我也没太纠结，因为后面就再也没失败过了，所以感觉就还行。</p>
-<h3 id="Day-3-配置个人主题和添加图片"><a href="#Day-3-配置个人主题和添加图片" class="headerlink" title="Day 3 配置个人主题和添加图片"></a>Day 3 配置个人主题和添加图片</h3><p>昨天晚上不知道为什么莫名其妙就把主题弄上去了，后面new了那个计算机网络的文档之后就炸了，主题又回到原生Hexo了。今天早上又仔细地看了一遍Redefine主题的文档之后才发现原来是自己没有把主题的config文件添加到博客根目录，所以才失败了。</p>
-<p>这个问题虽然看起来很简单啊，但是真的卡了我好久好久。</p>
-<p><strong>所以以后一定要仔细读官方使用文档！！！</strong></p>
-<p>（当然也有可能是我对博客里面的文件的表述啥的都太陌生了所以才看不懂官方文档）</p>
-<p><strong>添加图片！！！</strong></p>
-<p>这个真的是梦魇，我真的翻了起码有20篇教程了。插件啥的也装了，文件夹什么也都弄好了，但是各种方法都无法让我的图片上传到博客上。做完已经很晚了，所以干脆就不弄了洗洗睡。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>其实遇到的几个问题都是不知道怎么就出现了，也不知道怎么就解决了，所以感觉还挺神奇的</p>
-<p>虽然搭博客搭了很久，但是整个博客真的很好看我很喜欢，做完感觉真的很有满足感~</p>
-<p>博客主页背景的意境很美，我就想到了这句词，把它放在了博客主页，出自江南的《踏莎行》。</p>
-<p>页底是我最喜欢的《春江花月夜》，与君共勉。</p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1891711657&auto=1&height=66"></iframe>
+<p>网上说的解决方法都是删除.deploy_git文件夹的方法：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">进入站点根目录</span><br><span class="line">cd E:/hexo</span><br><span class="line"> </span><br><span class="line">删除git提交内容文件夹</span><br><span class="line">rm -rf .deploy_git/</span><br><span class="line"> </span><br><span class="line">执行</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line"> </span><br><span class="line">最后</span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure></div>
+
+<p>但是我尝试多次仍然无效，甚至重新设置了Git的SSHkey啥的，麻烦死了</p>
+<p>最后看到了一个博客，就一行，说了一句是进程阻塞的问题:</p>
+<p><a class="link" href="https://www.cnblogs.com/chendeqiang/p/12861744.html">https://www.cnblogs.com/chendeqiang/p/12861744.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后我重启电脑，问题解决了….</p>
+<p>大无语……😅</p>
+<p>2023.9.13</p>
+<p>又遇到了这个问题，一周后的今天解决了</p>
+<p>这次重启没用了，不是线程占用的问题</p>
+<p>重新设置SSH Key好像也不行</p>
+<p>然后找到一个教程要我删代理：<a class="link" href="https://www.cnblogs.com/Duan2baka/p/17271142.html">https://www.cnblogs.com/Duan2baka/p/17271142.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后就…行了？！而且网站同步速度快了很多！</p>
+<p>神奇！</p>
 ]]></content>
-      <categories>
-        <category>Sketch</category>
-      </categories>
       <tags>
-        <tag>随笔</tag>
+        <tag>Note</tag>
       </tags>
   </entry>
   <entry>
@@ -2542,6 +2504,44 @@
       </categories>
       <tags>
         <tag>Note</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记录第一次搭建个人博客</title>
+    <url>/2023/02/26/%E8%AE%B0%E5%BD%95%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>第一次搭博客，没啥经验，也没有问别人，遇到的一切问题都自己上网查资料解决，算是锻炼了一下自己的自学能力了吧。</p>
+<p>不管怎么说总算是搭好了，很有成就感。先说说遇到的一些问题，下次再搭博客的时候就可以少踩很多雷。</p>
+<p>按照搭建顺序来说说自己的步骤和当中遇到的问题吧，教程连接贴在下面：</p>
+<p>这是主要参考的教程：<a class="link" href="https://www.jianshu.com/p/d78adad4705f">利用Github搭建自己的个人博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>2023.4.14：看到一个更加完整的教程：<a class="link" href="https://cloud.tencent.com/developer/article/2148748">个人博客搭建 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><strong>我真的放弃添加图片了，所以我的博客暂时用来写一些书评影评好了，笔记什么的我还是在本地查看吧o(TヘTo)</strong></p>
+<p>2023.3.7 偶然调了一下，改成了相对路径！图片传上去了！！！！！但是不知道怎么调图片的大小，而且好多图片也都还没放到文件夹里，有时间再弄吧</p>
+<p>教程：<a class="link" href="https://www.cnblogs.com/bzsheng/p/13802829.html">Hexo博客如何插入图片 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>2023.7.14 趁着帮助别人搭博客的契机把自己的博客功能做全了，现在是所有功能都具备的完全体博客啦！（顺便在这篇博文下面加了一首歌</p>
+<h3 id="Day-1-搭建Github个人仓库"><a href="#Day-1-搭建Github个人仓库" class="headerlink" title="Day 1 搭建Github个人仓库"></a>Day 1 搭建Github个人仓库</h3><p>​	一开始这步就已经把我弄的有点难受了，建好了个人仓库BUPT-Serendy.github.io结果点进去是404。我找遍了各种教程，搜了好多问题，试了好多种方法，甚至把自己原来的GitHub号给销了重新注册了一个（虽然原来的号里啥也没有，但是浪费了我一个ID…），最后一看hsp的教程才发现，原来只是没有使用魔法，然后周六就开始找各种魔法，各处打听终于找到了一个还算不错的（一开始系统代理没打开用不了…）。之后也研究了好久的魔法，最后总算是能稳定用了。</p>
+<h3 id="Day-2-开始在本地建博客"><a href="#Day-2-开始在本地建博客" class="headerlink" title="Day 2 开始在本地建博客"></a>Day 2 开始在本地建博客</h3><p>安装node.js和Git这些都没啥，问题不大，就是中间安装Git的时候cmd卡住了一下，后面重新装一次就没有问题了。</p>
+<p>然后博客文件夹啥的都创建好了之后，第一次在hexo d的时候出现了一个问题，就是一直只有一行：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">INFO Validating config</span><br></pre></td></tr></table></figure></div>
+
+<p>这个奇怪的问题我真的找遍全网资料都没有找到跟我一样的问题，过了大概一个小时我又重新试了一次，这次用的hexo deploy，然后成功了，我就天真地以为是我没有把deploy打出来…其实就是不知道出了什么问题，这时就冒出了那个疑问：它为什么能跑？</p>
+<p>不过我也没太纠结，因为后面就再也没失败过了，所以感觉就还行。</p>
+<h3 id="Day-3-配置个人主题和添加图片"><a href="#Day-3-配置个人主题和添加图片" class="headerlink" title="Day 3 配置个人主题和添加图片"></a>Day 3 配置个人主题和添加图片</h3><p>昨天晚上不知道为什么莫名其妙就把主题弄上去了，后面new了那个计算机网络的文档之后就炸了，主题又回到原生Hexo了。今天早上又仔细地看了一遍Redefine主题的文档之后才发现原来是自己没有把主题的config文件添加到博客根目录，所以才失败了。</p>
+<p>这个问题虽然看起来很简单啊，但是真的卡了我好久好久。</p>
+<p><strong>所以以后一定要仔细读官方使用文档！！！</strong></p>
+<p>（当然也有可能是我对博客里面的文件的表述啥的都太陌生了所以才看不懂官方文档）</p>
+<p><strong>添加图片！！！</strong></p>
+<p>这个真的是梦魇，我真的翻了起码有20篇教程了。插件啥的也装了，文件夹什么也都弄好了，但是各种方法都无法让我的图片上传到博客上。做完已经很晚了，所以干脆就不弄了洗洗睡。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>其实遇到的几个问题都是不知道怎么就出现了，也不知道怎么就解决了，所以感觉还挺神奇的</p>
+<p>虽然搭博客搭了很久，但是整个博客真的很好看我很喜欢，做完感觉真的很有满足感~</p>
+<p>博客主页背景的意境很美，我就想到了这句词，把它放在了博客主页，出自江南的《踏莎行》。</p>
+<p>页底是我最喜欢的《春江花月夜》，与君共勉。</p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1891711657&auto=1&height=66"></iframe>
+]]></content>
+      <categories>
+        <category>Sketch</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
       </tags>
   </entry>
   <entry>

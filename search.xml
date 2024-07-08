@@ -3,7 +3,7 @@
   <entry>
     <title>ContactME</title>
     <url>/2023/03/12/ContactME/</url>
-    <content><![CDATA[<p>Email: <a class="link" href="mailto:&#115;&#x65;&#x72;&#101;&#x6e;&#x64;&#121;&#x6c;&#105;&#x6e;&#x40;&#111;&#x75;&#116;&#108;&#111;&#x6f;&#x6b;&#x2e;&#x63;&#111;&#x6d;">&#115;&#x65;&#x72;&#101;&#x6e;&#x64;&#121;&#x6c;&#105;&#x6e;&#x40;&#111;&#x75;&#116;&#108;&#111;&#x6f;&#x6b;&#x2e;&#x63;&#111;&#x6d; <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+    <content><![CDATA[<p>Email: <a class="link" href="mailto:&#x73;&#x65;&#x72;&#x65;&#110;&#100;&#x79;&#108;&#x69;&#110;&#64;&#x6f;&#117;&#x74;&#108;&#111;&#111;&#107;&#x2e;&#99;&#111;&#x6d;">&#x73;&#x65;&#x72;&#x65;&#110;&#100;&#x79;&#108;&#x69;&#110;&#64;&#x6f;&#117;&#x74;&#108;&#111;&#111;&#107;&#x2e;&#99;&#111;&#x6d; <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p>QQ: 15993469631 (备注博客)</p>
 ]]></content>
   </entry>
@@ -363,150 +363,6 @@
       </tags>
   </entry>
   <entry>
-    <title>加密算法逆向实践</title>
-    <url>/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/</url>
-    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><strong>问题-1</strong>：找到开头“This program cannot be run …” 这个字符串的内存起始地址（即字符串的指针），并准确计算该字符串的长度；</p>
-<p><strong>问题-2</strong>：需要结合具体的加密操作逻辑，说明所发现的加密算法。</p>
-<p>输入正确 flag 后的运行截图如下：</p>
-<img lazyload src="/images/loading.svg" data-src="https://fileucloud.bupt.edu.cn/bupt/upload/20230422/6b6a1856b38e98db2bb0f0d80a5fe12b.png" alt="img" style="zoom:50%;">
-
-<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><h3 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h3><p>首先找到——FOR FUN—–的位置，使用IDA Pro</p>
-<p>Shift+F12进行字符串定位</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111417280.png" class title="image-20230428111417280">
-
-<p>追入</p>
-<p>发现有一个%s夹在两行———-中间，可以判断这个输入的%s就是“This program cannot be run …”</p>
-<p>查看main函数</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111553144.png" class title="image-20230428111553144">
-
-<p>发现在调用<code>printf</code>函数时输入了一个参数，其地址为<code>40004Eh</code></p>
-<p>==因此我们就找到了字符串“This program cannot be run …”的起始地址<code>40004Eh</code>==</p>
-<p>接下来找字符串长度，此时使用x32dbg进行动态调试</p>
-<p>因为我们已经知道了该字符串的起始地址，因此我们可以在程序运行到Entrypoint时直接定位到该字符串：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132011451.png" class title="image-20230511132011451">
-
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132055593.png" class title="image-20230511132055593">
-
-<p>==数一数字符串长度 可知该字符串长度是43个字节==</p>
-<h3 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h3><p>首先发现exe文件在输入错误的flag之后直接结束或者退出了，因此我们只能直接看汇编代码对该程序进行研究</p>
-<p>首先看提示的字符串” ———FOR FUN———-“以及”Please input your flag below:”，可以从这两个提示字符串入手研究该程序</p>
-<p>先看main函数的整体结构：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503144347708.png" class title="image-20230503144347708">
-
-<p>首先调用了函数<code>sub_402320</code>，随后输出提示信息————–FOR FUN——————，接着连续调用了三个函数，因此可以从一个一个函数入手研究这个程序</p>
-<h4 id="第1个函数"><a href="#第1个函数" class="headerlink" title="第1个函数"></a>第1个函数</h4><p>发现在调用<code>printf</code>函数输出——-FOR FUN——–之前调用了一个函数<code>sub_402320</code></p>
-<p>追入该函数查看，利用IDA Pro的反汇编功能研究该函数：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230501231323379.png" class title="image-20230501231323379">
-
-<p>解读这段反汇编代码：这段代码的功能是执行一个函数表中的一系列函数，并在程序退出时再次执行一个特定函数。它的基本思路是：如果全局变量dword_407080的值为0，则将其设为1，然后执行一个函数表中的一系列函数，最后调用sub_4014C0函数，该函数的参数是sub_402290函数的地址。如果dword_407080的值不是0，则直接返回它（result）。</p>
-<p>具体来说，下面是每个步骤的解释：</p>
-<ol>
-<li><p>result = dword_407080;<br>将dword_407080的值赋给result变量。</p>
-</li>
-<li><p>if (!dword_407080)<br>如果dword_407080的值为0，执行以下代码块，否则跳过该代码块。</p>
-</li>
-<li><p>dword_407080 = 1;<br>将dword_407080的值设为1。</p>
-</li>
-<li><p>for (i = 0; dword_4033E0[i + 1]; ++i)<br>查找函数表dword_4033E0中最后一个函数的索引。该函数表是一个由地址组成的数组，最后一个地址为0，以便循环能够停止。</p>
-</li>
-<li><p>for (; i; –i)<br>执行函数表dword_4033E0中的函数，从最后一个函数开始一直到第一个函数。</p>
-</li>
-<li><p>((void (*)(void))dword_4033E0[i])();<br>将函数表dword_4033E0中第i个元素的地址强制转换为void (*)(void)类型的函数指针，然后执行该函数。</p>
-</li>
-<li><p>return sub_4014C0((_onexit_t)sub_402290);<br>调用sub_4014C0函数，并将sub_402290函数的地址转换为_onexit_t类型的函数指针作为参数。_onexit_t是一个函数指针类型，它指向一个函数，该函数在程序退出时执行。</p>
-</li>
-<li><p>return result;<br>如果dword_407080的值不为0，则直接返回该值。</p>
-</li>
-</ol>
-<p><u><strong>这段函数的功能是调用函数表</strong></u></p>
-<h4 id="第2个函数"><a href="#第2个函数" class="headerlink" title="第2个函数"></a>第2个函数</h4><p>追入<code>sub_4015C0</code>这个函数</p>
-<p>查看其汇编代码，这个函数的功能上，首先输出了提示信息：“Please input your flag below:”</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143435814.png" class title="image-20230503143435814">
-
-<p>接下来函数调用了scanf函数接收我们输入的flag：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143727587.png" class title="image-20230503143727587">
-
-<p>可以看到这个scanf函数是用于接收一个长度不小于9个字符的字符串输入，**<code>byte_407444</code>就是输入的字符串**</p>
-<p>接下来，该函数计算了输入的字符串长度，并将其与存储在内存地址 <code>byte_4040E4</code> 处的值进行比较：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145208387.png" class title="image-20230503145208387">
-
-<p>可以看到，如果输入的字符串长度不相等，则跳转到loc_40160F处，loc_40160F的功能是恢复函数栈寄存器并退出程序；如果相等则返回</p>
-<p>因此我们需要知道byte_4040E4的值，追入查看byte_4040E4</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145115142.png" class title="image-20230503145115142">
-
-<p>可以看到<code>4040E4</code>的值是9，也就是说，输入的字符串长度应当是<strong>9</strong></p>
-<p>因此，<strong>第二个函数的功能是输出提示信息，接收输入的字符串并将输入字符串的长度与预设的长度值9进行比较</strong>，如果长度不相等则退出程序</p>
-<h4 id="第3个函数"><a href="#第3个函数" class="headerlink" title="第3个函数"></a>第3个函数</h4><p>回到main函数，继续研究下一个函数<code>sub_401770</code></p>
-<p>查看其反汇编函数：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503150657627.png" class title="image-20230503150657627">
-
-<p>可以看到，本段代码的功能是对字符串进行合法性判断</p>
-<p>以下是代码注释：</p>
-<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; (<span class="type">unsigned</span> __int8)byte_4040E4 != i; ++i) <span class="comment">// 对每个字符，循环直到字符为0x00</span></span><br><span class="line">{</span><br><span class="line">  v1 = (<span class="type">unsigned</span> __int8)byte_407444[i]; <span class="comment">// 取出当前字符</span></span><br><span class="line">  v2 = <span class="number">48</span>; <span class="comment">// v2 为 ASCII 码 48，即字符 '0'</span></span><br><span class="line">  <span class="keyword">while</span> (v1 != v2 &amp;&amp; byte_407444[i] != <span class="number">95</span>) <span class="comment">// 如果当前字符不是 '0' 且不是下划线 '_'</span></span><br><span class="line">  {</span><br><span class="line">    <span class="keyword">if</span> (++v2 == <span class="number">58</span>) <span class="comment">// 如果 v2 递增后等于 ASCII 码 58，即字符 '9'+1，说明当前字符为大写字母</span></span><br><span class="line">    {</span><br><span class="line">      v3 = <span class="number">65</span>; <span class="comment">// v3 为 ASCII 码 65，即字符 'A'</span></span><br><span class="line">      <span class="keyword">while</span> (v1 != v3) <span class="comment">// 如果当前字符不是大写字母</span></span><br><span class="line">      {</span><br><span class="line">        <span class="keyword">if</span> (++v3 == <span class="number">91</span>) <span class="comment">// 如果 v3 递增后等于 ASCII 码 91，即字符 'Z'+1，说明当前字符不合法</span></span><br><span class="line">          <span class="built_in">exit</span>(<span class="number">100876</span>); <span class="comment">// 结束程序并返回错误码 100876</span></span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">if</span> ((<span class="type">unsigned</span> __int8)byte_4040E4 - <span class="number">1</span> == i) <span class="comment">// 如果遍历完字符串后还未结束循环，则结束循环</span></span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">return</span> sub_401700(); <span class="comment">// 调用 sub_401700() 函数并返回结果</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-<p>因此，<strong>这个函数的目的是遍历一个字符串，并检查字符串中的每个字符是否是数字、大写字母或下划线，如果不是，则结束程序并返回错误码。</strong></p>
-<h4 id="第3个函数调用的函数"><a href="#第3个函数调用的函数" class="headerlink" title="第3个函数调用的函数"></a>第3个函数调用的函数</h4><p>如果字符串合法，则会跳转到<code>sub_401700</code>我们追入这个函数查看</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503151526462.png" class title="image-20230503151526462">
-
-<p>查看其反汇编代码，发现这个函数就是<strong>关键的进行字符串比较的函数</strong></p>
-<p>这个函数的功能是将输入的字符串<code>byte_407444</code>与 <code>a1234567890Abcd</code> 字符串数组进行比较，如果相等，则将 <code>dword_4040C0</code> 数组中对应的元素设置为 <code>v3</code>并返回</p>
-<p>此时我们发现，关键的数组出现了，就是这个<code>a1234567890Abcd</code></p>
-<p>追入查看：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152011515.png" class title="image-20230503152011515">
-
-<p>它的值是：<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></p>
-<h4 id="第4个函数"><a href="#第4个函数" class="headerlink" title="第4个函数"></a>第4个函数</h4><p>回到main函数，继续查看第四个函数：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152426933.png" class title="image-20230503152426933">
-
-<p>看到：<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153124833.png" class title="image-20230503153124833"></p>
-<p>发现这里对字符串进行了<strong>仿射加密</strong>：对输入的明文字符串利用<code>a1234567890Abcd</code>的字符集<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code>进行仿射加密</p>
-<p>其中仿射加密的密钥<code>a=v6=9, b=v1=3</code></p>
-<h4 id="第4个函数调用的函数"><a href="#第4个函数调用的函数" class="headerlink" title="第4个函数调用的函数"></a>第4个函数调用的函数</h4><p>随后调用了一个函数<code>sub_40210C</code>，追入查看，并定位到关键代码段：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153420750.png" class title="image-20230503153420750">
-
-<p>这段代码中：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153741551.png" class title="image-20230503153741551">
-
-<p>将字符串合并为了一个长度为32字符长度的定长字符串，因此我们可以判断这个函数是一个<strong>哈希算法</strong>，用以输出定长的256位散列值</p>
-<p>随后定位到前面的关键函数<code>sub_401A14</code>，推测这个函数就是用来进行哈希的函数，追入查看：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154219688.png" class title="image-20230503154219688">
-
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154238457.png" class title="image-20230503154238457">
-
-<p><strong>可以判断这是一个MD5加密算法！！</strong></p>
-<p>因此函数<code>sub_40210C</code>的功能是将<code>Block</code> 变量分成多个32 字节的块，然后每个块都通过 <code>sub_401A14</code> 函数计算出其哈希值。最后，将所有块的哈希值合并成一个 128 位的哈希值，并将其转换为字符串格式写入 <code>Buffer</code> 变量中。</p>
-<p>回到函数<code>sub_40161C</code>，接下来函数进行了一个字符串比较：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154525848.png" class title="image-20230503154525848">
-
-<p>Str1是<code>sub_40120C</code>加密过后得到的散列值，因此判断<strong>Str2就是所比较的密文（散列值）</strong>，追入查看：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154746972.png" class title="image-20230503154746972">
-
-<p>Str2的值是：<code>f8728f24e01c1aaf54e23f7f0d591384</code></p>
-<p>如果比较成功，即输入的值加密后和预设的密文散列值相同，进入下一个比较，如果<code>byte_407449</code>的值为<code>32Z2</code>，则比较成功，跳出成功得到flag的消息框</p>
-<p>我们发现<code>byte_407449</code>和输入字符串的<code>byte_407444</code>相差5，因此v4的strcmp**<code>407449</code>所比较的字符串就是输入字符串的后4个字节，因此我们可以知道flag的后四个字节是<code>32Z2</code>**</p>
-<h4 id="解密思路"><a href="#解密思路" class="headerlink" title="解密思路"></a>解密思路</h4><p>在网上找了个MD5解密轮子（Link:<a class="link" href="https://www.somd5.com/%EF%BC%89%EF%BC%8C%E8%A7%A3%E5%AF%86MD5%E5%BE%97%E5%88%B0%E6%98%8E%E6%96%87%EF%BC%9A%60K502G%60">https://www.somd5.com/），解密MD5得到明文：`K502G` <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后我们就可以奖字符串进行拼接进行仿射解密了：<code>K502G32Z2</code></p>
-<p>仿射解密脚本如下（Python）：</p>
-<p>其中注意，由于解密是逆变换，所以密钥<code>a=3, b=9 </code></p>
-<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    c = <span class="built_in">input</span>(<span class="string">'输入密文：'</span>)</span><br><span class="line">    a = <span class="number">3</span> <span class="comment">#根据逆向结果得到的密钥</span></span><br><span class="line">    b = <span class="number">9</span></span><br><span class="line"></span><br><span class="line">    p = affine_decrypt(c, a, b)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"解密结果："</span> + p)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">affine_decrypt</span>(<span class="params">ciphertext, a, b</span>):</span><br><span class="line">    plaintext = <span class="string">""</span></span><br><span class="line">    m = <span class="built_in">len</span>(<span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>)</span><br><span class="line">    a_inv = <span class="number">0</span></span><br><span class="line">    <span class="comment"># 计算 a 的逆元素</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, m):</span><br><span class="line">        <span class="keyword">if</span> (i * a) % m == <span class="number">1</span>:</span><br><span class="line">            a_inv = i</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># 对密文进行解密</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> ciphertext:</span><br><span class="line">        <span class="keyword">if</span> char == <span class="string">'_'</span>:</span><br><span class="line">            char = <span class="string">' '</span></span><br><span class="line">        <span class="keyword">elif</span> char == <span class="string">'-'</span>:</span><br><span class="line">            char = <span class="string">'.'</span></span><br><span class="line">        <span class="comment"># 将字符映射到数字</span></span><br><span class="line">        num = <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>.index(char)</span><br><span class="line">        <span class="comment"># 计算解密后的数字</span></span><br><span class="line">        num = (a_inv * (num - b)) % m</span><br><span class="line">        <span class="comment"># 将数字映射回字符</span></span><br><span class="line">        plaintext += <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>[num]</span><br><span class="line">    <span class="keyword">return</span> plaintext</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></div>
-
-<p>然后把这个字符串拼接起来得到flag：<code>5M1LE_LOL</code></p>
-<p>输入这个flag，得到成功的提示:</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511124146592.png" class title="image-20230511124146592">
-
-<h5 id="第一次尝试："><a href="#第一次尝试：" class="headerlink" title="第一次尝试："></a>第一次尝试：</h5><p>因此可以得到flag：<code>3WC9H32Z2</code>–&gt;它不对…. o(TヘTo)</p>
-<p>难道是md5解错了？还是仿射回去的时候错了?</p>
-<p>笑死 原来是仿射解密的密钥搞反了 解密是逆变换 密钥要反过来</p>
-<p>而且32Z2也要一起丢进去仿射解密</p>
-]]></content>
-      <categories>
-        <category>Project</category>
-      </categories>
-      <tags>
-        <tag>汇编逆向</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《亲密关系》读书笔记</title>
     <url>/2024/03/16/%E3%80%8A%E4%BA%B2%E5%AF%86%E5%85%B3%E7%B3%BB%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h2 id="1-人际关系的构成"><a href="#1-人际关系的构成" class="headerlink" title="1 人际关系的构成"></a>1 人际关系的构成</h2><ol>
@@ -736,6 +592,150 @@
       </tags>
   </entry>
   <entry>
+    <title>加密算法逆向实践</title>
+    <url>/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/</url>
+    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><strong>问题-1</strong>：找到开头“This program cannot be run …” 这个字符串的内存起始地址（即字符串的指针），并准确计算该字符串的长度；</p>
+<p><strong>问题-2</strong>：需要结合具体的加密操作逻辑，说明所发现的加密算法。</p>
+<p>输入正确 flag 后的运行截图如下：</p>
+<img lazyload src="/images/loading.svg" data-src="https://fileucloud.bupt.edu.cn/bupt/upload/20230422/6b6a1856b38e98db2bb0f0d80a5fe12b.png" alt="img" style="zoom:50%;">
+
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><h3 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h3><p>首先找到——FOR FUN—–的位置，使用IDA Pro</p>
+<p>Shift+F12进行字符串定位</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111417280.png" class title="image-20230428111417280">
+
+<p>追入</p>
+<p>发现有一个%s夹在两行———-中间，可以判断这个输入的%s就是“This program cannot be run …”</p>
+<p>查看main函数</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230428111553144.png" class title="image-20230428111553144">
+
+<p>发现在调用<code>printf</code>函数时输入了一个参数，其地址为<code>40004Eh</code></p>
+<p>==因此我们就找到了字符串“This program cannot be run …”的起始地址<code>40004Eh</code>==</p>
+<p>接下来找字符串长度，此时使用x32dbg进行动态调试</p>
+<p>因为我们已经知道了该字符串的起始地址，因此我们可以在程序运行到Entrypoint时直接定位到该字符串：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132011451.png" class title="image-20230511132011451">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511132055593.png" class title="image-20230511132055593">
+
+<p>==数一数字符串长度 可知该字符串长度是43个字节==</p>
+<h3 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h3><p>首先发现exe文件在输入错误的flag之后直接结束或者退出了，因此我们只能直接看汇编代码对该程序进行研究</p>
+<p>首先看提示的字符串” ———FOR FUN———-“以及”Please input your flag below:”，可以从这两个提示字符串入手研究该程序</p>
+<p>先看main函数的整体结构：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503144347708.png" class title="image-20230503144347708">
+
+<p>首先调用了函数<code>sub_402320</code>，随后输出提示信息————–FOR FUN——————，接着连续调用了三个函数，因此可以从一个一个函数入手研究这个程序</p>
+<h4 id="第1个函数"><a href="#第1个函数" class="headerlink" title="第1个函数"></a>第1个函数</h4><p>发现在调用<code>printf</code>函数输出——-FOR FUN——–之前调用了一个函数<code>sub_402320</code></p>
+<p>追入该函数查看，利用IDA Pro的反汇编功能研究该函数：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230501231323379.png" class title="image-20230501231323379">
+
+<p>解读这段反汇编代码：这段代码的功能是执行一个函数表中的一系列函数，并在程序退出时再次执行一个特定函数。它的基本思路是：如果全局变量dword_407080的值为0，则将其设为1，然后执行一个函数表中的一系列函数，最后调用sub_4014C0函数，该函数的参数是sub_402290函数的地址。如果dword_407080的值不是0，则直接返回它（result）。</p>
+<p>具体来说，下面是每个步骤的解释：</p>
+<ol>
+<li><p>result = dword_407080;<br>将dword_407080的值赋给result变量。</p>
+</li>
+<li><p>if (!dword_407080)<br>如果dword_407080的值为0，执行以下代码块，否则跳过该代码块。</p>
+</li>
+<li><p>dword_407080 = 1;<br>将dword_407080的值设为1。</p>
+</li>
+<li><p>for (i = 0; dword_4033E0[i + 1]; ++i)<br>查找函数表dword_4033E0中最后一个函数的索引。该函数表是一个由地址组成的数组，最后一个地址为0，以便循环能够停止。</p>
+</li>
+<li><p>for (; i; –i)<br>执行函数表dword_4033E0中的函数，从最后一个函数开始一直到第一个函数。</p>
+</li>
+<li><p>((void (*)(void))dword_4033E0[i])();<br>将函数表dword_4033E0中第i个元素的地址强制转换为void (*)(void)类型的函数指针，然后执行该函数。</p>
+</li>
+<li><p>return sub_4014C0((_onexit_t)sub_402290);<br>调用sub_4014C0函数，并将sub_402290函数的地址转换为_onexit_t类型的函数指针作为参数。_onexit_t是一个函数指针类型，它指向一个函数，该函数在程序退出时执行。</p>
+</li>
+<li><p>return result;<br>如果dword_407080的值不为0，则直接返回该值。</p>
+</li>
+</ol>
+<p><u><strong>这段函数的功能是调用函数表</strong></u></p>
+<h4 id="第2个函数"><a href="#第2个函数" class="headerlink" title="第2个函数"></a>第2个函数</h4><p>追入<code>sub_4015C0</code>这个函数</p>
+<p>查看其汇编代码，这个函数的功能上，首先输出了提示信息：“Please input your flag below:”</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143435814.png" class title="image-20230503143435814">
+
+<p>接下来函数调用了scanf函数接收我们输入的flag：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503143727587.png" class title="image-20230503143727587">
+
+<p>可以看到这个scanf函数是用于接收一个长度不小于9个字符的字符串输入，**<code>byte_407444</code>就是输入的字符串**</p>
+<p>接下来，该函数计算了输入的字符串长度，并将其与存储在内存地址 <code>byte_4040E4</code> 处的值进行比较：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145208387.png" class title="image-20230503145208387">
+
+<p>可以看到，如果输入的字符串长度不相等，则跳转到loc_40160F处，loc_40160F的功能是恢复函数栈寄存器并退出程序；如果相等则返回</p>
+<p>因此我们需要知道byte_4040E4的值，追入查看byte_4040E4</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503145115142.png" class title="image-20230503145115142">
+
+<p>可以看到<code>4040E4</code>的值是9，也就是说，输入的字符串长度应当是<strong>9</strong></p>
+<p>因此，<strong>第二个函数的功能是输出提示信息，接收输入的字符串并将输入字符串的长度与预设的长度值9进行比较</strong>，如果长度不相等则退出程序</p>
+<h4 id="第3个函数"><a href="#第3个函数" class="headerlink" title="第3个函数"></a>第3个函数</h4><p>回到main函数，继续研究下一个函数<code>sub_401770</code></p>
+<p>查看其反汇编函数：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503150657627.png" class title="image-20230503150657627">
+
+<p>可以看到，本段代码的功能是对字符串进行合法性判断</p>
+<p>以下是代码注释：</p>
+<div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; (<span class="type">unsigned</span> __int8)byte_4040E4 != i; ++i) <span class="comment">// 对每个字符，循环直到字符为0x00</span></span><br><span class="line">{</span><br><span class="line">  v1 = (<span class="type">unsigned</span> __int8)byte_407444[i]; <span class="comment">// 取出当前字符</span></span><br><span class="line">  v2 = <span class="number">48</span>; <span class="comment">// v2 为 ASCII 码 48，即字符 '0'</span></span><br><span class="line">  <span class="keyword">while</span> (v1 != v2 &amp;&amp; byte_407444[i] != <span class="number">95</span>) <span class="comment">// 如果当前字符不是 '0' 且不是下划线 '_'</span></span><br><span class="line">  {</span><br><span class="line">    <span class="keyword">if</span> (++v2 == <span class="number">58</span>) <span class="comment">// 如果 v2 递增后等于 ASCII 码 58，即字符 '9'+1，说明当前字符为大写字母</span></span><br><span class="line">    {</span><br><span class="line">      v3 = <span class="number">65</span>; <span class="comment">// v3 为 ASCII 码 65，即字符 'A'</span></span><br><span class="line">      <span class="keyword">while</span> (v1 != v3) <span class="comment">// 如果当前字符不是大写字母</span></span><br><span class="line">      {</span><br><span class="line">        <span class="keyword">if</span> (++v3 == <span class="number">91</span>) <span class="comment">// 如果 v3 递增后等于 ASCII 码 91，即字符 'Z'+1，说明当前字符不合法</span></span><br><span class="line">          <span class="built_in">exit</span>(<span class="number">100876</span>); <span class="comment">// 结束程序并返回错误码 100876</span></span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">if</span> ((<span class="type">unsigned</span> __int8)byte_4040E4 - <span class="number">1</span> == i) <span class="comment">// 如果遍历完字符串后还未结束循环，则结束循环</span></span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">}</span><br><span class="line"><span class="keyword">return</span> sub_401700(); <span class="comment">// 调用 sub_401700() 函数并返回结果</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+<p>因此，<strong>这个函数的目的是遍历一个字符串，并检查字符串中的每个字符是否是数字、大写字母或下划线，如果不是，则结束程序并返回错误码。</strong></p>
+<h4 id="第3个函数调用的函数"><a href="#第3个函数调用的函数" class="headerlink" title="第3个函数调用的函数"></a>第3个函数调用的函数</h4><p>如果字符串合法，则会跳转到<code>sub_401700</code>我们追入这个函数查看</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503151526462.png" class title="image-20230503151526462">
+
+<p>查看其反汇编代码，发现这个函数就是<strong>关键的进行字符串比较的函数</strong></p>
+<p>这个函数的功能是将输入的字符串<code>byte_407444</code>与 <code>a1234567890Abcd</code> 字符串数组进行比较，如果相等，则将 <code>dword_4040C0</code> 数组中对应的元素设置为 <code>v3</code>并返回</p>
+<p>此时我们发现，关键的数组出现了，就是这个<code>a1234567890Abcd</code></p>
+<p>追入查看：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152011515.png" class title="image-20230503152011515">
+
+<p>它的值是：<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></p>
+<h4 id="第4个函数"><a href="#第4个函数" class="headerlink" title="第4个函数"></a>第4个函数</h4><p>回到main函数，继续查看第四个函数：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503152426933.png" class title="image-20230503152426933">
+
+<p>看到：<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153124833.png" class title="image-20230503153124833"></p>
+<p>发现这里对字符串进行了<strong>仿射加密</strong>：对输入的明文字符串利用<code>a1234567890Abcd</code>的字符集<code>1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ</code>进行仿射加密</p>
+<p>其中仿射加密的密钥<code>a=v6=9, b=v1=3</code></p>
+<h4 id="第4个函数调用的函数"><a href="#第4个函数调用的函数" class="headerlink" title="第4个函数调用的函数"></a>第4个函数调用的函数</h4><p>随后调用了一个函数<code>sub_40210C</code>，追入查看，并定位到关键代码段：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153420750.png" class title="image-20230503153420750">
+
+<p>这段代码中：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503153741551.png" class title="image-20230503153741551">
+
+<p>将字符串合并为了一个长度为32字符长度的定长字符串，因此我们可以判断这个函数是一个<strong>哈希算法</strong>，用以输出定长的256位散列值</p>
+<p>随后定位到前面的关键函数<code>sub_401A14</code>，推测这个函数就是用来进行哈希的函数，追入查看：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154219688.png" class title="image-20230503154219688">
+
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154238457.png" class title="image-20230503154238457">
+
+<p><strong>可以判断这是一个MD5加密算法！！</strong></p>
+<p>因此函数<code>sub_40210C</code>的功能是将<code>Block</code> 变量分成多个32 字节的块，然后每个块都通过 <code>sub_401A14</code> 函数计算出其哈希值。最后，将所有块的哈希值合并成一个 128 位的哈希值，并将其转换为字符串格式写入 <code>Buffer</code> 变量中。</p>
+<p>回到函数<code>sub_40161C</code>，接下来函数进行了一个字符串比较：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154525848.png" class title="image-20230503154525848">
+
+<p>Str1是<code>sub_40120C</code>加密过后得到的散列值，因此判断<strong>Str2就是所比较的密文（散列值）</strong>，追入查看：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230503154746972.png" class title="image-20230503154746972">
+
+<p>Str2的值是：<code>f8728f24e01c1aaf54e23f7f0d591384</code></p>
+<p>如果比较成功，即输入的值加密后和预设的密文散列值相同，进入下一个比较，如果<code>byte_407449</code>的值为<code>32Z2</code>，则比较成功，跳出成功得到flag的消息框</p>
+<p>我们发现<code>byte_407449</code>和输入字符串的<code>byte_407444</code>相差5，因此v4的strcmp**<code>407449</code>所比较的字符串就是输入字符串的后4个字节，因此我们可以知道flag的后四个字节是<code>32Z2</code>**</p>
+<h4 id="解密思路"><a href="#解密思路" class="headerlink" title="解密思路"></a>解密思路</h4><p>在网上找了个MD5解密轮子（Link:<a class="link" href="https://www.somd5.com/%EF%BC%89%EF%BC%8C%E8%A7%A3%E5%AF%86MD5%E5%BE%97%E5%88%B0%E6%98%8E%E6%96%87%EF%BC%9A%60K502G%60">https://www.somd5.com/），解密MD5得到明文：`K502G` <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后我们就可以奖字符串进行拼接进行仿射解密了：<code>K502G32Z2</code></p>
+<p>仿射解密脚本如下（Python）：</p>
+<p>其中注意，由于解密是逆变换，所以密钥<code>a=3, b=9 </code></p>
+<div class="highlight-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    c = <span class="built_in">input</span>(<span class="string">'输入密文：'</span>)</span><br><span class="line">    a = <span class="number">3</span> <span class="comment">#根据逆向结果得到的密钥</span></span><br><span class="line">    b = <span class="number">9</span></span><br><span class="line"></span><br><span class="line">    p = affine_decrypt(c, a, b)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"解密结果："</span> + p)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">affine_decrypt</span>(<span class="params">ciphertext, a, b</span>):</span><br><span class="line">    plaintext = <span class="string">""</span></span><br><span class="line">    m = <span class="built_in">len</span>(<span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>)</span><br><span class="line">    a_inv = <span class="number">0</span></span><br><span class="line">    <span class="comment"># 计算 a 的逆元素</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, m):</span><br><span class="line">        <span class="keyword">if</span> (i * a) % m == <span class="number">1</span>:</span><br><span class="line">            a_inv = i</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># 对密文进行解密</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> ciphertext:</span><br><span class="line">        <span class="keyword">if</span> char == <span class="string">'_'</span>:</span><br><span class="line">            char = <span class="string">' '</span></span><br><span class="line">        <span class="keyword">elif</span> char == <span class="string">'-'</span>:</span><br><span class="line">            char = <span class="string">'.'</span></span><br><span class="line">        <span class="comment"># 将字符映射到数字</span></span><br><span class="line">        num = <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>.index(char)</span><br><span class="line">        <span class="comment"># 计算解密后的数字</span></span><br><span class="line">        num = (a_inv * (num - b)) % m</span><br><span class="line">        <span class="comment"># 将数字映射回字符</span></span><br><span class="line">        plaintext += <span class="string">"1234567890_ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>[num]</span><br><span class="line">    <span class="keyword">return</span> plaintext</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure></div>
+
+<p>然后把这个字符串拼接起来得到flag：<code>5M1LE_LOL</code></p>
+<p>输入这个flag，得到成功的提示:</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/image-20230511124146592.png" class title="image-20230511124146592">
+
+<h5 id="第一次尝试："><a href="#第一次尝试：" class="headerlink" title="第一次尝试："></a>第一次尝试：</h5><p>因此可以得到flag：<code>3WC9H32Z2</code>–&gt;它不对…. o(TヘTo)</p>
+<p>难道是md5解错了？还是仿射回去的时候错了?</p>
+<p>笑死 原来是仿射解密的密钥搞反了 解密是逆变换 密钥要反过来</p>
+<p>而且32Z2也要一起丢进去仿射解密</p>
+]]></content>
+      <categories>
+        <category>Project</category>
+      </categories>
+      <tags>
+        <tag>汇编逆向</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>加密算法逆向总结</title>
     <url>/2023/05/10/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<h2 id="用于逆向的加密算法"><a href="#用于逆向的加密算法" class="headerlink" title="用于逆向的加密算法"></a>用于逆向的加密算法</h2><ol>
@@ -948,6 +948,87 @@
       </tags>
   </entry>
   <entry>
+    <title>林同学喜欢的诗句</title>
+    <url>/2023/09/21/%E6%9E%97%E5%90%8C%E5%AD%A6%E5%96%9C%E6%AC%A2%E7%9A%84%E8%AF%97%E5%8F%A5/</url>
+    <content><![CDATA[<h4 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h4><p>读诗是真的能让自己感受到自由的一件事，很多时候，真的有那么一句诗触动到了心灵，就会发现，原来这个世界上真有能读懂我内心的那么一个人，原来我并不孤独。</p>
+<p>这份内心连接，可以穿越时空，给予自己实实在在的力量。</p>
+<h2 id="01"><a href="#01" class="headerlink" title="01"></a>01</h2><blockquote>
+<p>今宵绝胜无人共，卧看星河尽意明。</p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/z8/wallhaven-z8qqdj.png"></p>
+<p>出自【宋】陈与义《雨晴》</p>
+<p>这句诗感觉就是我想要的生活状态啊！</p>
+<p>就算是一个人，也能够兴致满怀地躺着，安静地欣赏着银河之美，感觉这就是和天地寰宇共脉搏的感觉啊，脑海里已经能够想象出自己在一个安静的夏日，躺在海边草地上看着明月，没有生活杂碎烦扰，放空自身，让自己彻底融入大自然，或许这才是真正的自由吧~</p>
+<p>又或许在现代社会的拥扰中，能够找到属于自己的一隅，用于逃离社会喧嚣，重新找回内心中的真实自我，也是一种卧看星河尽意明吧~</p>
+
+  <div class="note-large blue">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>雨晴</p>
+
+    </div>
+    <div class="notel-content">
+      <p>天缺西南江面清，纤云不动小滩横。<br>墙头语鹊衣犹湿，楼外残雷气未平。<br>尽取微凉供稳睡，急搜奇句报新晴。<br>今宵绝胜无人共，卧看星河尽意明。</p>
+
+    </div>
+  </div>
+
+<p>2023.09.21</p>
+<h2 id="02"><a href="#02" class="headerlink" title="02"></a>02</h2><blockquote>
+<p>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/x6/wallhaven-x69pdo.jpg"></p>
+<p>出自【宋】李持正 《人月圆·小桃枝上春风早》</p>
+<p>好浪漫啊哈哈哈哈哈，与所爱之人携手共游元宵，热烈的节日与爱恋将料峭的春寒融化，我觉得这就是人生的小幸福和小圆满啦。</p>
+<p>写段的时候正好听到《园游会》，谁说这两段文字不是异曲同工之妙呢？</p>
+<p>我顶着大太阳，只想为你撑伞，你靠在我肩膀，深呼吸怕遗忘~</p>
+<p>当然这首词的上片所言“年年乐事”也是将自己的快乐融入了全人间的欢乐，词境阔大，意趣高远。</p>
+<p>其实生活不需要那么多的宏伟与波澜壮阔，在生活中与所爱之人共同享受欢乐时光，不为世俗困境困扰，认真过好每一天，每天都收获生活中的小美好，过好自己的平淡日子，就是最大的幸福~</p>
+
+  <div class="note-large green">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>人月圆·小桃枝上春风早</p>
+
+    </div>
+    <div class="notel-content">
+      <p>小桃枝上春风早，初试薄罗衣。年年乐事，华灯竞处，人月圆时。<br>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
+
+    </div>
+  </div>
+
+<p>2023.09.25</p>
+<h2 id="03"><a href="#03" class="headerlink" title="03"></a>03</h2><blockquote>
+<p>徙倚阑干送落晖，年华冉冉恨依依。</p>
+</blockquote>
+<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/ex/wallhaven-exqpqk.jpg" alt="General 5120x3200 night snow winter road alone white light bright lights lamp path"></p>
+<p>出自【宋】陆游 《晚春感事》</p>
+<p>其实还蛮感慨的，上次更新这篇博客的时候还在浪漫与共，现在也到了焦虑未来，迎接毕业的时候了。</p>
+<p>不得不说时间过得真的太快了，可是大学目标依旧没有完成呀~</p>
+<p>大早上就emo也是很奇怪，但是确实有点感慨了。</p>
+
+  <div class="note-large yellow">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>晚春感事</p>
+
+    </div>
+    <div class="notel-content">
+      <p>徙倚阑干送落晖，年华冉冉恨依依。</p>
+<p>护雏燕子常更出，著雨杨花又嬾飞。 </p>
+<p>已为读书悲眼力，还因揽带叹腰围。 </p>
+<p>亲朋半作荒郊冢，欲话初心泪满衣。 </p>
+
+    </div>
+  </div>
+
+<p>2024.6.15</p>
+]]></content>
+      <categories>
+        <category>Literature</category>
+      </categories>
+      <tags>
+        <tag>一些文学素养</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>数据库技术与应用</title>
     <url>/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/</url>
     <content><![CDATA[<h1 id="1-绪论"><a href="#1-绪论" class="headerlink" title="1 绪论"></a>1 绪论</h1><h2 id="1-2-数据模型"><a href="#1-2-数据模型" class="headerlink" title="1.2 数据模型"></a>1.2 数据模型</h2><p>在数据库中用数据模型这个工具来<strong>抽象、表示和处理</strong>现实世界中的事物。</p>
@@ -1146,87 +1227,6 @@
       </categories>
       <tags>
         <tag>Note</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>林同学喜欢的诗句</title>
-    <url>/2023/09/21/%E6%9E%97%E5%90%8C%E5%AD%A6%E5%96%9C%E6%AC%A2%E7%9A%84%E8%AF%97%E5%8F%A5/</url>
-    <content><![CDATA[<h4 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h4><p>读诗是真的能让自己感受到自由的一件事，很多时候，真的有那么一句诗触动到了心灵，就会发现，原来这个世界上真有能读懂我内心的那么一个人，原来我并不孤独。</p>
-<p>这份内心连接，可以穿越时空，给予自己实实在在的力量。</p>
-<h2 id="01"><a href="#01" class="headerlink" title="01"></a>01</h2><blockquote>
-<p>今宵绝胜无人共，卧看星河尽意明。</p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/z8/wallhaven-z8qqdj.png"></p>
-<p>出自【宋】陈与义《雨晴》</p>
-<p>这句诗感觉就是我想要的生活状态啊！</p>
-<p>就算是一个人，也能够兴致满怀地躺着，安静地欣赏着银河之美，感觉这就是和天地寰宇共脉搏的感觉啊，脑海里已经能够想象出自己在一个安静的夏日，躺在海边草地上看着明月，没有生活杂碎烦扰，放空自身，让自己彻底融入大自然，或许这才是真正的自由吧~</p>
-<p>又或许在现代社会的拥扰中，能够找到属于自己的一隅，用于逃离社会喧嚣，重新找回内心中的真实自我，也是一种卧看星河尽意明吧~</p>
-
-  <div class="note-large blue">
-    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
-      <p>雨晴</p>
-
-    </div>
-    <div class="notel-content">
-      <p>天缺西南江面清，纤云不动小滩横。<br>墙头语鹊衣犹湿，楼外残雷气未平。<br>尽取微凉供稳睡，急搜奇句报新晴。<br>今宵绝胜无人共，卧看星河尽意明。</p>
-
-    </div>
-  </div>
-
-<p>2023.09.21</p>
-<h2 id="02"><a href="#02" class="headerlink" title="02"></a>02</h2><blockquote>
-<p>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/x6/wallhaven-x69pdo.jpg"></p>
-<p>出自【宋】李持正 《人月圆·小桃枝上春风早》</p>
-<p>好浪漫啊哈哈哈哈哈，与所爱之人携手共游元宵，热烈的节日与爱恋将料峭的春寒融化，我觉得这就是人生的小幸福和小圆满啦。</p>
-<p>写段的时候正好听到《园游会》，谁说这两段文字不是异曲同工之妙呢？</p>
-<p>我顶着大太阳，只想为你撑伞，你靠在我肩膀，深呼吸怕遗忘~</p>
-<p>当然这首词的上片所言“年年乐事”也是将自己的快乐融入了全人间的欢乐，词境阔大，意趣高远。</p>
-<p>其实生活不需要那么多的宏伟与波澜壮阔，在生活中与所爱之人共同享受欢乐时光，不为世俗困境困扰，认真过好每一天，每天都收获生活中的小美好，过好自己的平淡日子，就是最大的幸福~</p>
-
-  <div class="note-large green">
-    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
-      <p>人月圆·小桃枝上春风早</p>
-
-    </div>
-    <div class="notel-content">
-      <p>小桃枝上春风早，初试薄罗衣。年年乐事，华灯竞处，人月圆时。<br>禁街箫鼓，寒轻夜永，纤手重携。更阑人散，千门笑语，声在帘帏。 </p>
-
-    </div>
-  </div>
-
-<p>2023.09.25</p>
-<h2 id="03"><a href="#03" class="headerlink" title="03"></a>03</h2><blockquote>
-<p>徙倚阑干送落晖，年华冉冉恨依依。</p>
-</blockquote>
-<p><img lazyload src="/images/loading.svg" data-src="https://w.wallhaven.cc/full/ex/wallhaven-exqpqk.jpg" alt="General 5120x3200 night snow winter road alone white light bright lights lamp path"></p>
-<p>出自【宋】陆游 《晚春感事》</p>
-<p>其实还蛮感慨的，上次更新这篇博客的时候还在浪漫与共，现在也到了焦虑未来，迎接毕业的时候了。</p>
-<p>不得不说时间过得真的太快了，可是大学目标依旧没有完成呀~</p>
-<p>大早上就emo也是很奇怪，但是确实有点感慨了。</p>
-
-  <div class="note-large yellow">
-    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
-      <p>晚春感事</p>
-
-    </div>
-    <div class="notel-content">
-      <p>徙倚阑干送落晖，年华冉冉恨依依。</p>
-<p>护雏燕子常更出，著雨杨花又嬾飞。 </p>
-<p>已为读书悲眼力，还因揽带叹腰围。 </p>
-<p>亲朋半作荒郊冢，欲话初心泪满衣。 </p>
-
-    </div>
-  </div>
-
-<p>2024.6.15</p>
-]]></content>
-      <categories>
-        <category>Literature</category>
-      </categories>
-      <tags>
-        <tag>一些文学素养</tag>
       </tags>
   </entry>
   <entry>
@@ -1893,6 +1893,32 @@
       </tags>
   </entry>
   <entry>
+    <title>用了好久博客了突然碰到一个坑</title>
+    <url>/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/</url>
+    <content><![CDATA[<p>今晚在部署博客的时突然出现了这样的错误：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/image-20230909102159001.png" class title="image-20230909102159001">
+
+<p>网上说的解决方法都是删除.deploy_git文件夹的方法：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">进入站点根目录</span><br><span class="line">cd E:/hexo</span><br><span class="line"> </span><br><span class="line">删除git提交内容文件夹</span><br><span class="line">rm -rf .deploy_git/</span><br><span class="line"> </span><br><span class="line">执行</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line"> </span><br><span class="line">最后</span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure></div>
+
+<p>但是我尝试多次仍然无效，甚至重新设置了Git的SSHkey啥的，麻烦死了</p>
+<p>最后看到了一个博客，就一行，说了一句是进程阻塞的问题:</p>
+<p><a class="link" href="https://www.cnblogs.com/chendeqiang/p/12861744.html">https://www.cnblogs.com/chendeqiang/p/12861744.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后我重启电脑，问题解决了….</p>
+<p>大无语……😅</p>
+<p>2023.9.13</p>
+<p>又遇到了这个问题，一周后的今天解决了</p>
+<p>这次重启没用了，不是线程占用的问题</p>
+<p>重新设置SSH Key好像也不行</p>
+<p>然后找到一个教程要我删代理：<a class="link" href="https://www.cnblogs.com/Duan2baka/p/17271142.html">https://www.cnblogs.com/Duan2baka/p/17271142.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后就…行了？！而且网站同步速度快了很多！</p>
+<p>神奇！</p>
+]]></content>
+      <tags>
+        <tag>Note</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>算法与程序设计</title>
     <url>/2023/09/23/%E7%AE%97%E6%B3%95%E4%B8%8E%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</url>
     <content><![CDATA[<h1 id="递归与分治"><a href="#递归与分治" class="headerlink" title="递归与分治"></a>递归与分治</h1><h2 id="二分查找算法"><a href="#二分查找算法" class="headerlink" title="二分查找算法"></a>二分查找算法</h2><div class="highlight-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="code"><pre><span class="line">template&lt;class Type&gt; </span><br><span class="line"><span class="type">int</span> <span class="title function_">BinarySearch</span><span class="params">(Type a[], <span class="type">const</span> Type&amp; x, <span class="type">int</span> l, <span class="type">int</span> r)</span>{</span><br><span class="line">	<span class="keyword">while</span> (r &gt;= l){ </span><br><span class="line">		<span class="type">int</span> m = (l+r)/<span class="number">2</span>;</span><br><span class="line">		<span class="keyword">if</span> (x == a[m]) <span class="keyword">return</span> m;</span><br><span class="line">		<span class="keyword">if</span> (x &lt; a[m]) r = m<span class="number">-1</span>; <span class="keyword">else</span> l = m+<span class="number">1</span>;</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">}</span><br></pre></td></tr></table></figure></div>
@@ -1992,32 +2018,6 @@
       </categories>
       <tags>
         <tag>算法课笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>用了好久博客了突然碰到一个坑</title>
-    <url>/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/</url>
-    <content><![CDATA[<p>今晚在部署博客的时突然出现了这样的错误：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/image-20230909102159001.png" class title="image-20230909102159001">
-
-<p>网上说的解决方法都是删除.deploy_git文件夹的方法：</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">进入站点根目录</span><br><span class="line">cd E:/hexo</span><br><span class="line"> </span><br><span class="line">删除git提交内容文件夹</span><br><span class="line">rm -rf .deploy_git/</span><br><span class="line"> </span><br><span class="line">执行</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line"> </span><br><span class="line">最后</span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure></div>
-
-<p>但是我尝试多次仍然无效，甚至重新设置了Git的SSHkey啥的，麻烦死了</p>
-<p>最后看到了一个博客，就一行，说了一句是进程阻塞的问题:</p>
-<p><a class="link" href="https://www.cnblogs.com/chendeqiang/p/12861744.html">https://www.cnblogs.com/chendeqiang/p/12861744.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后我重启电脑，问题解决了….</p>
-<p>大无语……😅</p>
-<p>2023.9.13</p>
-<p>又遇到了这个问题，一周后的今天解决了</p>
-<p>这次重启没用了，不是线程占用的问题</p>
-<p>重新设置SSH Key好像也不行</p>
-<p>然后找到一个教程要我删代理：<a class="link" href="https://www.cnblogs.com/Duan2baka/p/17271142.html">https://www.cnblogs.com/Duan2baka/p/17271142.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后就…行了？！而且网站同步速度快了很多！</p>
-<p>神奇！</p>
-]]></content>
-      <tags>
-        <tag>Note</tag>
       </tags>
   </entry>
   <entry>
@@ -2504,44 +2504,6 @@
       </categories>
       <tags>
         <tag>Note</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>记录第一次搭建个人博客</title>
-    <url>/2023/02/26/%E8%AE%B0%E5%BD%95%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>第一次搭博客，没啥经验，也没有问别人，遇到的一切问题都自己上网查资料解决，算是锻炼了一下自己的自学能力了吧。</p>
-<p>不管怎么说总算是搭好了，很有成就感。先说说遇到的一些问题，下次再搭博客的时候就可以少踩很多雷。</p>
-<p>按照搭建顺序来说说自己的步骤和当中遇到的问题吧，教程连接贴在下面：</p>
-<p>这是主要参考的教程：<a class="link" href="https://www.jianshu.com/p/d78adad4705f">利用Github搭建自己的个人博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>2023.4.14：看到一个更加完整的教程：<a class="link" href="https://cloud.tencent.com/developer/article/2148748">个人博客搭建 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><strong>我真的放弃添加图片了，所以我的博客暂时用来写一些书评影评好了，笔记什么的我还是在本地查看吧o(TヘTo)</strong></p>
-<p>2023.3.7 偶然调了一下，改成了相对路径！图片传上去了！！！！！但是不知道怎么调图片的大小，而且好多图片也都还没放到文件夹里，有时间再弄吧</p>
-<p>教程：<a class="link" href="https://www.cnblogs.com/bzsheng/p/13802829.html">Hexo博客如何插入图片 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>2023.7.14 趁着帮助别人搭博客的契机把自己的博客功能做全了，现在是所有功能都具备的完全体博客啦！（顺便在这篇博文下面加了一首歌</p>
-<h3 id="Day-1-搭建Github个人仓库"><a href="#Day-1-搭建Github个人仓库" class="headerlink" title="Day 1 搭建Github个人仓库"></a>Day 1 搭建Github个人仓库</h3><p>​	一开始这步就已经把我弄的有点难受了，建好了个人仓库BUPT-Serendy.github.io结果点进去是404。我找遍了各种教程，搜了好多问题，试了好多种方法，甚至把自己原来的GitHub号给销了重新注册了一个（虽然原来的号里啥也没有，但是浪费了我一个ID…），最后一看hsp的教程才发现，原来只是没有使用魔法，然后周六就开始找各种魔法，各处打听终于找到了一个还算不错的（一开始系统代理没打开用不了…）。之后也研究了好久的魔法，最后总算是能稳定用了。</p>
-<h3 id="Day-2-开始在本地建博客"><a href="#Day-2-开始在本地建博客" class="headerlink" title="Day 2 开始在本地建博客"></a>Day 2 开始在本地建博客</h3><p>安装node.js和Git这些都没啥，问题不大，就是中间安装Git的时候cmd卡住了一下，后面重新装一次就没有问题了。</p>
-<p>然后博客文件夹啥的都创建好了之后，第一次在hexo d的时候出现了一个问题，就是一直只有一行：</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">INFO Validating config</span><br></pre></td></tr></table></figure></div>
-
-<p>这个奇怪的问题我真的找遍全网资料都没有找到跟我一样的问题，过了大概一个小时我又重新试了一次，这次用的hexo deploy，然后成功了，我就天真地以为是我没有把deploy打出来…其实就是不知道出了什么问题，这时就冒出了那个疑问：它为什么能跑？</p>
-<p>不过我也没太纠结，因为后面就再也没失败过了，所以感觉就还行。</p>
-<h3 id="Day-3-配置个人主题和添加图片"><a href="#Day-3-配置个人主题和添加图片" class="headerlink" title="Day 3 配置个人主题和添加图片"></a>Day 3 配置个人主题和添加图片</h3><p>昨天晚上不知道为什么莫名其妙就把主题弄上去了，后面new了那个计算机网络的文档之后就炸了，主题又回到原生Hexo了。今天早上又仔细地看了一遍Redefine主题的文档之后才发现原来是自己没有把主题的config文件添加到博客根目录，所以才失败了。</p>
-<p>这个问题虽然看起来很简单啊，但是真的卡了我好久好久。</p>
-<p><strong>所以以后一定要仔细读官方使用文档！！！</strong></p>
-<p>（当然也有可能是我对博客里面的文件的表述啥的都太陌生了所以才看不懂官方文档）</p>
-<p><strong>添加图片！！！</strong></p>
-<p>这个真的是梦魇，我真的翻了起码有20篇教程了。插件啥的也装了，文件夹什么也都弄好了，但是各种方法都无法让我的图片上传到博客上。做完已经很晚了，所以干脆就不弄了洗洗睡。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>其实遇到的几个问题都是不知道怎么就出现了，也不知道怎么就解决了，所以感觉还挺神奇的</p>
-<p>虽然搭博客搭了很久，但是整个博客真的很好看我很喜欢，做完感觉真的很有满足感~</p>
-<p>博客主页背景的意境很美，我就想到了这句词，把它放在了博客主页，出自江南的《踏莎行》。</p>
-<p>页底是我最喜欢的《春江花月夜》，与君共勉。</p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1891711657&auto=1&height=66"></iframe>
-]]></content>
-      <categories>
-        <category>Sketch</category>
-      </categories>
-      <tags>
-        <tag>随笔</tag>
       </tags>
   </entry>
   <entry>
@@ -3425,6 +3387,44 @@
 ]]></content>
       <tags>
         <tag>Notes</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记录第一次搭建个人博客</title>
+    <url>/2023/02/26/%E8%AE%B0%E5%BD%95%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>第一次搭博客，没啥经验，也没有问别人，遇到的一切问题都自己上网查资料解决，算是锻炼了一下自己的自学能力了吧。</p>
+<p>不管怎么说总算是搭好了，很有成就感。先说说遇到的一些问题，下次再搭博客的时候就可以少踩很多雷。</p>
+<p>按照搭建顺序来说说自己的步骤和当中遇到的问题吧，教程连接贴在下面：</p>
+<p>这是主要参考的教程：<a class="link" href="https://www.jianshu.com/p/d78adad4705f">利用Github搭建自己的个人博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>2023.4.14：看到一个更加完整的教程：<a class="link" href="https://cloud.tencent.com/developer/article/2148748">个人博客搭建 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><strong>我真的放弃添加图片了，所以我的博客暂时用来写一些书评影评好了，笔记什么的我还是在本地查看吧o(TヘTo)</strong></p>
+<p>2023.3.7 偶然调了一下，改成了相对路径！图片传上去了！！！！！但是不知道怎么调图片的大小，而且好多图片也都还没放到文件夹里，有时间再弄吧</p>
+<p>教程：<a class="link" href="https://www.cnblogs.com/bzsheng/p/13802829.html">Hexo博客如何插入图片 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>2023.7.14 趁着帮助别人搭博客的契机把自己的博客功能做全了，现在是所有功能都具备的完全体博客啦！（顺便在这篇博文下面加了一首歌</p>
+<h3 id="Day-1-搭建Github个人仓库"><a href="#Day-1-搭建Github个人仓库" class="headerlink" title="Day 1 搭建Github个人仓库"></a>Day 1 搭建Github个人仓库</h3><p>​	一开始这步就已经把我弄的有点难受了，建好了个人仓库BUPT-Serendy.github.io结果点进去是404。我找遍了各种教程，搜了好多问题，试了好多种方法，甚至把自己原来的GitHub号给销了重新注册了一个（虽然原来的号里啥也没有，但是浪费了我一个ID…），最后一看hsp的教程才发现，原来只是没有使用魔法，然后周六就开始找各种魔法，各处打听终于找到了一个还算不错的（一开始系统代理没打开用不了…）。之后也研究了好久的魔法，最后总算是能稳定用了。</p>
+<h3 id="Day-2-开始在本地建博客"><a href="#Day-2-开始在本地建博客" class="headerlink" title="Day 2 开始在本地建博客"></a>Day 2 开始在本地建博客</h3><p>安装node.js和Git这些都没啥，问题不大，就是中间安装Git的时候cmd卡住了一下，后面重新装一次就没有问题了。</p>
+<p>然后博客文件夹啥的都创建好了之后，第一次在hexo d的时候出现了一个问题，就是一直只有一行：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">INFO Validating config</span><br></pre></td></tr></table></figure></div>
+
+<p>这个奇怪的问题我真的找遍全网资料都没有找到跟我一样的问题，过了大概一个小时我又重新试了一次，这次用的hexo deploy，然后成功了，我就天真地以为是我没有把deploy打出来…其实就是不知道出了什么问题，这时就冒出了那个疑问：它为什么能跑？</p>
+<p>不过我也没太纠结，因为后面就再也没失败过了，所以感觉就还行。</p>
+<h3 id="Day-3-配置个人主题和添加图片"><a href="#Day-3-配置个人主题和添加图片" class="headerlink" title="Day 3 配置个人主题和添加图片"></a>Day 3 配置个人主题和添加图片</h3><p>昨天晚上不知道为什么莫名其妙就把主题弄上去了，后面new了那个计算机网络的文档之后就炸了，主题又回到原生Hexo了。今天早上又仔细地看了一遍Redefine主题的文档之后才发现原来是自己没有把主题的config文件添加到博客根目录，所以才失败了。</p>
+<p>这个问题虽然看起来很简单啊，但是真的卡了我好久好久。</p>
+<p><strong>所以以后一定要仔细读官方使用文档！！！</strong></p>
+<p>（当然也有可能是我对博客里面的文件的表述啥的都太陌生了所以才看不懂官方文档）</p>
+<p><strong>添加图片！！！</strong></p>
+<p>这个真的是梦魇，我真的翻了起码有20篇教程了。插件啥的也装了，文件夹什么也都弄好了，但是各种方法都无法让我的图片上传到博客上。做完已经很晚了，所以干脆就不弄了洗洗睡。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>其实遇到的几个问题都是不知道怎么就出现了，也不知道怎么就解决了，所以感觉还挺神奇的</p>
+<p>虽然搭博客搭了很久，但是整个博客真的很好看我很喜欢，做完感觉真的很有满足感~</p>
+<p>博客主页背景的意境很美，我就想到了这句词，把它放在了博客主页，出自江南的《踏莎行》。</p>
+<p>页底是我最喜欢的《春江花月夜》，与君共勉。</p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1891711657&auto=1&height=66"></iframe>
+]]></content>
+      <categories>
+        <category>Sketch</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
       </tags>
   </entry>
 </search>

@@ -3,7 +3,7 @@
   <entry>
     <title>ContactME</title>
     <url>/2023/03/12/ContactME/</url>
-    <content><![CDATA[<p>Email: <a class="link" href="mailto:&#115;&#101;&#x72;&#101;&#x6e;&#100;&#121;&#108;&#105;&#110;&#x40;&#111;&#117;&#x74;&#x6c;&#x6f;&#111;&#107;&#46;&#99;&#111;&#109;">&#115;&#101;&#x72;&#101;&#x6e;&#100;&#121;&#108;&#105;&#110;&#x40;&#111;&#117;&#x74;&#x6c;&#x6f;&#111;&#107;&#46;&#99;&#111;&#109; <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+    <content><![CDATA[<p>Email: <a class="link" href="mailto:&#115;&#101;&#114;&#x65;&#110;&#x64;&#x79;&#108;&#x69;&#x6e;&#64;&#x6f;&#117;&#116;&#108;&#111;&#111;&#107;&#x2e;&#x63;&#111;&#109;">&#115;&#101;&#114;&#x65;&#110;&#x64;&#x79;&#108;&#x69;&#x6e;&#64;&#x6f;&#117;&#116;&#108;&#111;&#111;&#107;&#x2e;&#x63;&#111;&#109; <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 <p>QQ: 15993469631 (备注博客)</p>
 ]]></content>
   </entry>
@@ -84,6 +84,26 @@
       </categories>
       <tags>
         <tag>汇编逆向</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Minecraft服务器的创建和配置</title>
+    <url>/2024/06/14/Minecraft%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<p>本文暂不考虑插件服务器，因为都是自己人玩，插件服麻烦</p>
+<h2 id="服务器搭建（Windows）"><a href="#服务器搭建（Windows）" class="headerlink" title="服务器搭建（Windows）"></a>服务器搭建（Windows）</h2><h3 id="原版服务端"><a href="#原版服务端" class="headerlink" title="原版服务端"></a>原版服务端</h3><p><a class="link" href="https://www.bilibili.com/read/cv33236294/?spm_id_from=333.999.collection.opus.click">Java Edition原版服务端核心 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>到这里找到对应版本的核心服务端，然后按照<a class="link" href="https://www.minecraft.net/zh-hans/download/server">官网教程 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>做好启动脚本，就可以成功搭建一个原版服务端了。</p>
+<p>注意：请注意自己的Java版本和游戏所支持的Java版本的对应，否则会出现无法加载主类的报错。</p>
+<h3 id="Forge服务端"><a href="#Forge服务端" class="headerlink" title="Forge服务端"></a>Forge服务端</h3><p>在PCL上手动安装部分下载对应版本的Forge，选择Install for Server，然后再选择服务器所需要安装的路径就可以安装成功了。</p>
+<img lazyload src="/images/loading.svg" data-src="/2024/06/14/Minecraft%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E9%85%8D%E7%BD%AE/image-20240614151247436.png" class title="image-20240614151247436">
+
+<h3 id="Fabric服务端"><a href="#Fabric服务端" class="headerlink" title="Fabric服务端"></a>Fabric服务端</h3><p>和Forge服务端操作类似，很简单就可以安装。</p>
+<p>注：有的版本Fabric端可以进Forge服务器而有的版本不行</p>
+<h3 id="Bedrock-Edition服务端"><a href="#Bedrock-Edition服务端" class="headerlink" title="Bedrock Edition服务端"></a>Bedrock Edition服务端</h3><p>到<a class="link" href="https://www.minecraft.net/zh-hans/download/server/bedrock">官网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>下载服务端，解压即用</p>
+<h2 id="服务器配置"><a href="#服务器配置" class="headerlink" title="服务器配置"></a>服务器配置</h2><p>server.properties各字段作用</p>
+<div class="highlight-container" data-rel="Properties"><figure class="iseeu highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment">#Minecraft server properties</span></span><br><span class="line"><span class="comment">#Fri Jun 14 17:21:18 CST 2024</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用JMX监控</span></span><br><span class="line"><span class="attr">enable-jmx-monitoring</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># RCON（远程控制台）端口</span></span><br><span class="line"><span class="attr">rcon.port</span>=<span class="string">25575</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 世界生成种子</span></span><br><span class="line"><span class="attr">level-seed</span>=<span class="string">-8723366411114572095</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 游戏模式（生存模式）</span></span><br><span class="line"><span class="attr">gamemode</span>=<span class="string">survival</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用命令方块</span></span><br><span class="line"><span class="attr">enable-command-block</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用查询</span></span><br><span class="line"><span class="attr">enable-query</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 自定义世界生成设置</span></span><br><span class="line"><span class="attr">generator-settings</span>=<span class="string">{}</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否强制使用安全配置文件</span></span><br><span class="line"><span class="attr">enforce-secure-profile</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 世界名称</span></span><br><span class="line"><span class="attr">level-name</span>=<span class="string">world</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># MOTD（消息通知）内容</span></span><br><span class="line"><span class="attr">motd</span>=<span class="string">养老生存服务器</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 查询端口</span></span><br><span class="line"><span class="attr">query.port</span>=<span class="string">25565</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否开启PVP</span></span><br><span class="line"><span class="attr">pvp</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否生成结构</span></span><br><span class="line"><span class="attr">generate-structures</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 最大链式邻居更新次数</span></span><br><span class="line"><span class="attr">max-chained-neighbor-updates</span>=<span class="string">1000000</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 游戏难度（困难）</span></span><br><span class="line"><span class="attr">difficulty</span>=<span class="string">hard</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 网络压缩阈值</span></span><br><span class="line"><span class="attr">network-compression-threshold</span>=<span class="string">256</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 最大每tick时间（毫秒）</span></span><br><span class="line"><span class="attr">max-tick-time</span>=<span class="string">60000</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否要求使用资源包</span></span><br><span class="line"><span class="attr">require-resource-pack</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否使用原生传输</span></span><br><span class="line"><span class="attr">use-native-transport</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 最大玩家数量</span></span><br><span class="line"><span class="attr">max-players</span>=<span class="string">8</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否在线模式</span></span><br><span class="line"><span class="attr">online-mode</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用服务器状态查询</span></span><br><span class="line"><span class="attr">enable-status</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否允许飞行</span></span><br><span class="line"><span class="attr">allow-flight</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 初始禁用包</span></span><br><span class="line"><span class="attr">initial-disabled-packs</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否向管理员广播RCON消息</span></span><br><span class="line"><span class="attr">broadcast-rcon-to-ops</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 视距</span></span><br><span class="line"><span class="attr">view-distance</span>=<span class="string">16</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 服务器IP地址</span></span><br><span class="line"><span class="attr">server-ip</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 资源包提示</span></span><br><span class="line"><span class="attr">resource-pack-prompt</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否允许进入下界</span></span><br><span class="line"><span class="attr">allow-nether</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 服务器端口</span></span><br><span class="line"><span class="attr">server-port</span>=<span class="string">25565</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用RCON</span></span><br><span class="line"><span class="attr">enable-rcon</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否同步区块写入</span></span><br><span class="line"><span class="attr">sync-chunk-writes</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 管理员权限等级</span></span><br><span class="line"><span class="attr">op-permission-level</span>=<span class="string">4</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否阻止代理连接</span></span><br><span class="line"><span class="attr">prevent-proxy-connections</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否隐藏在线玩家</span></span><br><span class="line"><span class="attr">hide-online-players</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 资源包URL</span></span><br><span class="line"><span class="attr">resource-pack</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 实体广播范围百分比</span></span><br><span class="line"><span class="attr">entity-broadcast-range-percentage</span>=<span class="string">100</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 模拟距离</span></span><br><span class="line"><span class="attr">simulation-distance</span>=<span class="string">12</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># RCON密码</span></span><br><span class="line"><span class="attr">rcon.password</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 玩家空闲超时时间（分钟）</span></span><br><span class="line"><span class="attr">player-idle-timeout</span>=<span class="string">0</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否强制游戏模式</span></span><br><span class="line"><span class="attr">force-gamemode</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 速率限制</span></span><br><span class="line"><span class="attr">rate-limit</span>=<span class="string">0</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否为极限模式</span></span><br><span class="line"><span class="attr">hardcore</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用白名单</span></span><br><span class="line"><span class="attr">white-list</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否向管理员广播控制台消息</span></span><br><span class="line"><span class="attr">broadcast-console-to-ops</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否生成NPC</span></span><br><span class="line"><span class="attr">spawn-npcs</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否生成动物</span></span><br><span class="line"><span class="attr">spawn-animals</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 功能权限等级</span></span><br><span class="line"><span class="attr">function-permission-level</span>=<span class="string">2</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 初始启用包</span></span><br><span class="line"><span class="attr">initial-enabled-packs</span>=<span class="string">vanilla</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 世界类型</span></span><br><span class="line"><span class="attr">level-type</span>=<span class="string">minecraft\:normal</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 文本过滤配置</span></span><br><span class="line"><span class="attr">text-filtering-config</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否生成怪物</span></span><br><span class="line"><span class="attr">spawn-monsters</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否强制白名单</span></span><br><span class="line"><span class="attr">enforce-whitelist</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 出生保护区块半径</span></span><br><span class="line"><span class="attr">spawn-protection</span>=<span class="string">0</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 资源包SHA1校验码</span></span><br><span class="line"><span class="attr">resource-pack-sha1</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 最大世界大小</span></span><br><span class="line"><span class="attr">max-world-size</span>=<span class="string">29999984</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
+
+]]></content>
+      <tags>
+        <tag>Note</tag>
       </tags>
   </entry>
   <entry>
@@ -572,6 +592,34 @@
       </tags>
   </entry>
   <entry>
+    <title>加密算法逆向总结</title>
+    <url>/2023/05/10/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h2 id="用于逆向的加密算法"><a href="#用于逆向的加密算法" class="headerlink" title="用于逆向的加密算法"></a>用于逆向的加密算法</h2><ol>
+<li><strong>简单加密算法逆向分析</strong><br>异或加密<br>仿射加密</li>
+<li><strong>对称加密算法逆向分析</strong><br>RC4流加密<br>DES对称加密</li>
+<li><strong>单向散列算法逆向分析</strong><br>MD5哈希函数<br>SHA哈希函数</li>
+</ol>
+<p><strong>首先要对这些算法的加密原理十分了解</strong>——参考现代密码学笔记</p>
+<h2 id="逆向方法"><a href="#逆向方法" class="headerlink" title="逆向方法"></a>逆向方法</h2><h3 id="可以直接复用源程序进行动态调试获得flag的"><a href="#可以直接复用源程序进行动态调试获得flag的" class="headerlink" title="可以直接复用源程序进行动态调试获得flag的"></a>可以直接复用源程序进行动态调试获得flag的</h3><p>加解密算法完全相同的是可以复用的</p>
+<p>包括：<strong>异或加密 仿射加密 RC4流加密</strong></p>
+<h3 id="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"><a href="#其余的算法加解密不相同则只能使用静态调试写脚本解出flag" class="headerlink" title="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"></a>其余的算法加解密不相同则只能使用静态调试写脚本解出flag</h3><p>包括 <strong>DES AES MD5 SHA256</strong></p>
+<h2 id="基本逆向思路——静态调试"><a href="#基本逆向思路——静态调试" class="headerlink" title="基本逆向思路——静态调试"></a>基本逆向思路——静态调试</h2><p>首先先打开程序，查看程序提示的字符串，以及输入随意值之后的程序提示</p>
+<p>根据程序的字符串提示，在IDA Pro中用shift+F12找到字符串，再通过X查看到交叉引用，再在这个字符串的上文定位到比较函数</p>
+<p>先看main函数，分析main函数的执行过程，然后找到加密函数，根据加密函数分析出对应的加密算法<br>（F5查看反汇编或者直接看汇编）</p>
+<p>然后再在函数中找到找到所需要的关键信息如<strong>密钥 密文等</strong></p>
+<p>最后再根据加密算法的原理写出<strong>加密算法的解密脚本</strong>或者是利用动态调试修改输入的字符串直接获得flag</p>
+<h4 id="PS：使用动态调试直接复用加密函数解密"><a href="#PS：使用动态调试直接复用加密函数解密" class="headerlink" title="PS：使用动态调试直接复用加密函数解密"></a>PS：使用动态调试直接复用加密函数解密</h4><p><strong>首先得确保加密算法的加解密过程是一致的才可以使用！！！</strong></p>
+<p>首先先用静态调试找到密文和加密函数的地址</p>
+<p>在x32dbg中定位到加密函数，找到输入的字符串地址，使用二进制编辑修改输入的字符串为密文，即可得到flag</p>
+]]></content>
+      <categories>
+        <category>Note</category>
+      </categories>
+      <tags>
+        <tag>汇编逆向</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>加密算法逆向实践</title>
     <url>/2023/05/02/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E5%AE%9E%E8%B7%B5/</url>
     <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p><strong>问题-1</strong>：找到开头“This program cannot be run …” 这个字符串的内存起始地址（即字符串的指针），并准确计算该字符串的长度；</p>
@@ -716,34 +764,6 @@
       </tags>
   </entry>
   <entry>
-    <title>加密算法逆向总结</title>
-    <url>/2023/05/10/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E9%80%86%E5%90%91%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h2 id="用于逆向的加密算法"><a href="#用于逆向的加密算法" class="headerlink" title="用于逆向的加密算法"></a>用于逆向的加密算法</h2><ol>
-<li><strong>简单加密算法逆向分析</strong><br>异或加密<br>仿射加密</li>
-<li><strong>对称加密算法逆向分析</strong><br>RC4流加密<br>DES对称加密</li>
-<li><strong>单向散列算法逆向分析</strong><br>MD5哈希函数<br>SHA哈希函数</li>
-</ol>
-<p><strong>首先要对这些算法的加密原理十分了解</strong>——参考现代密码学笔记</p>
-<h2 id="逆向方法"><a href="#逆向方法" class="headerlink" title="逆向方法"></a>逆向方法</h2><h3 id="可以直接复用源程序进行动态调试获得flag的"><a href="#可以直接复用源程序进行动态调试获得flag的" class="headerlink" title="可以直接复用源程序进行动态调试获得flag的"></a>可以直接复用源程序进行动态调试获得flag的</h3><p>加解密算法完全相同的是可以复用的</p>
-<p>包括：<strong>异或加密 仿射加密 RC4流加密</strong></p>
-<h3 id="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"><a href="#其余的算法加解密不相同则只能使用静态调试写脚本解出flag" class="headerlink" title="其余的算法加解密不相同则只能使用静态调试写脚本解出flag"></a>其余的算法加解密不相同则只能使用静态调试写脚本解出flag</h3><p>包括 <strong>DES AES MD5 SHA256</strong></p>
-<h2 id="基本逆向思路——静态调试"><a href="#基本逆向思路——静态调试" class="headerlink" title="基本逆向思路——静态调试"></a>基本逆向思路——静态调试</h2><p>首先先打开程序，查看程序提示的字符串，以及输入随意值之后的程序提示</p>
-<p>根据程序的字符串提示，在IDA Pro中用shift+F12找到字符串，再通过X查看到交叉引用，再在这个字符串的上文定位到比较函数</p>
-<p>先看main函数，分析main函数的执行过程，然后找到加密函数，根据加密函数分析出对应的加密算法<br>（F5查看反汇编或者直接看汇编）</p>
-<p>然后再在函数中找到找到所需要的关键信息如<strong>密钥 密文等</strong></p>
-<p>最后再根据加密算法的原理写出<strong>加密算法的解密脚本</strong>或者是利用动态调试修改输入的字符串直接获得flag</p>
-<h4 id="PS：使用动态调试直接复用加密函数解密"><a href="#PS：使用动态调试直接复用加密函数解密" class="headerlink" title="PS：使用动态调试直接复用加密函数解密"></a>PS：使用动态调试直接复用加密函数解密</h4><p><strong>首先得确保加密算法的加解密过程是一致的才可以使用！！！</strong></p>
-<p>首先先用静态调试找到密文和加密函数的地址</p>
-<p>在x32dbg中定位到加密函数，找到输入的字符串地址，使用二进制编辑修改输入的字符串为密文，即可得到flag</p>
-]]></content>
-      <categories>
-        <category>Note</category>
-      </categories>
-      <tags>
-        <tag>汇编逆向</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>博客优化和更新</title>
     <url>/2023/07/18/%E5%8D%9A%E5%AE%A2%E4%BC%98%E5%8C%96%E5%92%8C%E6%9B%B4%E6%96%B0/</url>
     <content><![CDATA[<p>最近正好在不断优化和更新自己的博客，我就想着可不可以试试给自己的博客多选几个主题，之后可以随时更换（看心情），然后就挑了下面几个主题：</p>
@@ -754,6 +774,23 @@
 ]]></content>
       <tags>
         <tag>Note</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>奥本海默</title>
+    <url>/2023/08/30/%E5%A5%A5%E6%9C%AC%E6%B5%B7%E9%BB%98/</url>
+    <content><![CDATA[<p><strong>“当人们折磨够你之后，就会颁奖给你，好像在原谅你的样子，但其实这些举动都只是为了他们自己。”</strong></p>
+<p>当奥本海默看到原子弹爆炸的那一刻，他的眼中出现了恐惧，之后他的脑海里多次闪回巨响、彻夜地失眠、清晰地记得受害者人数、在演讲时看见诺兰女儿被核武器摧毁…</p>
+<p>他也是一名普通人，他渴望和平，他只是想快速结束第二次世界大战，但是完成任务后，他不想继续让人类继续毁灭自己而反对氢弹，却遭到麦卡锡主义者的排挤（以至于在去年的12月才得以平反），作为一名科学家的他只能身处矛盾的暴风眼中心却无能为力，受尽打击。</p>
+<p>他是原子弹的创造者，也是原子弹的受害者，他比谁都更想看到世界和平，却已经没有办法控制贪婪的政治家们，反倒成为了杜鲁门口中的傻子。无论是原子弹还是核污水排放也只是为了政治家们自己的利益，在他们的眼中，普通人的生命？笑话罢了。</p>
+<p>电影最后平行时空里的大气层烧毁，或许是诺兰留给我们的思考吧。</p>
+<p>确实很震撼，但是别睡着…</p>
+]]></content>
+      <categories>
+        <category>Movie</category>
+      </categories>
+      <tags>
+        <tag>影评</tag>
       </tags>
   </entry>
   <entry>
@@ -908,224 +945,6 @@
       </categories>
       <tags>
         <tag>homework</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>奥本海默</title>
-    <url>/2023/08/30/%E5%A5%A5%E6%9C%AC%E6%B5%B7%E9%BB%98/</url>
-    <content><![CDATA[<p><strong>“当人们折磨够你之后，就会颁奖给你，好像在原谅你的样子，但其实这些举动都只是为了他们自己。”</strong></p>
-<p>当奥本海默看到原子弹爆炸的那一刻，他的眼中出现了恐惧，之后他的脑海里多次闪回巨响、彻夜地失眠、清晰地记得受害者人数、在演讲时看见诺兰女儿被核武器摧毁…</p>
-<p>他也是一名普通人，他渴望和平，他只是想快速结束第二次世界大战，但是完成任务后，他不想继续让人类继续毁灭自己而反对氢弹，却遭到麦卡锡主义者的排挤（以至于在去年的12月才得以平反），作为一名科学家的他只能身处矛盾的暴风眼中心却无能为力，受尽打击。</p>
-<p>他是原子弹的创造者，也是原子弹的受害者，他比谁都更想看到世界和平，却已经没有办法控制贪婪的政治家们，反倒成为了杜鲁门口中的傻子。无论是原子弹还是核污水排放也只是为了政治家们自己的利益，在他们的眼中，普通人的生命？笑话罢了。</p>
-<p>电影最后平行时空里的大气层烧毁，或许是诺兰留给我们的思考吧。</p>
-<p>确实很震撼，但是别睡着…</p>
-]]></content>
-      <categories>
-        <category>Movie</category>
-      </categories>
-      <tags>
-        <tag>影评</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数据库技术与应用</title>
-    <url>/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/</url>
-    <content><![CDATA[<h1 id="1-绪论"><a href="#1-绪论" class="headerlink" title="1 绪论"></a>1 绪论</h1><h2 id="1-2-数据模型"><a href="#1-2-数据模型" class="headerlink" title="1.2 数据模型"></a>1.2 数据模型</h2><p>在数据库中用数据模型这个工具来<strong>抽象、表示和处理</strong>现实世界中的事物。</p>
-<p>通俗地讲数据模型就是现实世界的抽象和模拟。</p>
-<p>数据模型应满足三方面要求</p>
-<p><strong>能比较真实地模拟现实世界</strong></p>
-<p><strong>容易为人所理解</strong></p>
-<p><strong>便于在计算机上 实现</strong></p>
-<h3 id="两大类数据模型"><a href="#两大类数据模型" class="headerlink" title="两大类数据模型"></a>两大类数据模型</h3><p>(1) <strong>概念模型</strong>   也称信息模型，它是按用户的观点来对数据和信息建模，用于数据库设计。<br>(2) <strong>逻辑模型和物理模型</strong>   按计算机系统的观点对数据建模，用于DBMS的实现。<br>        逻辑模型主要包括网状模型、层次模型、关系模型、面向对象模型等，按计算机系统的观点对数据建模，用于DBMS实现。<br>        物理模型是对数据最底层的抽象，描述数据在系统内部的表示方式和存取方法，在磁盘或磁带上的存储方式和存取方法。</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228192613246-16781980135701.png" alt="image-20230228192613246" style="zoom:50%;">
-
-<h3 id="概念模型"><a href="#概念模型" class="headerlink" title="概念模型"></a>概念模型</h3><p><strong>概念模型的用途</strong><br>概念模型用于信息世界的建模<br>是现实世界到机器世界的一个中间层次<br>是数据库设计的有力工具<br>数据库设计人员和用户之间进行交流的语言<br><strong>对概念模型的基本要求</strong><br>较强的语义表达能力<br>能够方便、直接地表达应用中的各种语义知识<br>简单、清晰、易于用户理解</p>
-<h3 id="信息世界中的基本概念"><a href="#信息世界中的基本概念" class="headerlink" title="信息世界中的基本概念"></a>信息世界中的基本概念</h3><p><strong>(1) 实体（Entity）</strong></p>
-<p>客观存在并可相互区别的事物称为实体。可以是具体的人、事、物或抽象的概念。</p>
-<p><strong>(2) 属性（Attribute）</strong></p>
-<p>实体所具有的某一特性称为属性。一个实体可以由若干个属性来刻画。 </p>
-<p><strong>(3) 码（Key）</strong> </p>
-<p>唯一标识实体的属性集称为码</p>
-<p><strong>(4) 域（Domain）</strong> </p>
-<p>属性的取值范围称为该属性的域。 </p>
-<p><strong>(5) 实体型（Entity Type）</strong> </p>
-<p>用实体名及其属性名集合来抽象和刻画同类实体称为实体型</p>
-<p>例子：学生（学号、姓名、性别、出生年月）</p>
-<p><strong>(6) 实体集（Entity Set）</strong><br>同一类型实体的集合称为实体集：</p>
-<table>
-<thead>
-<tr>
-<th><strong>学号</strong></th>
-<th><strong>姓名</strong></th>
-<th><strong>性别</strong></th>
-<th><strong>出生日期</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>20021001</td>
-<td>张三</td>
-<td>男</td>
-<td>1978-5-6</td>
-</tr>
-<tr>
-<td>20021003</td>
-<td>李四</td>
-<td>女</td>
-<td>1980-1-24</td>
-</tr>
-<tr>
-<td>20021004</td>
-<td>王五</td>
-<td>男</td>
-<td>1979-11-12</td>
-</tr>
-</tbody></table>
-<p><strong>(7) 联系（Relationship）</strong>  </p>
-<p>现实世界：事物内部以及事物之间的联系<br>信息世界：实体内部的联系和实体之间的联系</p>
-<h3 id="两个实体型之间的联系"><a href="#两个实体型之间的联系" class="headerlink" title="两个实体型之间的联系"></a>两个实体型之间的联系</h3><h4 id="一对一联系（1-1）"><a href="#一对一联系（1-1）" class="headerlink" title="一对一联系（1 : 1）"></a>一对一联系（1 : 1）</h4><p><strong>实例</strong><br>一个班级只有一个正班长，一个班长只在一个班中任职<br><strong>定义：</strong><br>    如果对于实体集A中的每一个实体，实体集B中至多有一个（也可以没有）实体与之联系，反之亦然，<strong>则称实体集A与实体集B具有一对一联系，记为1:1</strong> </p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193153537-16781980135712.png" alt="image-20230228193153537" style="zoom:33%;">
-
-<h4 id="一对多联系（1-n）"><a href="#一对多联系（1-n）" class="headerlink" title="一对多联系（1 : n）"></a>一对多联系（1 : n）</h4><p><strong>实例</strong><br>一个班级中有若干名学生，每个学生只在一个班级中学习<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中至多只有一个实体与之联系，则称<strong>实体集A与实体集B</strong>有一对多联系，记为1:n</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193321227-16781980135713.png" alt="image-20230228193321227" style="zoom:33%;">
-
-<p>注意一对多联系图中<strong>1</strong>的位置</p>
-<h4 id="多对多联系（m-n）"><a href="#多对多联系（m-n）" class="headerlink" title="多对多联系（m : n）"></a>多对多联系（m : n）</h4><p><strong>实例</strong><br>课程与学生之间的联系：<br>一门课程同时有若干个学生选修<br>一个学生可以同时选修多门课程<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中也有m个实体（m≥0）与之联系，则称实体集A与实体B具有多对多联系，记为m:n</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193313680-16781980135714.png" alt="image-20230228193313680" style="zoom:33%;">
-
-<h4 id="用图形来表示两个实体型之间的三类联系"><a href="#用图形来表示两个实体型之间的三类联系" class="headerlink" title="用图形来表示两个实体型之间的三类联系"></a>用图形来表示两个实体型之间的三类联系</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193406567-16781980135715.png" alt="image-20230228193406567" style="zoom:50%;">
-
-<h3 id="两个以上实体型之间的联系"><a href="#两个以上实体型之间的联系" class="headerlink" title="两个以上实体型之间的联系"></a>两个以上实体型之间的联系</h3><p>若实体型E1，E2，…，En存在联系，对于实体型Ej（j&#x3D;1，2，…，i-1，i+1，…，n）中的给定实体，最多只和Ei中的一个实体相联系，则我们说Ei与E1，E2，…，Ei-1，Ei+1，…，En之间的联系是<strong>一对多</strong>的</p>
-<p><strong>实例</strong></p>
-<p>课程、教师与参考书三个实体型</p>
-<p>每一个教师可以讲授若干门课程，每门课程可以使用若干本参考书</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193534803-16781980135716.png" alt="image-20230228193534803" style="zoom:50%;">
-
-<p><strong>两个以上实体型间的一对一联系</strong></p>
-<p><strong>两个以上实体型间的多对多联系</strong></p>
-<h3 id="单个实体型内的联系"><a href="#单个实体型内的联系" class="headerlink" title="单个实体型内的联系"></a>单个实体型内的联系</h3><p>同一实体集内的各实体之间的关系<br><strong>一对多联系</strong><br><strong>实例</strong><br>职工实体型内部具有领导与被领导的联系<br>某一职工（干部）“领导”若干名职工<br>一个职工仅被另外一个职工直接领导<br>这是一对多的联系</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193653846-16781980135717.png" alt="image-20230228193653846" style="zoom:50%;">
-
-<p><strong>一对一联系和多对多联系</strong></p>
-<h3 id="概念模型的一种表示方法"><a href="#概念模型的一种表示方法" class="headerlink" title="概念模型的一种表示方法"></a>概念模型的一种表示方法</h3><p><strong>实体－联系方法(E-R方法)</strong></p>
-<h4 id="E-R图"><a href="#E-R图" class="headerlink" title="E-R图"></a>E-R图</h4><p><strong>实体型</strong><br>用矩形表示，矩形框内写明实体名。</p>
-<p><strong>属性</strong><br>用椭圆形表示，并用无向边将其与相应的实体连接起来</p>
-<p><strong>联系</strong><br>联系本身：<br>   用菱形表示，菱形框内写明联系名，并用无向边分别与有关实体连接起来，同时在无向边旁标上联系的类型（1:1、1:n或m:n）</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193805948-16781980135718.png" alt="image-20230228193805948" style="zoom:50%;">
-
-<h4 id="联系的表示方法"><a href="#联系的表示方法" class="headerlink" title="联系的表示方法"></a>联系的表示方法</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193826047-16781980135719.png" alt="image-20230228193826047" style="zoom:50%;">
-
-<h4 id="联系的属性"><a href="#联系的属性" class="headerlink" title="联系的属性"></a>联系的属性</h4><p>联系本身也是一种实体型，也   可以有属性。如果一个联系具有属性，则这些属性也要用无向边与该联系连接起来 </p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193848342-167819801357110.png" alt="image-20230228193848342" style="zoom:50%;">
-
-<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>用E-R图表示某个工厂物资管理的概念模型<br>实体：<br>        仓库： 仓库号、面积、电话号码<br>        零件 ：零件号、名称、规格、单价、描述<br>        供应商：供应商号、姓名、地址、电话号码、帐号<br>        项目：项目号、预算、开工日期<br>        职工：职工号、姓名、年龄、职称<br>实体之间的联系如下：<br>        一个仓库可以存放多种零件，一种零件可以存放在多个仓库中。用库存量来表示某种零件在某个仓库中的数量<br>        一个仓库有多个职工当仓库保管员，一个职工只能在一个仓库工作<br>        职工之间具有领导-被领导关系。即仓库主任领导若干保管员</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194000378-167819801357111.png" alt="image-20230228194000378" style="zoom:67%;">
-
-<h3 id="数据模型的组成要素"><a href="#数据模型的组成要素" class="headerlink" title="数据模型的组成要素"></a>数据模型的组成要素</h3><h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p><strong>描述数据库的组成对象，以及对象之间的联系</strong></p>
-<p><strong>描述的内容</strong><br>与数据类型、内容、性质有关的对象<br>与数据之间联系有关的对象</p>
-<p><strong>数据结构是对系统静态特性的描述</strong></p>
-<h4 id="数据操作"><a href="#数据操作" class="headerlink" title="数据操作"></a>数据操作</h4><p>**对数据库中各种对象(型)的实例(值)允许执行的操作及有关的操作规则</p>
-<p><strong>数据操作的类型</strong><br>查询<br>更新(包括插入、删除、修改)</p>
-<p><strong>数据模型对操作的定义</strong><br>操作的确切含义<br>操作符号<br>操作规则（如优先级）<br>实现操作的语言</p>
-<p><strong>数据操作是对系统动态特性的描述</strong></p>
-<h4 id="完整性约束条件"><a href="#完整性约束条件" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h4><p><strong>一组完整性规则的集合。</strong><br>完整性规则：给定的数据模型中数据及其联系所具有的制约和储存规则，用以限定符合数据模型的数据库状态以及状态的变化，以保证数据的正确、有效、相容。</p>
-<p><strong>数据模型对完整性约束条件的定义</strong><br>必须遵守的基本的通用的完整性约束条件。<br>例如，关系模型中，任何关系必须满足实体完整性和参照完整性两个条件。</p>
-<p><strong>反映具体应用所涉及的特定的约束条件。</strong><br>例子：学校数据库中规定博士学生的年龄必须小于45岁<br>例子：银行的系统中规定帐号的余额不能小于1元</p>
-<h3 id="常用的数据模型"><a href="#常用的数据模型" class="headerlink" title="常用的数据模型"></a>常用的数据模型</h3><p>格式化模型<br>        层次模型(Hierarchical Model)<br>        网状模型(Network Model)</p>
-<p>关系模型(Relational Model)  </p>
-<p>面向对象模型(Object Oriented Model）</p>
-<p>对象关系模型(Object Relational Model)</p>
-<h4 id="层次模型"><a href="#层次模型" class="headerlink" title="层次模型"></a>层次模型</h4><p>层次模型用树形结构来表示各类实体以及实体间的联系 </p>
-<h5 id="层次模型-1"><a href="#层次模型-1" class="headerlink" title="层次模型"></a><strong>层次模型</strong></h5><p> 满足下面两个条件的基本层次联系的集合为层次模型</p>
-<p>1.有且只有一个结点没有双亲结点，这个结点称为根结点</p>
-<p>2.根以外的其它结点有且只有一个双亲结点</p>
-<h5 id="层次模型中的几个术语"><a href="#层次模型中的几个术语" class="headerlink" title="层次模型中的几个术语"></a><strong>层次模型中的几个术语</strong></h5><p>根结点，双亲结点，兄弟结点，叶结点</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194651033-167819801357112.png" alt="image-20230228194651033" style="zoom:50%;">
-
-<h5 id="表示方法"><a href="#表示方法" class="headerlink" title="表示方法"></a><strong>表示方法</strong></h5><p><strong>实体型：</strong>用记录类型描述，每个结点表示一个记录类型（实体）</p>
-<p><strong>属性：</strong>用字段描述，每个记录类型可包含若干个字段</p>
-<p><strong>联系：</strong>用结点之间的连线表示记录类型（实体）之间的<strong>一对多</strong>的父子联系</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194729758-167819801357113.png" alt="image-20230228194729758" style="zoom: 50%;">
-
-<h5 id="层次模型的数据操纵"><a href="#层次模型的数据操纵" class="headerlink" title="层次模型的数据操纵"></a><strong>层次模型的数据操纵</strong></h5><p>查询 插入 删除 更新</p>
-<h5 id="层次模型的完整性约束条件"><a href="#层次模型的完整性约束条件" class="headerlink" title="层次模型的完整性约束条件"></a><strong>层次模型的完整性约束条件</strong></h5><p>无相应的双亲结点值就不能插入子女结点值<br>如果删除双亲结点值，则相应的子女结点值也被同时删除</p>
-<h5 id="层次数据模型的存储结构"><a href="#层次数据模型的存储结构" class="headerlink" title="层次数据模型的存储结构"></a><strong>层次数据模型的存储结构</strong></h5><p><strong>邻接法</strong><br>按照层次树前序遍历的顺序把所有记录值依次邻接存放，即通过物理空间的位置相邻来实现层次顺序</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194950487-167819801357115.png" alt="image-20230228194950487" style="zoom:50%;">
-
-<p><strong>链接法</strong><br>用指引来反映数据之间的层次联系<br>子女－兄弟链接法<br>层次序列链接法</p>
-<p><strong>子女-兄弟链接法</strong><br>每个记录设两类指针，分别指向最左边的子女（每个记录型对应一个）和最近的兄弟</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195024242-167819801357114.png" alt="image-20230228195024242" style="zoom:50%;">
-
-<p><strong>层次序列链接法</strong></p>
-<p>按树的前序穿越顺序链接各记录值</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195039461-167819801357116.png" alt="image-20230228195039461" style="zoom:50%;">
-
-<h5 id="层次模型的优缺点"><a href="#层次模型的优缺点" class="headerlink" title="层次模型的优缺点"></a><strong>层次模型的优缺点</strong></h5><p><strong>优点</strong><br>层次模型的数据结构比较简单清晰<br>查询效率高，性能优于关系模型，不低于网状模型<br>层次数据模型提供了良好的完整性支持</p>
-<p><strong>缺点</strong><br>多对多联系表示不自然<br>对插入和删除操作的限制多，应用程序的编写比较复杂<br>查询子女结点必须通过双亲结点</p>
-<h4 id="网状模型"><a href="#网状模型" class="headerlink" title="网状模型"></a>网状模型</h4><p>满足下面两个条件的基本层次联系的集合：</p>
-<ol>
-<li>允许一个以上的结点无双亲；</li>
-<li>一个结点可以有多于一个的双亲。<br>允许两个结点之间有多种联系（复合联系）<br>网状模型可以更直接地去描述现实世界，层次模型实际上是网状模型的一个特例</li>
-</ol>
-<h5 id="多对多联系在网状模型中的表示"><a href="#多对多联系在网状模型中的表示" class="headerlink" title="多对多联系在网状模型中的表示"></a><strong>多对多联系在网状模型中的表示</strong></h5><p>​		用网状模型间接表示多对多联系<br>​		方法：将多对多联系直接分解成一对多联系</p>
-<h5 id="数据操作-1"><a href="#数据操作-1" class="headerlink" title="数据操作"></a><strong>数据操作</strong></h5><p>网状数据库系统（如DBTG）对数据操纵加了一些限制，提供了一定的完整性约束<br>码：唯一标识记录的数据项的集合<br>支持双亲记录和子女记录之间某些约束条件<br>    有些子女记录要求双亲记录存在才能插入，双亲记录删除时也连同删除。例如学生选课记录</p>
-<h5 id="网状数据模型的存储结构"><a href="#网状数据模型的存储结构" class="headerlink" title="网状数据模型的存储结构"></a>网状数据模型的存储结构</h5><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195613303-167819801357117.png" alt="image-20230228195613303" style="zoom:50%;">
-
-<h5 id="网状数据模型的优缺点"><a href="#网状数据模型的优缺点" class="headerlink" title="网状数据模型的优缺点"></a>网状数据模型的优缺点</h5><p><strong>优点</strong><br>能更为直接地描述现实世界，如一个结点可以有多个双亲</p>
-<p>具有良好的性能，存取效率较高</p>
-<p><strong>缺点</strong><br>结构比较复杂，而且随着应用环境的扩大，数据库的结构就变得越来越复杂，不利于最终用户掌握</p>
-<p>DDL、DML语言复杂，用户不容易使用</p>
-<p>记录类型联系变动后涉及链接指针的调整，扩充和维护都比较复杂 </p>
-<h4 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h4><p>在用户观点下，关系模型中数据的逻辑结构是一张二维表，它由行和列组成。</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195759196-167819801357118.png" alt="image-20230228195759196" style="zoom: 50%;">
-
-<p><strong>关系（Relation）</strong><br>一个关系对应通常说的一张表<br><strong>元组（Tuple）</strong><br>表中的一行即为一个元组<br><strong>属性（Attribute）</strong><br>表中的一列即为一个属性，给每一个属性起一个名称即属性名</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195837826-167819801357119.png" alt="image-20230228195837826" style="zoom:50%;">
-
-<p><strong>主码（Key）</strong><br>表中的某个属性组，它可以唯一确定一个元组。<br><strong>域（Domain）</strong><br>属性的取值范围。<br><strong>分量</strong><br>元组中的一个属性值。<br><strong>关系模式</strong><br>对关系的描述<br>关系名（属性1，属性2，…，属性n）<br>学生（学号，姓名，年龄，性别，系，年级）</p>
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200117047-167819801357220.png" alt="image-20230228200117047" style="zoom:50%;">
-
-<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200133118-167819801357221.png" alt="image-20230228200133118" style="zoom:50%;">
-
-<h5 id="数据操作是集合操作，操作对象和结果都是关系"><a href="#数据操作是集合操作，操作对象和结果都是关系" class="headerlink" title="数据操作是集合操作，操作对象和结果都是关系"></a>数据操作是集合操作，操作对象和结果都是关系</h5><p>查询 插入 删除 更新</p>
-<h5 id="完整性约束条件-1"><a href="#完整性约束条件-1" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h5><p>实体完整性<br>参照完整性<br>用户定义的完整性</p>
-<h5 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h5><p>实体及实体间的联系都用表来表示<br>表以文件形式存储<br>有的DBMS一个表对应一个操作系统文件<br>有的DBMS自己设计文件结构</p>
-<h5 id="关系数据模型的优缺点"><a href="#关系数据模型的优缺点" class="headerlink" title="关系数据模型的优缺点"></a>关系数据模型的优缺点</h5><p><strong>优点</strong><br>建立在严格的数学概念的基础上<br>可以描述一对一、一对多和多对多的联系<br>概念单一<br>        实体和各类联系都用关系来表示<br>        对数据的检索结果也是关系<br>存取路径对用户透明<br>        用户只要指出“干什么”，不必详细说明“怎么干”<br>        具有更高的数据独立性，更好的安全保密性<br>        简化了程序员的工作和数据库开发建立的工作</p>
-<p><strong>缺点</strong><br>存取路径对用户透明导致查询效率往往不如非关系数据模型<br>为提高性能，必须对用户的查询请求进行优化增加了开发DBMS的难度</p>
-<h4 id="关系模式-ER图"><a href="#关系模式-ER图" class="headerlink" title="关系模式-&gt;ER图"></a>关系模式-&gt;ER图</h4><p>例：<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307214952179.png" alt="image-20230307214952179" style="zoom:67%;"></p>
-<h3 id="E-R模型补充扩展"><a href="#E-R模型补充扩展" class="headerlink" title="E-R模型补充扩展"></a>E-R模型补充扩展</h3><p><strong>Movie database</strong><br><strong>Movie</strong>: title, year, length, genre<br><strong>Stars</strong>: name, address<br><strong>Studios</strong>: name, address</p>
-<p>a studio contracts with a particular start to act in a particular movie for some salary</p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215104726.png" alt="image-20230307215104726" style="zoom:50%;">
-
-<h4 id="多实体集联系-多角色实体集"><a href="#多实体集联系-多角色实体集" class="headerlink" title="多实体集联系+多角色实体集"></a>多实体集联系+多角色实体集</h4><p>怎样表示Studio 2从studio 1租借某演员签约出演某电影？</p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215135547.png" alt="image-20230307215135547" style="zoom:50%;">
-
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215534821.png" alt="image-20230307215534821" style="zoom: 33%;">
-
-<p>怎样去掉联系Contracts的属性salary？</p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215600082.png" alt="image-20230307215600082" style="zoom:50%;">
-
-<h4 id="“Is-a”联系"><a href="#“Is-a”联系" class="headerlink" title="“Is a”联系"></a>“Is a”联系</h4><p>怎样表示电影的两个子类“动画片”和“枪战片”</p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215658701.png" alt="image-20230307215658701" style="zoom: 33%;">
-
-<h2 id="1-3-数据库系统结构"><a href="#1-3-数据库系统结构" class="headerlink" title="1.3 数据库系统结构"></a>1.3 数据库系统结构</h2><h4 id="分布式B-S结构数据库系统"><a href="#分布式B-S结构数据库系统" class="headerlink" title="分布式B&#x2F;S结构数据库系统"></a>分布式B&#x2F;S结构数据库系统</h4><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215809913.png" alt="image-20230307215809913" style="zoom:50%;">
-
-<h3 id="数据库系统模式的概念"><a href="#数据库系统模式的概念" class="headerlink" title="数据库系统模式的概念"></a>数据库系统模式的概念</h3><h4 id="“型”-和“值”-的概念"><a href="#“型”-和“值”-的概念" class="headerlink" title="“型” 和“值” 的概念"></a>“型” 和“值” 的概念</h4><p><strong>型(Type)</strong>  对某一类数据的结构和属性的说明<br><strong>值(Value)</strong>  是型的一个具体赋值<br>例如<br>学生记录型：<br>  （学号，姓名，性别，系别，年龄，籍贯）<br>一个记录值：<br>  （900201，李明，男，计算机，22，江苏）</p>
-<p><strong>模式（Schema）</strong><br>数据库逻辑结构和特征的描述<br>是型的描述<br>反映的是数据的结构及其联系<br>模式是相对稳定的</p>
-<p><strong>实例（Instance）</strong><br>模式的一个具体值<br>反映数据库某一时刻的状态<br>同一个模式可以有很多实例<br>实例随数据库中的数据的更新而变动</p>
-<h3 id="数据库系统的三级模式结构"><a href="#数据库系统的三级模式结构" class="headerlink" title="数据库系统的三级模式结构"></a>数据库系统的三级模式结构</h3><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220505091.png" alt="image-20230307220505091" style="zoom: 50%;">
-
-<h4 id="模式（也称逻辑模式）"><a href="#模式（也称逻辑模式）" class="headerlink" title="模式（也称逻辑模式）"></a>模式（也称逻辑模式）</h4><p>​		数据库中全体数据的逻辑结构和特征的描述<br>​		所有用户的公共数据视图，综合了所有用户的需求<br><strong>一个数据库只有一个模式</strong><br><strong>模式的地位：是数据库系统模式结构的中间层</strong><br>​		与数据的物理存储细节和硬件环境无关<br>​		与具体的应用程序、开发工具及高级程序设计语言无关</p>
-<p><strong>模式的定义</strong><br>        数据的逻辑结构（数据项的名字、类型、取值范围等）<br>        数据之间的联系<br>        数据有关的安全性、完整性要求</p>
-<h4 id="外模式（也称子模式或用户模式）"><a href="#外模式（也称子模式或用户模式）" class="headerlink" title="外模式（也称子模式或用户模式）"></a>外模式（也称子模式或用户模式）</h4><p>数据库用户（包括应用程序员和最终用户）使用的局部数据的逻辑结构和特征的描述<br>数据库用户的数据视图，是与某一应用有关的数据的逻辑表示</p>
-<h4 id="内模式（也称存储模式）"><a href="#内模式（也称存储模式）" class="headerlink" title="内模式（也称存储模式）"></a>内模式（也称存储模式）</h4><p>是数据物理结构和存储方式的描述<br>是数据在数据库内部的表示方式</p>
-<p><strong>一个数据库只有一个内模式</strong></p>
-<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220519463.png" alt="image-20230307220519463" style="zoom:67%;">
-]]></content>
-      <categories>
-        <category>Note</category>
-      </categories>
-      <tags>
-        <tag>Note</tag>
       </tags>
   </entry>
   <entry>
@@ -1749,6 +1568,207 @@
       </tags>
   </entry>
   <entry>
+    <title>数据库技术与应用</title>
+    <url>/2023/02/28/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/</url>
+    <content><![CDATA[<h1 id="1-绪论"><a href="#1-绪论" class="headerlink" title="1 绪论"></a>1 绪论</h1><h2 id="1-2-数据模型"><a href="#1-2-数据模型" class="headerlink" title="1.2 数据模型"></a>1.2 数据模型</h2><p>在数据库中用数据模型这个工具来<strong>抽象、表示和处理</strong>现实世界中的事物。</p>
+<p>通俗地讲数据模型就是现实世界的抽象和模拟。</p>
+<p>数据模型应满足三方面要求</p>
+<p><strong>能比较真实地模拟现实世界</strong></p>
+<p><strong>容易为人所理解</strong></p>
+<p><strong>便于在计算机上 实现</strong></p>
+<h3 id="两大类数据模型"><a href="#两大类数据模型" class="headerlink" title="两大类数据模型"></a>两大类数据模型</h3><p>(1) <strong>概念模型</strong>   也称信息模型，它是按用户的观点来对数据和信息建模，用于数据库设计。<br>(2) <strong>逻辑模型和物理模型</strong>   按计算机系统的观点对数据建模，用于DBMS的实现。<br>        逻辑模型主要包括网状模型、层次模型、关系模型、面向对象模型等，按计算机系统的观点对数据建模，用于DBMS实现。<br>        物理模型是对数据最底层的抽象，描述数据在系统内部的表示方式和存取方法，在磁盘或磁带上的存储方式和存取方法。</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228192613246-16781980135701.png" alt="image-20230228192613246" style="zoom:50%;">
+
+<h3 id="概念模型"><a href="#概念模型" class="headerlink" title="概念模型"></a>概念模型</h3><p><strong>概念模型的用途</strong><br>概念模型用于信息世界的建模<br>是现实世界到机器世界的一个中间层次<br>是数据库设计的有力工具<br>数据库设计人员和用户之间进行交流的语言<br><strong>对概念模型的基本要求</strong><br>较强的语义表达能力<br>能够方便、直接地表达应用中的各种语义知识<br>简单、清晰、易于用户理解</p>
+<h3 id="信息世界中的基本概念"><a href="#信息世界中的基本概念" class="headerlink" title="信息世界中的基本概念"></a>信息世界中的基本概念</h3><p><strong>(1) 实体（Entity）</strong></p>
+<p>客观存在并可相互区别的事物称为实体。可以是具体的人、事、物或抽象的概念。</p>
+<p><strong>(2) 属性（Attribute）</strong></p>
+<p>实体所具有的某一特性称为属性。一个实体可以由若干个属性来刻画。 </p>
+<p><strong>(3) 码（Key）</strong> </p>
+<p>唯一标识实体的属性集称为码</p>
+<p><strong>(4) 域（Domain）</strong> </p>
+<p>属性的取值范围称为该属性的域。 </p>
+<p><strong>(5) 实体型（Entity Type）</strong> </p>
+<p>用实体名及其属性名集合来抽象和刻画同类实体称为实体型</p>
+<p>例子：学生（学号、姓名、性别、出生年月）</p>
+<p><strong>(6) 实体集（Entity Set）</strong><br>同一类型实体的集合称为实体集：</p>
+<table>
+<thead>
+<tr>
+<th><strong>学号</strong></th>
+<th><strong>姓名</strong></th>
+<th><strong>性别</strong></th>
+<th><strong>出生日期</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>20021001</td>
+<td>张三</td>
+<td>男</td>
+<td>1978-5-6</td>
+</tr>
+<tr>
+<td>20021003</td>
+<td>李四</td>
+<td>女</td>
+<td>1980-1-24</td>
+</tr>
+<tr>
+<td>20021004</td>
+<td>王五</td>
+<td>男</td>
+<td>1979-11-12</td>
+</tr>
+</tbody></table>
+<p><strong>(7) 联系（Relationship）</strong>  </p>
+<p>现实世界：事物内部以及事物之间的联系<br>信息世界：实体内部的联系和实体之间的联系</p>
+<h3 id="两个实体型之间的联系"><a href="#两个实体型之间的联系" class="headerlink" title="两个实体型之间的联系"></a>两个实体型之间的联系</h3><h4 id="一对一联系（1-1）"><a href="#一对一联系（1-1）" class="headerlink" title="一对一联系（1 : 1）"></a>一对一联系（1 : 1）</h4><p><strong>实例</strong><br>一个班级只有一个正班长，一个班长只在一个班中任职<br><strong>定义：</strong><br>    如果对于实体集A中的每一个实体，实体集B中至多有一个（也可以没有）实体与之联系，反之亦然，<strong>则称实体集A与实体集B具有一对一联系，记为1:1</strong> </p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193153537-16781980135712.png" alt="image-20230228193153537" style="zoom:33%;">
+
+<h4 id="一对多联系（1-n）"><a href="#一对多联系（1-n）" class="headerlink" title="一对多联系（1 : n）"></a>一对多联系（1 : n）</h4><p><strong>实例</strong><br>一个班级中有若干名学生，每个学生只在一个班级中学习<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中至多只有一个实体与之联系，则称<strong>实体集A与实体集B</strong>有一对多联系，记为1:n</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193321227-16781980135713.png" alt="image-20230228193321227" style="zoom:33%;">
+
+<p>注意一对多联系图中<strong>1</strong>的位置</p>
+<h4 id="多对多联系（m-n）"><a href="#多对多联系（m-n）" class="headerlink" title="多对多联系（m : n）"></a>多对多联系（m : n）</h4><p><strong>实例</strong><br>课程与学生之间的联系：<br>一门课程同时有若干个学生选修<br>一个学生可以同时选修多门课程<br><strong>定义：</strong><br>如果对于实体集A中的每一个实体，实体集B中有n个实体（n≥0）与之联系，反之，对于实体集B中的每一个实体，实体集A中也有m个实体（m≥0）与之联系，则称实体集A与实体B具有多对多联系，记为m:n</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193313680-16781980135714.png" alt="image-20230228193313680" style="zoom:33%;">
+
+<h4 id="用图形来表示两个实体型之间的三类联系"><a href="#用图形来表示两个实体型之间的三类联系" class="headerlink" title="用图形来表示两个实体型之间的三类联系"></a>用图形来表示两个实体型之间的三类联系</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193406567-16781980135715.png" alt="image-20230228193406567" style="zoom:50%;">
+
+<h3 id="两个以上实体型之间的联系"><a href="#两个以上实体型之间的联系" class="headerlink" title="两个以上实体型之间的联系"></a>两个以上实体型之间的联系</h3><p>若实体型E1，E2，…，En存在联系，对于实体型Ej（j&#x3D;1，2，…，i-1，i+1，…，n）中的给定实体，最多只和Ei中的一个实体相联系，则我们说Ei与E1，E2，…，Ei-1，Ei+1，…，En之间的联系是<strong>一对多</strong>的</p>
+<p><strong>实例</strong></p>
+<p>课程、教师与参考书三个实体型</p>
+<p>每一个教师可以讲授若干门课程，每门课程可以使用若干本参考书</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193534803-16781980135716.png" alt="image-20230228193534803" style="zoom:50%;">
+
+<p><strong>两个以上实体型间的一对一联系</strong></p>
+<p><strong>两个以上实体型间的多对多联系</strong></p>
+<h3 id="单个实体型内的联系"><a href="#单个实体型内的联系" class="headerlink" title="单个实体型内的联系"></a>单个实体型内的联系</h3><p>同一实体集内的各实体之间的关系<br><strong>一对多联系</strong><br><strong>实例</strong><br>职工实体型内部具有领导与被领导的联系<br>某一职工（干部）“领导”若干名职工<br>一个职工仅被另外一个职工直接领导<br>这是一对多的联系</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193653846-16781980135717.png" alt="image-20230228193653846" style="zoom:50%;">
+
+<p><strong>一对一联系和多对多联系</strong></p>
+<h3 id="概念模型的一种表示方法"><a href="#概念模型的一种表示方法" class="headerlink" title="概念模型的一种表示方法"></a>概念模型的一种表示方法</h3><p><strong>实体－联系方法(E-R方法)</strong></p>
+<h4 id="E-R图"><a href="#E-R图" class="headerlink" title="E-R图"></a>E-R图</h4><p><strong>实体型</strong><br>用矩形表示，矩形框内写明实体名。</p>
+<p><strong>属性</strong><br>用椭圆形表示，并用无向边将其与相应的实体连接起来</p>
+<p><strong>联系</strong><br>联系本身：<br>   用菱形表示，菱形框内写明联系名，并用无向边分别与有关实体连接起来，同时在无向边旁标上联系的类型（1:1、1:n或m:n）</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193805948-16781980135718.png" alt="image-20230228193805948" style="zoom:50%;">
+
+<h4 id="联系的表示方法"><a href="#联系的表示方法" class="headerlink" title="联系的表示方法"></a>联系的表示方法</h4><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193826047-16781980135719.png" alt="image-20230228193826047" style="zoom:50%;">
+
+<h4 id="联系的属性"><a href="#联系的属性" class="headerlink" title="联系的属性"></a>联系的属性</h4><p>联系本身也是一种实体型，也   可以有属性。如果一个联系具有属性，则这些属性也要用无向边与该联系连接起来 </p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228193848342-167819801357110.png" alt="image-20230228193848342" style="zoom:50%;">
+
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h3><p>用E-R图表示某个工厂物资管理的概念模型<br>实体：<br>        仓库： 仓库号、面积、电话号码<br>        零件 ：零件号、名称、规格、单价、描述<br>        供应商：供应商号、姓名、地址、电话号码、帐号<br>        项目：项目号、预算、开工日期<br>        职工：职工号、姓名、年龄、职称<br>实体之间的联系如下：<br>        一个仓库可以存放多种零件，一种零件可以存放在多个仓库中。用库存量来表示某种零件在某个仓库中的数量<br>        一个仓库有多个职工当仓库保管员，一个职工只能在一个仓库工作<br>        职工之间具有领导-被领导关系。即仓库主任领导若干保管员</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194000378-167819801357111.png" alt="image-20230228194000378" style="zoom:67%;">
+
+<h3 id="数据模型的组成要素"><a href="#数据模型的组成要素" class="headerlink" title="数据模型的组成要素"></a>数据模型的组成要素</h3><h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p><strong>描述数据库的组成对象，以及对象之间的联系</strong></p>
+<p><strong>描述的内容</strong><br>与数据类型、内容、性质有关的对象<br>与数据之间联系有关的对象</p>
+<p><strong>数据结构是对系统静态特性的描述</strong></p>
+<h4 id="数据操作"><a href="#数据操作" class="headerlink" title="数据操作"></a>数据操作</h4><p>**对数据库中各种对象(型)的实例(值)允许执行的操作及有关的操作规则</p>
+<p><strong>数据操作的类型</strong><br>查询<br>更新(包括插入、删除、修改)</p>
+<p><strong>数据模型对操作的定义</strong><br>操作的确切含义<br>操作符号<br>操作规则（如优先级）<br>实现操作的语言</p>
+<p><strong>数据操作是对系统动态特性的描述</strong></p>
+<h4 id="完整性约束条件"><a href="#完整性约束条件" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h4><p><strong>一组完整性规则的集合。</strong><br>完整性规则：给定的数据模型中数据及其联系所具有的制约和储存规则，用以限定符合数据模型的数据库状态以及状态的变化，以保证数据的正确、有效、相容。</p>
+<p><strong>数据模型对完整性约束条件的定义</strong><br>必须遵守的基本的通用的完整性约束条件。<br>例如，关系模型中，任何关系必须满足实体完整性和参照完整性两个条件。</p>
+<p><strong>反映具体应用所涉及的特定的约束条件。</strong><br>例子：学校数据库中规定博士学生的年龄必须小于45岁<br>例子：银行的系统中规定帐号的余额不能小于1元</p>
+<h3 id="常用的数据模型"><a href="#常用的数据模型" class="headerlink" title="常用的数据模型"></a>常用的数据模型</h3><p>格式化模型<br>        层次模型(Hierarchical Model)<br>        网状模型(Network Model)</p>
+<p>关系模型(Relational Model)  </p>
+<p>面向对象模型(Object Oriented Model）</p>
+<p>对象关系模型(Object Relational Model)</p>
+<h4 id="层次模型"><a href="#层次模型" class="headerlink" title="层次模型"></a>层次模型</h4><p>层次模型用树形结构来表示各类实体以及实体间的联系 </p>
+<h5 id="层次模型-1"><a href="#层次模型-1" class="headerlink" title="层次模型"></a><strong>层次模型</strong></h5><p> 满足下面两个条件的基本层次联系的集合为层次模型</p>
+<p>1.有且只有一个结点没有双亲结点，这个结点称为根结点</p>
+<p>2.根以外的其它结点有且只有一个双亲结点</p>
+<h5 id="层次模型中的几个术语"><a href="#层次模型中的几个术语" class="headerlink" title="层次模型中的几个术语"></a><strong>层次模型中的几个术语</strong></h5><p>根结点，双亲结点，兄弟结点，叶结点</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194651033-167819801357112.png" alt="image-20230228194651033" style="zoom:50%;">
+
+<h5 id="表示方法"><a href="#表示方法" class="headerlink" title="表示方法"></a><strong>表示方法</strong></h5><p><strong>实体型：</strong>用记录类型描述，每个结点表示一个记录类型（实体）</p>
+<p><strong>属性：</strong>用字段描述，每个记录类型可包含若干个字段</p>
+<p><strong>联系：</strong>用结点之间的连线表示记录类型（实体）之间的<strong>一对多</strong>的父子联系</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194729758-167819801357113.png" alt="image-20230228194729758" style="zoom: 50%;">
+
+<h5 id="层次模型的数据操纵"><a href="#层次模型的数据操纵" class="headerlink" title="层次模型的数据操纵"></a><strong>层次模型的数据操纵</strong></h5><p>查询 插入 删除 更新</p>
+<h5 id="层次模型的完整性约束条件"><a href="#层次模型的完整性约束条件" class="headerlink" title="层次模型的完整性约束条件"></a><strong>层次模型的完整性约束条件</strong></h5><p>无相应的双亲结点值就不能插入子女结点值<br>如果删除双亲结点值，则相应的子女结点值也被同时删除</p>
+<h5 id="层次数据模型的存储结构"><a href="#层次数据模型的存储结构" class="headerlink" title="层次数据模型的存储结构"></a><strong>层次数据模型的存储结构</strong></h5><p><strong>邻接法</strong><br>按照层次树前序遍历的顺序把所有记录值依次邻接存放，即通过物理空间的位置相邻来实现层次顺序</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228194950487-167819801357115.png" alt="image-20230228194950487" style="zoom:50%;">
+
+<p><strong>链接法</strong><br>用指引来反映数据之间的层次联系<br>子女－兄弟链接法<br>层次序列链接法</p>
+<p><strong>子女-兄弟链接法</strong><br>每个记录设两类指针，分别指向最左边的子女（每个记录型对应一个）和最近的兄弟</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195024242-167819801357114.png" alt="image-20230228195024242" style="zoom:50%;">
+
+<p><strong>层次序列链接法</strong></p>
+<p>按树的前序穿越顺序链接各记录值</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195039461-167819801357116.png" alt="image-20230228195039461" style="zoom:50%;">
+
+<h5 id="层次模型的优缺点"><a href="#层次模型的优缺点" class="headerlink" title="层次模型的优缺点"></a><strong>层次模型的优缺点</strong></h5><p><strong>优点</strong><br>层次模型的数据结构比较简单清晰<br>查询效率高，性能优于关系模型，不低于网状模型<br>层次数据模型提供了良好的完整性支持</p>
+<p><strong>缺点</strong><br>多对多联系表示不自然<br>对插入和删除操作的限制多，应用程序的编写比较复杂<br>查询子女结点必须通过双亲结点</p>
+<h4 id="网状模型"><a href="#网状模型" class="headerlink" title="网状模型"></a>网状模型</h4><p>满足下面两个条件的基本层次联系的集合：</p>
+<ol>
+<li>允许一个以上的结点无双亲；</li>
+<li>一个结点可以有多于一个的双亲。<br>允许两个结点之间有多种联系（复合联系）<br>网状模型可以更直接地去描述现实世界，层次模型实际上是网状模型的一个特例</li>
+</ol>
+<h5 id="多对多联系在网状模型中的表示"><a href="#多对多联系在网状模型中的表示" class="headerlink" title="多对多联系在网状模型中的表示"></a><strong>多对多联系在网状模型中的表示</strong></h5><p>​		用网状模型间接表示多对多联系<br>​		方法：将多对多联系直接分解成一对多联系</p>
+<h5 id="数据操作-1"><a href="#数据操作-1" class="headerlink" title="数据操作"></a><strong>数据操作</strong></h5><p>网状数据库系统（如DBTG）对数据操纵加了一些限制，提供了一定的完整性约束<br>码：唯一标识记录的数据项的集合<br>支持双亲记录和子女记录之间某些约束条件<br>    有些子女记录要求双亲记录存在才能插入，双亲记录删除时也连同删除。例如学生选课记录</p>
+<h5 id="网状数据模型的存储结构"><a href="#网状数据模型的存储结构" class="headerlink" title="网状数据模型的存储结构"></a>网状数据模型的存储结构</h5><img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195613303-167819801357117.png" alt="image-20230228195613303" style="zoom:50%;">
+
+<h5 id="网状数据模型的优缺点"><a href="#网状数据模型的优缺点" class="headerlink" title="网状数据模型的优缺点"></a>网状数据模型的优缺点</h5><p><strong>优点</strong><br>能更为直接地描述现实世界，如一个结点可以有多个双亲</p>
+<p>具有良好的性能，存取效率较高</p>
+<p><strong>缺点</strong><br>结构比较复杂，而且随着应用环境的扩大，数据库的结构就变得越来越复杂，不利于最终用户掌握</p>
+<p>DDL、DML语言复杂，用户不容易使用</p>
+<p>记录类型联系变动后涉及链接指针的调整，扩充和维护都比较复杂 </p>
+<h4 id="关系模型"><a href="#关系模型" class="headerlink" title="关系模型"></a>关系模型</h4><p>在用户观点下，关系模型中数据的逻辑结构是一张二维表，它由行和列组成。</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195759196-167819801357118.png" alt="image-20230228195759196" style="zoom: 50%;">
+
+<p><strong>关系（Relation）</strong><br>一个关系对应通常说的一张表<br><strong>元组（Tuple）</strong><br>表中的一行即为一个元组<br><strong>属性（Attribute）</strong><br>表中的一列即为一个属性，给每一个属性起一个名称即属性名</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228195837826-167819801357119.png" alt="image-20230228195837826" style="zoom:50%;">
+
+<p><strong>主码（Key）</strong><br>表中的某个属性组，它可以唯一确定一个元组。<br><strong>域（Domain）</strong><br>属性的取值范围。<br><strong>分量</strong><br>元组中的一个属性值。<br><strong>关系模式</strong><br>对关系的描述<br>关系名（属性1，属性2，…，属性n）<br>学生（学号，姓名，年龄，性别，系，年级）</p>
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200117047-167819801357220.png" alt="image-20230228200117047" style="zoom:50%;">
+
+<img lazyload src="/images/loading.svg" data-src="%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230228200133118-167819801357221.png" alt="image-20230228200133118" style="zoom:50%;">
+
+<h5 id="数据操作是集合操作，操作对象和结果都是关系"><a href="#数据操作是集合操作，操作对象和结果都是关系" class="headerlink" title="数据操作是集合操作，操作对象和结果都是关系"></a>数据操作是集合操作，操作对象和结果都是关系</h5><p>查询 插入 删除 更新</p>
+<h5 id="完整性约束条件-1"><a href="#完整性约束条件-1" class="headerlink" title="完整性约束条件"></a>完整性约束条件</h5><p>实体完整性<br>参照完整性<br>用户定义的完整性</p>
+<h5 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h5><p>实体及实体间的联系都用表来表示<br>表以文件形式存储<br>有的DBMS一个表对应一个操作系统文件<br>有的DBMS自己设计文件结构</p>
+<h5 id="关系数据模型的优缺点"><a href="#关系数据模型的优缺点" class="headerlink" title="关系数据模型的优缺点"></a>关系数据模型的优缺点</h5><p><strong>优点</strong><br>建立在严格的数学概念的基础上<br>可以描述一对一、一对多和多对多的联系<br>概念单一<br>        实体和各类联系都用关系来表示<br>        对数据的检索结果也是关系<br>存取路径对用户透明<br>        用户只要指出“干什么”，不必详细说明“怎么干”<br>        具有更高的数据独立性，更好的安全保密性<br>        简化了程序员的工作和数据库开发建立的工作</p>
+<p><strong>缺点</strong><br>存取路径对用户透明导致查询效率往往不如非关系数据模型<br>为提高性能，必须对用户的查询请求进行优化增加了开发DBMS的难度</p>
+<h4 id="关系模式-ER图"><a href="#关系模式-ER图" class="headerlink" title="关系模式-&gt;ER图"></a>关系模式-&gt;ER图</h4><p>例：<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307214952179.png" alt="image-20230307214952179" style="zoom:67%;"></p>
+<h3 id="E-R模型补充扩展"><a href="#E-R模型补充扩展" class="headerlink" title="E-R模型补充扩展"></a>E-R模型补充扩展</h3><p><strong>Movie database</strong><br><strong>Movie</strong>: title, year, length, genre<br><strong>Stars</strong>: name, address<br><strong>Studios</strong>: name, address</p>
+<p>a studio contracts with a particular start to act in a particular movie for some salary</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215104726.png" alt="image-20230307215104726" style="zoom:50%;">
+
+<h4 id="多实体集联系-多角色实体集"><a href="#多实体集联系-多角色实体集" class="headerlink" title="多实体集联系+多角色实体集"></a>多实体集联系+多角色实体集</h4><p>怎样表示Studio 2从studio 1租借某演员签约出演某电影？</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215135547.png" alt="image-20230307215135547" style="zoom:50%;">
+
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215534821.png" alt="image-20230307215534821" style="zoom: 33%;">
+
+<p>怎样去掉联系Contracts的属性salary？</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215600082.png" alt="image-20230307215600082" style="zoom:50%;">
+
+<h4 id="“Is-a”联系"><a href="#“Is-a”联系" class="headerlink" title="“Is a”联系"></a>“Is a”联系</h4><p>怎样表示电影的两个子类“动画片”和“枪战片”</p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215658701.png" alt="image-20230307215658701" style="zoom: 33%;">
+
+<h2 id="1-3-数据库系统结构"><a href="#1-3-数据库系统结构" class="headerlink" title="1.3 数据库系统结构"></a>1.3 数据库系统结构</h2><h4 id="分布式B-S结构数据库系统"><a href="#分布式B-S结构数据库系统" class="headerlink" title="分布式B&#x2F;S结构数据库系统"></a>分布式B&#x2F;S结构数据库系统</h4><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307215809913.png" alt="image-20230307215809913" style="zoom:50%;">
+
+<h3 id="数据库系统模式的概念"><a href="#数据库系统模式的概念" class="headerlink" title="数据库系统模式的概念"></a>数据库系统模式的概念</h3><h4 id="“型”-和“值”-的概念"><a href="#“型”-和“值”-的概念" class="headerlink" title="“型” 和“值” 的概念"></a>“型” 和“值” 的概念</h4><p><strong>型(Type)</strong>  对某一类数据的结构和属性的说明<br><strong>值(Value)</strong>  是型的一个具体赋值<br>例如<br>学生记录型：<br>  （学号，姓名，性别，系别，年龄，籍贯）<br>一个记录值：<br>  （900201，李明，男，计算机，22，江苏）</p>
+<p><strong>模式（Schema）</strong><br>数据库逻辑结构和特征的描述<br>是型的描述<br>反映的是数据的结构及其联系<br>模式是相对稳定的</p>
+<p><strong>实例（Instance）</strong><br>模式的一个具体值<br>反映数据库某一时刻的状态<br>同一个模式可以有很多实例<br>实例随数据库中的数据的更新而变动</p>
+<h3 id="数据库系统的三级模式结构"><a href="#数据库系统的三级模式结构" class="headerlink" title="数据库系统的三级模式结构"></a>数据库系统的三级模式结构</h3><img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220505091.png" alt="image-20230307220505091" style="zoom: 50%;">
+
+<h4 id="模式（也称逻辑模式）"><a href="#模式（也称逻辑模式）" class="headerlink" title="模式（也称逻辑模式）"></a>模式（也称逻辑模式）</h4><p>​		数据库中全体数据的逻辑结构和特征的描述<br>​		所有用户的公共数据视图，综合了所有用户的需求<br><strong>一个数据库只有一个模式</strong><br><strong>模式的地位：是数据库系统模式结构的中间层</strong><br>​		与数据的物理存储细节和硬件环境无关<br>​		与具体的应用程序、开发工具及高级程序设计语言无关</p>
+<p><strong>模式的定义</strong><br>        数据的逻辑结构（数据项的名字、类型、取值范围等）<br>        数据之间的联系<br>        数据有关的安全性、完整性要求</p>
+<h4 id="外模式（也称子模式或用户模式）"><a href="#外模式（也称子模式或用户模式）" class="headerlink" title="外模式（也称子模式或用户模式）"></a>外模式（也称子模式或用户模式）</h4><p>数据库用户（包括应用程序员和最终用户）使用的局部数据的逻辑结构和特征的描述<br>数据库用户的数据视图，是与某一应用有关的数据的逻辑表示</p>
+<h4 id="内模式（也称存储模式）"><a href="#内模式（也称存储模式）" class="headerlink" title="内模式（也称存储模式）"></a>内模式（也称存储模式）</h4><p>是数据物理结构和存储方式的描述<br>是数据在数据库内部的表示方式</p>
+<p><strong>一个数据库只有一个内模式</strong></p>
+<img lazyload src="/images/loading.svg" data-src="G:/XMNSatayBlog/source/_posts/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8A%80%E6%9C%AF%E4%B8%8E%E5%BA%94%E7%94%A8/image-20230307220519463.png" alt="image-20230307220519463" style="zoom:67%;">
+]]></content>
+      <categories>
+        <category>Note</category>
+      </categories>
+      <tags>
+        <tag>Note</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>汇编冒泡排序</title>
     <url>/2023/04/21/%E6%B1%87%E7%BC%96%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/</url>
     <content><![CDATA[<p>PS：由于Redefine主题和Butterfly主题目前都不支持汇编代码高亮，所以如果想要看到更好看的代码可以联系我拿博文的PDF版本</p>
@@ -1830,6 +1850,32 @@
       </tags>
   </entry>
   <entry>
+    <title>用了好久博客了突然碰到一个坑</title>
+    <url>/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/</url>
+    <content><![CDATA[<p>今晚在部署博客的时突然出现了这样的错误：</p>
+<img lazyload src="/images/loading.svg" data-src="/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/image-20230909102159001.png" class title="image-20230909102159001">
+
+<p>网上说的解决方法都是删除.deploy_git文件夹的方法：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">进入站点根目录</span><br><span class="line">cd E:/hexo</span><br><span class="line"> </span><br><span class="line">删除git提交内容文件夹</span><br><span class="line">rm -rf .deploy_git/</span><br><span class="line"> </span><br><span class="line">执行</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line"> </span><br><span class="line">最后</span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure></div>
+
+<p>但是我尝试多次仍然无效，甚至重新设置了Git的SSHkey啥的，麻烦死了</p>
+<p>最后看到了一个博客，就一行，说了一句是进程阻塞的问题:</p>
+<p><a class="link" href="https://www.cnblogs.com/chendeqiang/p/12861744.html">https://www.cnblogs.com/chendeqiang/p/12861744.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后我重启电脑，问题解决了….</p>
+<p>大无语……😅</p>
+<p>2023.9.13</p>
+<p>又遇到了这个问题，一周后的今天解决了</p>
+<p>这次重启没用了，不是线程占用的问题</p>
+<p>重新设置SSH Key好像也不行</p>
+<p>然后找到一个教程要我删代理：<a class="link" href="https://www.cnblogs.com/Duan2baka/p/17271142.html">https://www.cnblogs.com/Duan2baka/p/17271142.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>然后就…行了？！而且网站同步速度快了很多！</p>
+<p>神奇！</p>
+]]></content>
+      <tags>
+        <tag>Note</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>深夜杂记1</title>
     <url>/2023/07/14/%E6%B7%B1%E5%A4%9C%E6%9D%82%E8%AE%B01/</url>
     <content><![CDATA[<p>最近教务排名更新了，看看自己的成绩单，还算比较满意吧，毕竟跟自己之前比已经进步很大了，咱也不跟别人比</p>
@@ -1870,32 +1916,6 @@
       </categories>
       <tags>
         <tag>杂记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>用了好久博客了突然碰到一个坑</title>
-    <url>/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/</url>
-    <content><![CDATA[<p>今晚在部署博客的时突然出现了这样的错误：</p>
-<img lazyload src="/images/loading.svg" data-src="/2023/07/12/%E7%94%A8%E4%BA%86%E5%A5%BD%E4%B9%85%E5%8D%9A%E5%AE%A2%E4%BA%86%E7%AA%81%E7%84%B6%E7%A2%B0%E5%88%B0%E4%B8%80%E4%B8%AA%E5%9D%91/image-20230909102159001.png" class title="image-20230909102159001">
-
-<p>网上说的解决方法都是删除.deploy_git文件夹的方法：</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">进入站点根目录</span><br><span class="line">cd E:/hexo</span><br><span class="line"> </span><br><span class="line">删除git提交内容文件夹</span><br><span class="line">rm -rf .deploy_git/</span><br><span class="line"> </span><br><span class="line">执行</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line"> </span><br><span class="line">最后</span><br><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure></div>
-
-<p>但是我尝试多次仍然无效，甚至重新设置了Git的SSHkey啥的，麻烦死了</p>
-<p>最后看到了一个博客，就一行，说了一句是进程阻塞的问题:</p>
-<p><a class="link" href="https://www.cnblogs.com/chendeqiang/p/12861744.html">https://www.cnblogs.com/chendeqiang/p/12861744.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后我重启电脑，问题解决了….</p>
-<p>大无语……😅</p>
-<p>2023.9.13</p>
-<p>又遇到了这个问题，一周后的今天解决了</p>
-<p>这次重启没用了，不是线程占用的问题</p>
-<p>重新设置SSH Key好像也不行</p>
-<p>然后找到一个教程要我删代理：<a class="link" href="https://www.cnblogs.com/Duan2baka/p/17271142.html">https://www.cnblogs.com/Duan2baka/p/17271142.html <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>然后就…行了？！而且网站同步速度快了很多！</p>
-<p>神奇！</p>
-]]></content>
-      <tags>
-        <tag>Note</tag>
       </tags>
   </entry>
   <entry>
@@ -1998,6 +2018,44 @@
       </categories>
       <tags>
         <tag>算法课笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记录第一次搭建个人博客</title>
+    <url>/2023/02/26/%E8%AE%B0%E5%BD%95%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>第一次搭博客，没啥经验，也没有问别人，遇到的一切问题都自己上网查资料解决，算是锻炼了一下自己的自学能力了吧。</p>
+<p>不管怎么说总算是搭好了，很有成就感。先说说遇到的一些问题，下次再搭博客的时候就可以少踩很多雷。</p>
+<p>按照搭建顺序来说说自己的步骤和当中遇到的问题吧，教程连接贴在下面：</p>
+<p>这是主要参考的教程：<a class="link" href="https://www.jianshu.com/p/d78adad4705f">利用Github搭建自己的个人博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>2023.4.14：看到一个更加完整的教程：<a class="link" href="https://cloud.tencent.com/developer/article/2148748">个人博客搭建 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p><strong>我真的放弃添加图片了，所以我的博客暂时用来写一些书评影评好了，笔记什么的我还是在本地查看吧o(TヘTo)</strong></p>
+<p>2023.3.7 偶然调了一下，改成了相对路径！图片传上去了！！！！！但是不知道怎么调图片的大小，而且好多图片也都还没放到文件夹里，有时间再弄吧</p>
+<p>教程：<a class="link" href="https://www.cnblogs.com/bzsheng/p/13802829.html">Hexo博客如何插入图片 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
+<p>2023.7.14 趁着帮助别人搭博客的契机把自己的博客功能做全了，现在是所有功能都具备的完全体博客啦！（顺便在这篇博文下面加了一首歌</p>
+<h3 id="Day-1-搭建Github个人仓库"><a href="#Day-1-搭建Github个人仓库" class="headerlink" title="Day 1 搭建Github个人仓库"></a>Day 1 搭建Github个人仓库</h3><p>​	一开始这步就已经把我弄的有点难受了，建好了个人仓库BUPT-Serendy.github.io结果点进去是404。我找遍了各种教程，搜了好多问题，试了好多种方法，甚至把自己原来的GitHub号给销了重新注册了一个（虽然原来的号里啥也没有，但是浪费了我一个ID…），最后一看hsp的教程才发现，原来只是没有使用魔法，然后周六就开始找各种魔法，各处打听终于找到了一个还算不错的（一开始系统代理没打开用不了…）。之后也研究了好久的魔法，最后总算是能稳定用了。</p>
+<h3 id="Day-2-开始在本地建博客"><a href="#Day-2-开始在本地建博客" class="headerlink" title="Day 2 开始在本地建博客"></a>Day 2 开始在本地建博客</h3><p>安装node.js和Git这些都没啥，问题不大，就是中间安装Git的时候cmd卡住了一下，后面重新装一次就没有问题了。</p>
+<p>然后博客文件夹啥的都创建好了之后，第一次在hexo d的时候出现了一个问题，就是一直只有一行：</p>
+<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">INFO Validating config</span><br></pre></td></tr></table></figure></div>
+
+<p>这个奇怪的问题我真的找遍全网资料都没有找到跟我一样的问题，过了大概一个小时我又重新试了一次，这次用的hexo deploy，然后成功了，我就天真地以为是我没有把deploy打出来…其实就是不知道出了什么问题，这时就冒出了那个疑问：它为什么能跑？</p>
+<p>不过我也没太纠结，因为后面就再也没失败过了，所以感觉就还行。</p>
+<h3 id="Day-3-配置个人主题和添加图片"><a href="#Day-3-配置个人主题和添加图片" class="headerlink" title="Day 3 配置个人主题和添加图片"></a>Day 3 配置个人主题和添加图片</h3><p>昨天晚上不知道为什么莫名其妙就把主题弄上去了，后面new了那个计算机网络的文档之后就炸了，主题又回到原生Hexo了。今天早上又仔细地看了一遍Redefine主题的文档之后才发现原来是自己没有把主题的config文件添加到博客根目录，所以才失败了。</p>
+<p>这个问题虽然看起来很简单啊，但是真的卡了我好久好久。</p>
+<p><strong>所以以后一定要仔细读官方使用文档！！！</strong></p>
+<p>（当然也有可能是我对博客里面的文件的表述啥的都太陌生了所以才看不懂官方文档）</p>
+<p><strong>添加图片！！！</strong></p>
+<p>这个真的是梦魇，我真的翻了起码有20篇教程了。插件啥的也装了，文件夹什么也都弄好了，但是各种方法都无法让我的图片上传到博客上。做完已经很晚了，所以干脆就不弄了洗洗睡。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>其实遇到的几个问题都是不知道怎么就出现了，也不知道怎么就解决了，所以感觉还挺神奇的</p>
+<p>虽然搭博客搭了很久，但是整个博客真的很好看我很喜欢，做完感觉真的很有满足感~</p>
+<p>博客主页背景的意境很美，我就想到了这句词，把它放在了博客主页，出自江南的《踏莎行》。</p>
+<p>页底是我最喜欢的《春江花月夜》，与君共勉。</p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1891711657&auto=1&height=66"></iframe>
+]]></content>
+      <categories>
+        <category>Sketch</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
       </tags>
   </entry>
   <entry>
@@ -2484,44 +2542,6 @@
       </categories>
       <tags>
         <tag>Note</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>记录第一次搭建个人博客</title>
-    <url>/2023/02/26/%E8%AE%B0%E5%BD%95%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>第一次搭博客，没啥经验，也没有问别人，遇到的一切问题都自己上网查资料解决，算是锻炼了一下自己的自学能力了吧。</p>
-<p>不管怎么说总算是搭好了，很有成就感。先说说遇到的一些问题，下次再搭博客的时候就可以少踩很多雷。</p>
-<p>按照搭建顺序来说说自己的步骤和当中遇到的问题吧，教程连接贴在下面：</p>
-<p>这是主要参考的教程：<a class="link" href="https://www.jianshu.com/p/d78adad4705f">利用Github搭建自己的个人博客 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>2023.4.14：看到一个更加完整的教程：<a class="link" href="https://cloud.tencent.com/developer/article/2148748">个人博客搭建 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p><strong>我真的放弃添加图片了，所以我的博客暂时用来写一些书评影评好了，笔记什么的我还是在本地查看吧o(TヘTo)</strong></p>
-<p>2023.3.7 偶然调了一下，改成了相对路径！图片传上去了！！！！！但是不知道怎么调图片的大小，而且好多图片也都还没放到文件夹里，有时间再弄吧</p>
-<p>教程：<a class="link" href="https://www.cnblogs.com/bzsheng/p/13802829.html">Hexo博客如何插入图片 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
-<p>2023.7.14 趁着帮助别人搭博客的契机把自己的博客功能做全了，现在是所有功能都具备的完全体博客啦！（顺便在这篇博文下面加了一首歌</p>
-<h3 id="Day-1-搭建Github个人仓库"><a href="#Day-1-搭建Github个人仓库" class="headerlink" title="Day 1 搭建Github个人仓库"></a>Day 1 搭建Github个人仓库</h3><p>​	一开始这步就已经把我弄的有点难受了，建好了个人仓库BUPT-Serendy.github.io结果点进去是404。我找遍了各种教程，搜了好多问题，试了好多种方法，甚至把自己原来的GitHub号给销了重新注册了一个（虽然原来的号里啥也没有，但是浪费了我一个ID…），最后一看hsp的教程才发现，原来只是没有使用魔法，然后周六就开始找各种魔法，各处打听终于找到了一个还算不错的（一开始系统代理没打开用不了…）。之后也研究了好久的魔法，最后总算是能稳定用了。</p>
-<h3 id="Day-2-开始在本地建博客"><a href="#Day-2-开始在本地建博客" class="headerlink" title="Day 2 开始在本地建博客"></a>Day 2 开始在本地建博客</h3><p>安装node.js和Git这些都没啥，问题不大，就是中间安装Git的时候cmd卡住了一下，后面重新装一次就没有问题了。</p>
-<p>然后博客文件夹啥的都创建好了之后，第一次在hexo d的时候出现了一个问题，就是一直只有一行：</p>
-<div class="highlight-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="code"><pre><span class="line">INFO Validating config</span><br></pre></td></tr></table></figure></div>
-
-<p>这个奇怪的问题我真的找遍全网资料都没有找到跟我一样的问题，过了大概一个小时我又重新试了一次，这次用的hexo deploy，然后成功了，我就天真地以为是我没有把deploy打出来…其实就是不知道出了什么问题，这时就冒出了那个疑问：它为什么能跑？</p>
-<p>不过我也没太纠结，因为后面就再也没失败过了，所以感觉就还行。</p>
-<h3 id="Day-3-配置个人主题和添加图片"><a href="#Day-3-配置个人主题和添加图片" class="headerlink" title="Day 3 配置个人主题和添加图片"></a>Day 3 配置个人主题和添加图片</h3><p>昨天晚上不知道为什么莫名其妙就把主题弄上去了，后面new了那个计算机网络的文档之后就炸了，主题又回到原生Hexo了。今天早上又仔细地看了一遍Redefine主题的文档之后才发现原来是自己没有把主题的config文件添加到博客根目录，所以才失败了。</p>
-<p>这个问题虽然看起来很简单啊，但是真的卡了我好久好久。</p>
-<p><strong>所以以后一定要仔细读官方使用文档！！！</strong></p>
-<p>（当然也有可能是我对博客里面的文件的表述啥的都太陌生了所以才看不懂官方文档）</p>
-<p><strong>添加图片！！！</strong></p>
-<p>这个真的是梦魇，我真的翻了起码有20篇教程了。插件啥的也装了，文件夹什么也都弄好了，但是各种方法都无法让我的图片上传到博客上。做完已经很晚了，所以干脆就不弄了洗洗睡。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>其实遇到的几个问题都是不知道怎么就出现了，也不知道怎么就解决了，所以感觉还挺神奇的</p>
-<p>虽然搭博客搭了很久，但是整个博客真的很好看我很喜欢，做完感觉真的很有满足感~</p>
-<p>博客主页背景的意境很美，我就想到了这句词，把它放在了博客主页，出自江南的《踏莎行》。</p>
-<p>页底是我最喜欢的《春江花月夜》，与君共勉。</p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=1891711657&auto=1&height=66"></iframe>
-]]></content>
-      <categories>
-        <category>Sketch</category>
-      </categories>
-      <tags>
-        <tag>随笔</tag>
       </tags>
   </entry>
   <entry>
@@ -3405,26 +3425,6 @@
 ]]></content>
       <tags>
         <tag>Notes</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Minecraft服务器的创建和配置</title>
-    <url>/2024/06/14/Minecraft%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<p>本文暂不考虑插件服务器，因为都是自己人玩，插件服麻烦</p>
-<h2 id="服务器搭建（Windows）"><a href="#服务器搭建（Windows）" class="headerlink" title="服务器搭建（Windows）"></a>服务器搭建（Windows）</h2><h3 id="原版服务端"><a href="#原版服务端" class="headerlink" title="原版服务端"></a>原版服务端</h3><p><a class="link" href="https://www.bilibili.com/read/cv33236294/?spm_id_from=333.999.collection.opus.click">Java Edition原版服务端核心 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>到这里找到对应版本的核心服务端，然后按照<a class="link" href="https://www.minecraft.net/zh-hans/download/server">官网教程 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>做好启动脚本，就可以成功搭建一个原版服务端了。</p>
-<p>注意：请注意自己的Java版本和游戏所支持的Java版本的对应，否则会出现无法加载主类的报错。</p>
-<h3 id="Forge服务端"><a href="#Forge服务端" class="headerlink" title="Forge服务端"></a>Forge服务端</h3><p>在PCL上手动安装部分下载对应版本的Forge，选择Install for Server，然后再选择服务器所需要安装的路径就可以安装成功了。</p>
-<img lazyload src="/images/loading.svg" data-src="/2024/06/14/Minecraft%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E9%85%8D%E7%BD%AE/image-20240614151247436.png" class title="image-20240614151247436">
-
-<h3 id="Fabric服务端"><a href="#Fabric服务端" class="headerlink" title="Fabric服务端"></a>Fabric服务端</h3><p>和Forge服务端操作类似，很简单就可以安装。</p>
-<p>注：有的版本Fabric端可以进Forge服务器而有的版本不行</p>
-<h3 id="Bedrock-Edition服务端"><a href="#Bedrock-Edition服务端" class="headerlink" title="Bedrock Edition服务端"></a>Bedrock Edition服务端</h3><p>到<a class="link" href="https://www.minecraft.net/zh-hans/download/server/bedrock">官网 <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a>下载服务端，解压即用</p>
-<h2 id="服务器配置"><a href="#服务器配置" class="headerlink" title="服务器配置"></a>服务器配置</h2><p>server.properties各字段作用</p>
-<div class="highlight-container" data-rel="Properties"><figure class="iseeu highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment">#Minecraft server properties</span></span><br><span class="line"><span class="comment">#Fri Jun 14 17:21:18 CST 2024</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用JMX监控</span></span><br><span class="line"><span class="attr">enable-jmx-monitoring</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># RCON（远程控制台）端口</span></span><br><span class="line"><span class="attr">rcon.port</span>=<span class="string">25575</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 世界生成种子</span></span><br><span class="line"><span class="attr">level-seed</span>=<span class="string">-8723366411114572095</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 游戏模式（生存模式）</span></span><br><span class="line"><span class="attr">gamemode</span>=<span class="string">survival</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用命令方块</span></span><br><span class="line"><span class="attr">enable-command-block</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用查询</span></span><br><span class="line"><span class="attr">enable-query</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 自定义世界生成设置</span></span><br><span class="line"><span class="attr">generator-settings</span>=<span class="string">{}</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否强制使用安全配置文件</span></span><br><span class="line"><span class="attr">enforce-secure-profile</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 世界名称</span></span><br><span class="line"><span class="attr">level-name</span>=<span class="string">world</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># MOTD（消息通知）内容</span></span><br><span class="line"><span class="attr">motd</span>=<span class="string">养老生存服务器</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 查询端口</span></span><br><span class="line"><span class="attr">query.port</span>=<span class="string">25565</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否开启PVP</span></span><br><span class="line"><span class="attr">pvp</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否生成结构</span></span><br><span class="line"><span class="attr">generate-structures</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 最大链式邻居更新次数</span></span><br><span class="line"><span class="attr">max-chained-neighbor-updates</span>=<span class="string">1000000</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 游戏难度（困难）</span></span><br><span class="line"><span class="attr">difficulty</span>=<span class="string">hard</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 网络压缩阈值</span></span><br><span class="line"><span class="attr">network-compression-threshold</span>=<span class="string">256</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 最大每tick时间（毫秒）</span></span><br><span class="line"><span class="attr">max-tick-time</span>=<span class="string">60000</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否要求使用资源包</span></span><br><span class="line"><span class="attr">require-resource-pack</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否使用原生传输</span></span><br><span class="line"><span class="attr">use-native-transport</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 最大玩家数量</span></span><br><span class="line"><span class="attr">max-players</span>=<span class="string">8</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否在线模式</span></span><br><span class="line"><span class="attr">online-mode</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用服务器状态查询</span></span><br><span class="line"><span class="attr">enable-status</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否允许飞行</span></span><br><span class="line"><span class="attr">allow-flight</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 初始禁用包</span></span><br><span class="line"><span class="attr">initial-disabled-packs</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否向管理员广播RCON消息</span></span><br><span class="line"><span class="attr">broadcast-rcon-to-ops</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 视距</span></span><br><span class="line"><span class="attr">view-distance</span>=<span class="string">16</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 服务器IP地址</span></span><br><span class="line"><span class="attr">server-ip</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 资源包提示</span></span><br><span class="line"><span class="attr">resource-pack-prompt</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否允许进入下界</span></span><br><span class="line"><span class="attr">allow-nether</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 服务器端口</span></span><br><span class="line"><span class="attr">server-port</span>=<span class="string">25565</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用RCON</span></span><br><span class="line"><span class="attr">enable-rcon</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否同步区块写入</span></span><br><span class="line"><span class="attr">sync-chunk-writes</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 管理员权限等级</span></span><br><span class="line"><span class="attr">op-permission-level</span>=<span class="string">4</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否阻止代理连接</span></span><br><span class="line"><span class="attr">prevent-proxy-connections</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否隐藏在线玩家</span></span><br><span class="line"><span class="attr">hide-online-players</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 资源包URL</span></span><br><span class="line"><span class="attr">resource-pack</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 实体广播范围百分比</span></span><br><span class="line"><span class="attr">entity-broadcast-range-percentage</span>=<span class="string">100</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 模拟距离</span></span><br><span class="line"><span class="attr">simulation-distance</span>=<span class="string">12</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># RCON密码</span></span><br><span class="line"><span class="attr">rcon.password</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 玩家空闲超时时间（分钟）</span></span><br><span class="line"><span class="attr">player-idle-timeout</span>=<span class="string">0</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否强制游戏模式</span></span><br><span class="line"><span class="attr">force-gamemode</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 速率限制</span></span><br><span class="line"><span class="attr">rate-limit</span>=<span class="string">0</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否为极限模式</span></span><br><span class="line"><span class="attr">hardcore</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否启用白名单</span></span><br><span class="line"><span class="attr">white-list</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否向管理员广播控制台消息</span></span><br><span class="line"><span class="attr">broadcast-console-to-ops</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否生成NPC</span></span><br><span class="line"><span class="attr">spawn-npcs</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否生成动物</span></span><br><span class="line"><span class="attr">spawn-animals</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 功能权限等级</span></span><br><span class="line"><span class="attr">function-permission-level</span>=<span class="string">2</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 初始启用包</span></span><br><span class="line"><span class="attr">initial-enabled-packs</span>=<span class="string">vanilla</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 世界类型</span></span><br><span class="line"><span class="attr">level-type</span>=<span class="string">minecraft\:normal</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 文本过滤配置</span></span><br><span class="line"><span class="attr">text-filtering-config</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否生成怪物</span></span><br><span class="line"><span class="attr">spawn-monsters</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 是否强制白名单</span></span><br><span class="line"><span class="attr">enforce-whitelist</span>=<span class="string">false</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 出生保护区块半径</span></span><br><span class="line"><span class="attr">spawn-protection</span>=<span class="string">0</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 资源包SHA1校验码</span></span><br><span class="line"><span class="attr">resource-pack-sha1</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 最大世界大小</span></span><br><span class="line"><span class="attr">max-world-size</span>=<span class="string">29999984</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
-
-]]></content>
-      <tags>
-        <tag>Note</tag>
       </tags>
   </entry>
 </search>

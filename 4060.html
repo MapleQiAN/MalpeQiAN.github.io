@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" content="Hexo Theme Redefine">
     
+    
     <meta name="author" content="Serendy">
     
     <!-- Completely eliminate flash of wrong theme -->
@@ -31,9 +32,6 @@
                 const isDark = theme === DARK;
                 const root = document.documentElement;
                 
-                // Set data attribute for CSS variables
-                root.setAttribute("data-theme", theme);
-                
                 // Set classes for compatibility
                 root.classList.add(theme);
                 root.classList.remove(isDark ? LIGHT : DARK);
@@ -52,69 +50,26 @@
                 }
             });
             
-            // Set body classes once DOM is ready
-            if (document.readyState !== "loading") {
-                document.body.classList.add(theme + "-mode");
-            } else {
-                document.addEventListener("DOMContentLoaded", () => {
-                    document.body.classList.add(theme + "-mode");
-                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
                 });
-            }
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
         })();
     </script>
-    
-    <!-- Critical CSS to prevent flash -->
-    <style>
-        :root[data-theme="dark"] {
-            --background-color: #202124;
-            --background-color-transparent: rgba(32, 33, 36, 0.6);
-            --second-background-color: #2d2e32;
-            --third-background-color: #34353a;
-            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
-            --primary-color: #0066CC;
-            --first-text-color: #ffffff;
-            --second-text-color: #eeeeee;
-            --third-text-color: #bebec6;
-            --fourth-text-color: #999999;
-            --default-text-color: #bebec6;
-            --invert-text-color: #373D3F;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --selection-color: #0066CC;
-            --shadow-color-1: rgba(255, 255, 255, 0.08);
-            --shadow-color-2: rgba(255, 255, 255, 0.05);
-        }
-        
-        :root[data-theme="light"] {
-            --background-color: #fff;
-            --background-color-transparent: rgba(255, 255, 255, 0.6);
-            --second-background-color: #f8f8f8;
-            --third-background-color: #f2f2f2;
-            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
-            --primary-color: #0066CC;
-            --first-text-color: #16171a;
-            --second-text-color: #2f3037;
-            --third-text-color: #5e5e5e;
-            --fourth-text-color: #eeeeee;
-            --default-text-color: #373D3F;
-            --invert-text-color: #bebec6;
-            --border-color: rgba(0, 0, 0, 0.08);
-            --selection-color: #0066CC;
-            --shadow-color-1: rgba(0, 0, 0, 0.08);
-            --shadow-color-2: rgba(0, 0, 0, 0.05);
-        }
-        
-        body {
-            background-color: var(--background-color);
-            color: var(--default-text-color);
-        }
-        
-        /* Apply body classes as soon as DOM is ready */
-        :root[data-theme="dark"] body {
-            background-color: var(--background-color);
-            color: var(--default-text-color);
-        }
-    </style>
     
     <!-- preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -127,7 +82,6 @@
     <meta name="robots" content="index,follow">
     <meta name="googlebot" content="index,follow">
     <meta name="revisit-after" content="1 days">
-    
     
     
         
@@ -215,8 +169,9 @@
 
     <script id="hexo-configurations">
     window.config = {"hostname":"www.z2z4.com","root":"/","language":"zh-CN","path":"search.json"};
-    window.theme = {"articles":{"style":{"font_size":"18px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"center","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":["Magician"]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":true,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#80c0d0","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"LXGW WenKai","url":"https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":"Waiting for Serendipity..."},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"A Journey To MilkyWay."},"google_analytics":{"enable":true,"id":"G-XF0XWGF3JV"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-vqgxw3.jpg","dark":"/images/wallhaven-1pzgq9.jpg"},"title":"Aurora Island","subtitle":{"text":["做不了李白 就活成明月","欲买桂花同载酒 终不似 少年游"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#DDA15E","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.7rem","line_height":1.2},"custom_font":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/MapleQiAN","instagram":null,"zhihu":"https://www.zhihu.com/people/xing-yun-ying-mo","twitter":null,"email":"serendylin@outlook.com"},"qrs":{"weixin":"/images/微信图片_20230901163956.jpg","fab fa-qq":"/images/091B49A2F9CB323A7362A2830917B582.jpg"}}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"枫","artist":"周杰伦","url":"https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/周杰伦%20-%20枫.ogg","cover":"https://img.alicdn.com/bao/uploaded/i1/291799040/O1CN01rm0Vpf2GeN6hRk8oy_!!0-item_pic.jpg","lrc":null},{"name":"我表示理解","artist":"单依纯","url":"https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/单依纯-我表示理解.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"轨迹","artist":"周杰伦","url":"https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/周杰伦-轨迹.mp3","cover":"https://pic4.zhimg.com/v2-8ba910872a76670064c4280f654ef4b7_r.jpg"},{"name":"若把你","artist":"刘瑾睿","url":"http://music.163.com/song/media/outer/url?id=865632948.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D1891696427%2C2591050078%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=1d43c7f2cb35a3a6f232d87b668b7fed"},{"name":"你的星 | On Your Planet","artist":"万玲琳","url":"http://music.163.com/song/media/outer/url?id=1872955849.mp3","cover":"https://y.qq.com/music/photo_new/T002R300x300M0000031cHw32UyHyX_1.jpg?max_age=2592000"},{"name":"想念拟人化","artist":"孟慧圆","url":"http://music.163.com/song/media/outer/url?id=1379662223.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"Moon River","artist":"Alexer","url":"http://music.163.com/song/media/outer/url?id=2038909565.mp3","cover":null},{"name":"晚风","artist":"陈婧霏","url":"http://music.163.com/song/media/outer/url?id=1299326404.mp3","cover":"https://imgessl.kugou.com/stdmusic/20190821/20190821151012401114.jpg"},{"name":"不如不见","artist":"陈奕迅","url":"http://music.163.com/song/media/outer/url?id=65769.mp3","cover":"https://q3.itc.cn/q_70/images03/20240317/021c6b650bdb4878bfca2c9fac84f2ce.jpeg"},{"name":"月亮代表我的心","artist":"邓丽君","url":"http://music.163.com/song/media/outer/url?id=1889549348.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips1.baidu.com%2Fit%2Fu%3D2887465135%2C2828162594%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1725901200&t=b075167a9f9700007e704ab88feb82c0"},{"name":"Perfect","artist":"Leroy Sanchez","url":"http://music.163.com/song/media/outer/url?id=1436193759.mp3","cover":"https://img0.baidu.com/it/u=4287436206,131987723&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"搁浅","artist":"周杰伦","url":"https://www.joy127.com/url/113142.mp3","cover":"https://i0.hdslb.com/bfs/archive/b84821382b1eb918ef3d0b92a8b82d448d9208fc.jpg"}]},"mermaid":{"enable":false,"version":"9.3.0"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f1f4a4","right":"#699aea","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"书签":{"icon":"fa-solid fa-bookmark","path":"/bookmarks/"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"照片墙":{"icon":"fa-solid fa-image","path":"/masonry/"},"Friends":{"icon":"fa-regular fa-planet-ringed","path":"/links"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"缓缓飘落的枫叶像思念","show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"path":"/links","icon":"fa-regular fa-planet-ringed"},"Sketch":{"path":"/essays","icon":"fa-regular fa-comment-dots"},"ContactMe":{"path":"/2023/03/12/ContactME/","icon":"fa-regular fa-phone"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":5}},"footerStart":"2023/2/26 00:00:00"};
+    window.theme = {"articles":{"style":{"font_size":"18px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"center","headings_top_spacing":{"h1":"5rem","h2":"4rem","h3":"2.8rem","h4":"2.5rem","h5":"2.2rem","h6":"2rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":["Magician"]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":4,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":true,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#80c0d0","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":"LXGW WenKai","url":"https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css"},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":false},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":false,"custom_message":"Waiting for Serendipity..."},"side_tools":{"gear_rotation":true,"auto_expand":false},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"A Journey To MilkyWay."},"google_analytics":{"enable":true,"id":"G-XF0XWGF3JV"}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-vqgxw3.jpg","dark":"/images/wallhaven-1pzgq9.jpg"},"title":"Aurora Island","subtitle":{"text":["做不了李白 就活成明月","欲买桂花同载酒 终不似 少年游"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#DDA15E","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.7rem","line_height":1.2},"custom_font":{"enable":false,"family":"Lemon","url":"https://fonts.googleapis.com/css2?family=Lemon&display=swap"},"social_links":{"enable":true,"style":"default","links":[{"icon":"fa-brands fa-github","url":"https://github.com/MapleQiAN"},{"icon":"fa-brands fa-twitter","url":null},{"icon":"fa-solid fa-at","url":"serendylin@outlook.com"},{"icon":"fa-brands fa-telegram","url":null},{"icon":"/images/custom-icon.svg","url":null}],"qrs":[{"icon":"fa-brands fa-weixin","qr":"/images/微信图片_20230901163956.jpg"},{"icon":"/images/custom-icon.svg","qr":"/images/091B49A2F9CB323A7362A2830917B582.jpg"}]}},"plugins":{"feed":{"enable":true},"aplayer":{"enable":true,"type":"fixed","audios":[{"name":"枫","artist":"周杰伦","url":"https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/周杰伦%20-%20枫.ogg","cover":"https://img.alicdn.com/bao/uploaded/i1/291799040/O1CN01rm0Vpf2GeN6hRk8oy_!!0-item_pic.jpg","lrc":null},{"name":"我表示理解","artist":"单依纯","url":"https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/单依纯-我表示理解.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"轨迹","artist":"周杰伦","url":"https://cdn.jsdelivr.net/gh/MapleQiAN/img_bed/周杰伦-轨迹.mp3","cover":"https://pic4.zhimg.com/v2-8ba910872a76670064c4280f654ef4b7_r.jpg"},{"name":"若把你","artist":"刘瑾睿","url":"http://music.163.com/song/media/outer/url?id=865632948.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D1891696427%2C2591050078%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=1d43c7f2cb35a3a6f232d87b668b7fed"},{"name":"你的星 | On Your Planet","artist":"万玲琳","url":"http://music.163.com/song/media/outer/url?id=1872955849.mp3","cover":"https://y.qq.com/music/photo_new/T002R300x300M0000031cHw32UyHyX_1.jpg?max_age=2592000"},{"name":"想念拟人化","artist":"孟慧圆","url":"http://music.163.com/song/media/outer/url?id=1379662223.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips2.baidu.com%2Fit%2Fu%3D139213094%2C742853167%26fm%3D3007%26app%3D3007%26f%3DPNG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1678122000&t=57c43bd3a19e0847c75d4898ba8f039b"},{"name":"Moon River","artist":"Alexer","url":"http://music.163.com/song/media/outer/url?id=2038909565.mp3","cover":null},{"name":"晚风","artist":"陈婧霏","url":"http://music.163.com/song/media/outer/url?id=1299326404.mp3","cover":"https://imgessl.kugou.com/stdmusic/20190821/20190821151012401114.jpg"},{"name":"不如不见","artist":"陈奕迅","url":"http://music.163.com/song/media/outer/url?id=65769.mp3","cover":"https://q3.itc.cn/q_70/images03/20240317/021c6b650bdb4878bfca2c9fac84f2ce.jpeg"},{"name":"月亮代表我的心","artist":"邓丽君","url":"http://music.163.com/song/media/outer/url?id=1889549348.mp3","cover":"https://gimg3.baidu.com/yule/src=http%3A%2F%2Fgips1.baidu.com%2Fit%2Fu%3D2887465135%2C2828162594%26fm%3D3007%26app%3D3007%26f%3DJPEG%3Fw%3D500%26h%3D500&refer=http%3A%2F%2Fwww.baidu.com&app=2019&size=w931&n=0&g=0n&q=75&fmt=auto?sec=1725901200&t=b075167a9f9700007e704ab88feb82c0"},{"name":"Perfect","artist":"Leroy Sanchez","url":"http://music.163.com/song/media/outer/url?id=1436193759.mp3","cover":"https://img0.baidu.com/it/u=4287436206,131987723&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"搁浅","artist":"周杰伦","url":"https://www.joy127.com/url/113142.mp3","cover":"https://i0.hdslb.com/bfs/archive/b84821382b1eb918ef3d0b92a8b82d448d9208fc.jpg"}]},"mermaid":{"enable":false,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f1f4a4","right":"#699aea","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"书签":{"icon":"fa-solid fa-bookmark","path":"/bookmarks/"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"照片墙":{"icon":"fa-solid fa-image","path":"/masonry/"},"Friends":{"icon":"fa-regular fa-planet-ringed","path":"/links"}},"search":{"enable":true,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":true,"position":"left","first_item":"info","announcement":"缓缓飘落的枫叶像思念","show_on_mobile":true,"links":{"Archives":{"path":"/archives","icon":"fa-regular fa-archive"},"Categories":{"path":"/categories","icon":"fa-regular fa-folder"},"Friends":{"path":"/links","icon":"fa-regular fa-planet-ringed"},"Sketch":{"path":"/essays","icon":"fa-regular fa-comment-dots"},"ContactMe":{"path":"/2023/03/12/ContactME/","icon":"fa-regular fa-phone"}}},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":5}},"footer":{"runtime":true,"icon":"<i class=\"fa-solid fa-circle-notch fa-spin\"></i>","start":"2023/2/26 00:00:00","statistics":true,"customize":"江流宛转绕芳甸 月照花林皆似霰","icp":{"enable":false,"number":null,"url":null}},"footerStart":"2023/2/26 00:00:00","mermaid":{"style":{"light":"default","dark":"dark"}}};
     window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.i18n = {"search":"站内搜索您需要的内容...","toc":"目录","prev":"上一页","next":"下一页","prev_posts":"上一篇","next_posts":"下一篇","page":"第 %d 页","recent_posts":"最新文章","share":"分享","powered_by":"由 %s 驱动","theme":"主题","rss_feed":"RSS Feed","category":"分类","categories":"分类","tag":"标签","tags":"标签","post":"文章","posts":"文章","tagcloud":"标签云","comment":"评论","comments":"评论","top":"置顶","sticky":"置顶","go-back-home":"回到首页","masonry_loading":"照片加载中...","image_viewer":"图片查看器","close":"关闭","exif":{"title":"EXIF","cards":{"camera":"相机","lens":"镜头","exposure":"曝光","other":"其他"},"fields":{"make":"品牌","model":"机型","date_taken":"拍摄时间","lens_model":"镜头","focal_length":"焦距","focus_mode":"对焦模式","shutter":"快门","aperture":"光圈","iso":"感光度","exposure_program":"曝光程序","exposure_compensation":"曝光补偿","metering_mode":"测光模式","flash":"闪光灯","white_balance":"白平衡","latitude":"纬度","longitude":"经度","altitude":"海拔"},"status":{"loading":"加载中...","no_exif":"无 EXIF 信息","library_missing":"EXIF 库未加载","image_source_missing":"图片地址不可用","unavailable":"EXIF 不可用（可能被 CORS 阻止或缺少元数据）","flag_unavailable":"EXIF 不可用"}},"home":"首页","archive":"归档","archives":"归档","about":"关于","links":"链接","link":"链接","friends":"友情链接","friend":"友情链接","timeline":"时间轴","shuoshuo":"说说","bookmarks":"书签","site_uv":"访问人数","site_pv":"总访问量","read_more":"阅读全文","wordcount":"字","min2read":"分钟","changelog":"更新日志","status":"状态","runtime":"博客已运行","days":"天","hours":"小时","minutes":"分钟","seconds":"秒","optimized_by":"并由 Evan 进行优化","rights":"版权所有","site_posts":"共撰写了 %s 篇文章","site_wordcount":"共 %s 字","copyright":{"title":"标题","author":"作者","link":"链接","create_time":"创建于","update_time":"更新于","license_title":"版权声明","license_content":"本文章采用 %s 进行许可。","all_rights_reserved":"版权所有 &#169 %s，禁止转载。","public_domain":"本文为公有领域作品，可自由转载、引用。"},"ago":{"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"},"create_time":"创建","update_time":"更新","expired":"这篇文章最后更新于 %s 天前，内容可能已经过时。"};
     window.data = {"masonry":true};
   </script>
     
@@ -239,7 +194,6 @@
     
 <meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="SerendyLin's Empire" type="application/atom+xml">
 </head>
-
 
 
 <body>
@@ -568,7 +522,7 @@
         <div class="label text-third-text-color text-sm">分类</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">25</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">26</div>
         <div class="label text-third-text-color text-sm">文章</div>
     </a>
 </div>
@@ -592,7 +546,7 @@
 			
 			
 			
-			<img src="https://w.wallhaven.cc/full/9o/wallhaven-9o6rxd.jpg" alt="关于我自认为有点摆烂的本科" class="w-full h-60 sm:h-72 md:h-80 object-cover sm:rounded-t-large dark:brightness-75" />
+			<img src="https://w.wallhaven.cc/full/9o/wallhaven-9o6rxd.jpg" alt="关于我自认为有点摆烂的本科" class="w-full h-60 sm:h-72 md:h-80 object-cover rounded-t-large dark:brightness-75" />
 			
 			<div class="w-full flex items-center absolute bottom-0 justify-center">
 				<h1 class="article-title-cover text-center mx-6 my-6 text-second-text-color bg-background-color-transparent px-4 py-3 text-3xl sm:text-4xl md:text-5xl font-semibold backdrop-blur-lg rounded-xl border border-border-color ">关于我自认为有点摆烂的本科</h1>
@@ -602,7 +556,7 @@
 
 		
 		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
-			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+			<div class="avatar w-[46px] h-[46px] shrink-0 rounded-medium border border-border-color p-px">
 				<img src="/images/po9.jpg">
 			</div>
 			<div class="info flex flex-col justify-between">
@@ -689,11 +643,11 @@
 			<p>恍惚之间，四年就这样过去了。</p>
 <h2 id="为啥来北邮"><a href="#为啥来北邮" class="headerlink" title="为啥来北邮"></a>为啥来北邮</h2><p>其实上北邮完全是个意外，我甚至在高考出分之前都不知道还有北邮这个学校。对，生活就是这么dramatic，八省联考考了全省前2000名（是因为只能显示前两千），结果高考就考了个2800名，哈哈。我刷到的写大学生活反思的文章大多是什么高考超常发挥的，但是我还真是发挥的不咋地，我自始至终的水平一直都是全省一千多名，研究大学志愿的时候我也是看着哪些一千多名的大学去的，但是谁知道呢？成绩一出，我了解的关于这些大学什么学校环境专业什么就业情况什么专业分数线全部成为没用的东西了，因为我考不上，哈哈哈哈。</p>
 <p>不过现在回头想想，我要是真考了一千多名，大概率去的就是西交华科南开武大，顶多摸一摸北理屁股，我也从没想过自己能像那些小红书博主一样超常发挥写出数学大题什么的多考十几分逆袭浙大同济北航的，所以这个高考成绩还真就是差强人意，顺便让我有了个机会到北京读大学感受北京的生活以及北京的城市风格。要是真考上一千多名还真不一定有机会能到北京呢（反正上海肯定是去不了），而且也不知道会到什么专业去。现在看来选北邮是对的，至少专业非常好，万一真学校优先被分到了985天坑专业那不炸了吗。再说了，北邮在北京就不存在非985的问题，我也不是很喜欢进体制内，万一以后真留在北京了，那北邮就是个中9，所以选择北邮倒是没有后悔啦（尤其是看到这两年厦大分数在一直下降，但是有的时候确实也认为厦大在福建企业里就是人上人）。</p>
-<style>.pfdmnimmpidu{zoom: 67%;}</style><img  
+<style>.mxlxyspwvbur{zoom: 67%;}</style><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/4060/b3cdacf2cb07b39aa37509511242cb2f.jpg"
-                      class="pfdmnimmpidu" alt="b3cdacf2cb07b39aa37509511242cb2f"
+                      class="mxlxyspwvbur" alt="b3cdacf2cb07b39aa37509511242cb2f"
                 >
 
 <p style="text-align: center; color: gray; font-size: 0.8em; margin-top: 5px;">
@@ -703,11 +657,11 @@
 
 <p>高三的暑假自然是最快乐的暑假了，2021年夏，没有补习班，没有焦虑，没有经济压力，没有现实的打击，就是开始慢慢认识这个世界，确实是最爽的一个暑假了。</p>
 <p>2021年9月8日，久违地离开了厦门，去往了11年前就到过的北京，下飞机打车，发现北京和11年前一样，堵车…以及一样的城市交通风格。踏入沙河校区的那一刻，我还没有觉得这所大学像一所大学，对，北邮给我的第一印象就是这样的，不过沙河的宿舍确实不错。但是北邮的小也是马上就被感受到了的，开学第二天就去狼人杀社开杀，他们说在N404，我还想说哪栋楼呀这是，也不说一声，结果发现北邮真就两栋楼能开活动…大是真的大，校门离宿舍好远，小也是真的小，没几栋楼…不过沙河整体的设施还是很不错的，尤其是图书馆，真的是环境相当好了，设施也相当现代化了。</p>
-<style>.qtvgsvmxvlay{zoom:25%;}</style><img  
+<style>.jueuolcffluv{zoom:25%;}</style><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/4060/e3c013a297d898592b94b897e69d0fb9.jpg"
-                      class="qtvgsvmxvlay" alt="e3c013a297d898592b94b897e69d0fb9"
+                      class="jueuolcffluv" alt="e3c013a297d898592b94b897e69d0fb9"
                 >
 
 <p style="text-align: center; color: gray; font-size: 0.8em; margin-top: 5px;">
@@ -719,11 +673,11 @@
 <p>不过好在是2021年最后一两个月防控没有那么严了，我也有机会出门走走了，也和身边的同学去了不少北京的知名景点，去了不少好玩的地方，吃了不少好吃的东西。这一学期其实也有很多的惊喜：喜欢的公选课，不错的社团活动，人生第一场雪，见证EDG夺冠（谁能想到呢，这个一开始拿的冠军竟然是LPL的最后一冠，也是大学里见证的最后一冠，未来看起来也没什么夺冠希望了），尝遍各种北方食物，体验一切都很新鲜的环境，见到一些厦门见不到的风景和城景…</p>
 <p>不过我当时觉得北京的气候确实很差，而且可能因为我不适应的原因吧，总是觉得北京就是让我有一种莫名的很不爽的感觉，从城市风格以及气候上来说都是，当时真是坚定地觉得厦门比北京好的多，也想着说在北京工作一段时间就回厦门养老哈哈哈哈。</p>
 <p>其实也挺怀念大一上学期的自己的，那个对未来充满希望，对自己充满信心的，对整个世界依然保持好奇的自己。</p>
-<style>.kmldshqohvbd{zoom:33%;}</style><img  
+<style>.mptzcgxixreo{zoom:33%;}</style><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/4060/396f1bca375e0f285b53c188a282d488.jpg"
-                      class="kmldshqohvbd" alt="396f1bca375e0f285b53c188a282d488"
+                      class="mptzcgxixreo" alt="396f1bca375e0f285b53c188a282d488"
                 >
 
 <p style="text-align: center; color: gray; font-size: 0.8em; margin-top: 5px;">
@@ -734,14 +688,14 @@
 <h2 id="开始出现了一些差距"><a href="#开始出现了一些差距" class="headerlink" title="开始出现了一些差距"></a>开始出现了一些差距</h2><p>大二开始了，确实是挥斥方遒的年纪了，也应该在大学生活的各方面大展宏图（大师亲手提笔字）。诶对，既然我这么说了，说明没实现…不过也不算完全没实现，还是做了很多有趣的事情的，当然也杂糅着很多煎熬，可以说大二确实是五味杂陈的了。</p>
 <p>第三学期我真的打算开始好好生活多参与学校活动争取拿二等奖学金了的！真的想碰上一个女生开启一段美美的大学校园恋爱！遂付诸实践，迎新活动、破冰活动（败北）、学院歌唱比赛（败北）、心理素质拓展活动通通参加了一遍。而且大二这个课程难度和课程量也上来了，我是真的感觉有点学不过来，去图书馆去的更多了。但是同时几乎把所有时间投身课内了，除了课上的知识就几乎没有学别的东西了，看着旁边的同学有着手开始科研的了，有开始正式开始打CTF比赛的了，也有去实习的了。我自己其实也很想去学点什么但是不知道从何下手，也不知道该向谁请教，这下信息差就出来了，没有认识多少学长学姐的弊端也就随之而来了😭。但是说实话，这都是后来反思起来才能想到这点，当时还是认真卷成绩的，所以其实真没想这么多。</p>
 <p>其实校园生活方面虽然结果不完美但是还是收获颇丰。歌唱比赛败北，但是我决定开始练唱歌了，可以唱最喜欢的周杰伦表达我的心情了。破冰活动败北，但是和她成为了很好的朋友。心理素质拓展活动是大成功，既让我认识到了不少很乐观开朗的同学，也是我踏上学生心理工作的第一步，也在这个过程当中不断让自己变得更E！绝对是我认为我大学过程中做的最对的一件事！和他人连接让我感到快乐！其实我真的认为全面发展是一件很重要的事情，如果将全部的身心全部都投入到学习或者工作之中，我会感觉这样的人生虽然大概率会很成功，但是却会无意间失去很多很多对于人生趣味的体验，也会失去很多探索世界的可能性。但是呀，现在社会就是这样，无论是学校还是公司，他们都觉得在技术上脱颖而出才是人才，忽略了对于人本身对于自身全面发展的需求，尤其是在chixx这种社会极度内卷甚至以廉价劳动力作为自身优势的地方来说，从高中开始就对全面发展十分鄙夷了（北京上海除外），我认为这是一种悲剧，也是因为这样我才会对《死亡诗社》这部电影有如此深刻的感触与喜爱。</p>
-<a class="button center large" href='https://www.z2z4.com/58860.html' title='《死亡诗社》观后感'><i class='fa-solid fa-compact-disc fa-spin'></i> 《死亡诗社》观后感</a>
+<a class="button not-markdown large center" href="https://www.z2z4.com/58860.html" title="《死亡诗社》观后感"><i class="fa-solid fa-compact-disc fa-spin" aria-hidden="true"></i> 《死亡诗社》观后感</a>
 
 <p>虽然我们自己无法改变这样的社会现状，但是我们可以改变自己，让自己能够在忙碌的生活当中给自己一些时间去让自己的生活更丰富，让自己更自由。</p>
-<style>.oxyqcyrualbc{zoom: 33%;}</style><img  
+<style>.buhkygvhevsv{zoom: 33%;}</style><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/4060/9513f22d28eda1b12924f1fa042b3545.jpg"
-                      class="oxyqcyrualbc" alt="9513f22d28eda1b12924f1fa042b3545"
+                      class="buhkygvhevsv" alt="9513f22d28eda1b12924f1fa042b3545"
                 >
 
 <p style="text-align: center; color: gray; font-size: 0.8em; margin-top: 5px;">
@@ -753,14 +707,14 @@
 <p>2023的第一学期是大二下学期，是课程最繁忙最紧张的时候，但也是生活开始丰富起来了的一个学期。这个学期从生活和学习上来说都挺顺利的，没有了封闭的校园，更多的社交和出游以及学习上的进步，果然是磨刀不误砍柴工，还是得劳逸结合才行。这学期的所有课我考的都不错，就连最后冲刺两周复习的数据库好像也因为运气好考试简单考了还不错的分数，操作系统更是期末考了个100，最后总分拿了99。上大学之后，已经很久没有这种考的很好的那种爽感了，这学期可能是因为自己学习方法也在改进，真的感觉学很多科目都是游刃有余的感觉，考试的时候就很相信自己能够考好，我觉得这种自信的心态其实也给我带来了很大的成绩加成。这种十分相信自己能考好的感觉已经很久没有了，上一次有这种感觉，还是在中考的时候，当时自己也是超常发挥了一把，可惜这样的状态没有延续至高考了。</p>
 <p>可能也是因为我当时还没有认识这么多学院里的大佬吧，处在一个自己学的路径当中，没有对比就没有伤害。这个学期其实我对自己的自信其实还没有建立起来（说实话现在也还没有建立起来，但是比当时要好一些了），所以没有和他们太熟，可能还真不一定是件坏事。</p>
 <p>大一下学期我参加了一个大创，这个大创感觉也是运气来了，上天眷顾送我的哈哈哈哈，因为真的很魔幻。当时我参加学校的鸿雁新媒体中心，是当时新媒体中心我所在的小组的小组长拉我进来的，我觉得不错于是就跟着他们一起做了。这学期（指大二下学期）我参加的大创也算是要拿出来比赛了，也是冲刺了一把，当我之后在北邮人论坛上刷到吐槽小组作业队友的时候，真的让我更加感受到了当时我的队友们真的很给力，大家都很认真也努力地去把这个比赛做好，也真的很感谢队长们的倾力付出，算是高攀上了经管院的专业第一了。这个比赛最后也是拿了个北京市一等奖，坏了，这可能是本人唯一的市级奖项了，但好在这个奖项就能让我保研加1分，足够保研资格了，也算是完美收官。这个比赛整个过程真的都很愉快，大家相处的也很融洽，很开心地就获得了这个奖，感觉真的是运气来了挡不住的。</p>
-<a class="button center large" href='https://www.z2z4.com/30288.html' title='深夜杂记1'><i class='fa-solid fa-star-of-david'></i> 深夜杂记1</a>
+<a class="button not-markdown large center" href="https://www.z2z4.com/30288.html" title="深夜杂记1"><i class="fa-solid fa-star-of-david" aria-hidden="true"></i> 深夜杂记1</a>
 
 <p>这学期五一假期去天津旅游了一趟，也是大学期间第一次离开北京去旅行。当时就真的很喜欢天津的城市氛围，那种宁静的、不张扬的、包容的城市建筑风格和生活气息让我很喜欢，真的和北京那种快速的紧张的大城市生活差别很大。走在天津安静的居住区小街上，内心真的感受到了久违的平静和舒畅。晚上到海河边上，看到天津大爷大妈们在海河边上丰富且有活力的活动，听到天津之眼下悠扬的萨克斯曲声，更让我感觉天津这个城市真的有在诠释“生活”这两个字，顺便也是在学期中提醒我要学会感受生活，在忙碌的日子中也好好好享受生活。</p>
-<style>.kdbwlkgncfbt{zoom:33%;}</style><img  
+<style>.gesiwxctbjwk{zoom:33%;}</style><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/4060/3ffe600a9bdfedbcd80a428bfbe53e91.jpg"
-                      class="kdbwlkgncfbt" alt="3ffe600a9bdfedbcd80a428bfbe53e91"
+                      class="gesiwxctbjwk" alt="3ffe600a9bdfedbcd80a428bfbe53e91"
                 >
 
 <p style="text-align: center; color: gray; font-size: 0.8em; margin-top: 5px;">
@@ -1202,11 +1156,11 @@
 </html>
 
 <p>这学期其实还有一件很重要的事情一直在影响我这个学期的生活主基调的，但是其实我不是很想说太多，或许下次开个情感专题的时候再仔细写写吧。总的来说就是，当时自己确实太年轻了，太难拿起和放下自己的情感了，自己拉扯自己，不断内耗自己，不停地做无谓的emo。对，这一点也不像我。我也觉得我自己当时真的好蠢，但是客观来说，这件事情过后也让自己再一次成熟了不少，难道说情关才是让一个未经世事的小孩子迈向成熟的重要关卡吗？哈哈哈哈哈。不过很搞笑，出现问题的第二天就是期末考试，我真的觉得期末考试太重要，所以心都在考试上了，第二天狠狠考过之后心情反倒好了很多，难道说我真的是先天卷王圣体吗？还是说我真的拎得清不同事情的重要性呢？我在这学期结束后，不仅仅是因为课程太多任务太多导致自己极其疲惫，还因为这段经历让我十分心累，就真的整个人再期末结束之后是一个身心俱疲的状态，真的很想回家好好休息休息，真的是第一次感觉整个人这么累。当时坐在回家的飞机上真的感觉很解脱很爽啊，终于可以为自己忙碌而混乱的生活暂时画上一个句号了。</p>
-<style>.ruiigufofikt{zoom:25%;}</style><img  
+<style>.zmgqllpeugvn{zoom:25%;}</style><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/4060/96101302f20fb8cc033eab3bcfea191e.jpg"
-                      class="ruiigufofikt" alt="96101302f20fb8cc033eab3bcfea191e"
+                      class="zmgqllpeugvn" alt="96101302f20fb8cc033eab3bcfea191e"
                 >
 
 <p style="text-align: center; color: gray; font-size: 0.8em; margin-top: 5px;">
@@ -1215,11 +1169,11 @@
 
 <h2 id="生活开始丰富了起来"><a href="#生活开始丰富了起来" class="headerlink" title="生活开始丰富了起来"></a>生活开始丰富了起来</h2><p>突然自己就大三了，也是突然感觉到了时间过的很快，自己的大学生活已经过完一半了，这个学期学业闲下来了，生活也丰富了起来。可能是因为上学期太累了吧，所以这学期的闲暇时光确实都拿去体验生活（玩）了。</p>
 <p>国庆节和初中同学们去武汉玩了一趟，那是最好的一群朋友，其实也是临时约的，有一天晚上我们组团视频聊天，然后就说国庆一起去武汉玩，还真是说走就走，前一天晚上定好，第二天立刻抢火车票哈哈哈。那可能是我大学期间最快乐的一趟旅行，大家一起聊天，一起玩阿瓦隆，每天晚上5点睡觉却一点不累，第二天依然精神满满去走走逛逛。而且我真觉得，我们一起出去旅游走到哪不重要，重要的是大家聚在一起，旅途的路上就很开心，不管走到哪都是快乐的氛围，不管玩多晚都不累。这不仅因为我是E人喜欢高强度社交，更是因为我们之间最能无话不说，最能真诚相待。</p>
-<style>.qhvyncwwvyuu{zoom: 25%;}</style><img  
+<style>.ikrlyaiqsout{zoom: 25%;}</style><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/4060/581bf446b23dd8947241aaf375ba2954.jpg"
-                      class="qhvyncwwvyuu" alt="581bf446b23dd8947241aaf375ba2954"
+                      class="ikrlyaiqsout" alt="581bf446b23dd8947241aaf375ba2954"
                 >
 
 <p style="text-align: center; color: gray; font-size: 0.8em; margin-top: 5px;">
@@ -1227,11 +1181,11 @@
 </p>
 
 <p>大二下学期末我代表北邮的心理社团去人大参加了首都高校朋辈心理互助论坛，也是第一次去其它高校参加活动。说这件事是为什么呢？对，是因为我这学期当上了心理社团的社长。我其实很享受在社团里带着同学们一起做活动的感觉，也很喜欢大家聚在一起，玩玩游戏放松，聊聊天说说心里的困惑的。但是也深知学生心理活动的局限性——参与社团的同学们有些参与度不高，不太特别愿意融入进团体中，虽然后续我也在改进了，但是随着后来社团参与活动的人数越来越少了，其实活动也越来越难办下去了😭。这还真不是我的问题，其实北邮所有的社团都是这样，随着活动的开展和学期的推进，大家要不就是太忙了，或者就是参与过一两次就不愿意参与社团了，或者真的就是想来刷德育分的。哎，每次想到这里都会觉得，chixx的教育真的是太不注重全面发展了，学生们真的不太愿意参加对自己所谓“没有用”的活动，认识不到无用之用。但是我作为社长，这段经历确实让我自己成长了不少，对我自己的组织能力和表达能力也是一个提升，也让我的生活开心了不少，每次和副社长组织活动的时候自己真的也是很开心很放松的一个抛去烦恼的状态，至少对我来说是很棒的。</p>
-<style>.pqyhrjbbswnc{zoom: 33%;}</style><img  
+<style>.rcqiltkhxifk{zoom: 33%;}</style><img  
                      lazyload
                      src="/images/loading.svg"
                      data-src="/4060/7d9d412e1cb80f6f2f859c938f56eb37.jpg"
-                      class="pqyhrjbbswnc" alt="7d9d412e1cb80f6f2f859c938f56eb37"
+                      class="rcqiltkhxifk" alt="7d9d412e1cb80f6f2f859c938f56eb37"
                 >
 
 <p style="text-align: center; color: gray; font-size: 0.8em; margin-top: 5px;">
@@ -1362,25 +1316,46 @@
             
     <div id="waline"></div>
     <script type="module" data-swup-reload-script>
-      import { init } from '/js/libs/waline.mjs';
+      import { init } from '/js/libs/waline.js';
 
-      function loadWaline() {
-        init({
-          el: '#waline',
-          serverURL: 'https://comment.negroni.top',
-          dark: 'body[class~="dark-mode"]',
-          reaction: true,
-          requiredMeta: ['nick', 'mail'],
-          emoji: ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo', 'https://unpkg.com/@waline/emojis@1.2.0/bmoji', 'https://unpkg.com/@waline/emojis@1.2.0/qq', 'https://unpkg.com/@waline/emojis@1.2.0/tieba'],
-                    lang: 'zh-CN',
-        });
-      }
+      (function() {
+        const startPath = location.pathname;
+        const startTime = Date.now();
+        const retryDelay = 200;
+        const retryLimit = 5000;
 
-      if (typeof swup !== 'undefined') {
-        loadWaline();
-      } else {
-        window.addEventListener('DOMContentLoaded', loadWaline);
-      }
+        const runWaline = () => {
+          if (location.pathname !== startPath) {
+            return;
+          }
+
+          const container = document.getElementById('waline');
+          if (!container) {
+            if (Date.now() - startTime < retryLimit) {
+              setTimeout(runWaline, retryDelay);
+            }
+            return;
+          }
+
+          if (window.redefineWalineInstance?.destroy) {
+            window.redefineWalineInstance.destroy();
+          }
+
+          container.innerHTML = '';
+          window.redefineWalineInstance = init({
+            el: '#waline',
+            serverURL: 'https://comment.negroni.top',
+            path: location.pathname,
+            dark: 'body[class~="dark-mode"]',
+            reaction: true,
+            requiredMeta: ['nick', 'mail'],
+            emoji: ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo', 'https://unpkg.com/@waline/emojis@1.2.0/bmoji', 'https://unpkg.com/@waline/emojis@1.2.0/qq', 'https://unpkg.com/@waline/emojis@1.2.0/tieba'],
+                      lang: 'zh-CN',
+          });
+        };
+
+        runWaline();
+      })();
     </script>
 
 
@@ -1406,6 +1381,7 @@
 	</div>
 	
 </div>
+
 			</div>
 
 			
@@ -1428,7 +1404,7 @@
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        共撰写了 25 篇文章
+                        共撰写了 26 篇文章
                     </span>
                     
                         <span>
@@ -1457,7 +1433,7 @@
         
         <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
             <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
-            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span>
         </div>
         
         
@@ -1558,9 +1534,43 @@
 </div>
 	</div>
 
-	<div class="image-viewer-container">
-	<img src="">
+	<div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="图片查看器">
+	<button class="image-viewer-close" type="button" aria-label="关闭">
+		<i class="fa-solid fa-xmark"></i>
+	</button>
+	<button class="image-viewer-prev" type="button" aria-label="上一页">
+		<i class="fa-solid fa-chevron-left"></i>
+	</button>
+	<div class="image-viewer-frame">
+		<img src="" alt="">
+	</div>
+	<div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true">
+		<div class="flex items-center justify-between mb-3">
+			<span class="text-sm font-semibold text-first-text-color">EXIF</span>
+			<button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="关闭">
+				<i class="fa-solid fa-xmark text-[0.65rem]"></i>
+			</button>
+		</div>
+		<div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div>
+		<template class="image-viewer-exif-card-template">
+			<div class="rounded-lg bg-background-color-transparent-40 px-3 py-2">
+				<div class="image-viewer-exif-card-header flex items-center gap-2 mb-1">
+					<i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i>
+					<div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div>
+				</div>
+				<div class="image-viewer-exif-card-items flex flex-col gap-1"></div>
+			</div>
+		</template>
+	</div>
+	<button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false">
+		<i class="fa-solid fa-circle-info text-xs"></i>
+		<span class="text-xs font-semibold uppercase tracking-wider">EXIF</span>
+	</button>
+	<button class="image-viewer-next" type="button" aria-label="下一页">
+		<i class="fa-solid fa-chevron-right"></i>
+	</button>
 </div>
+
 
 	
 	<div class="search-pop-overlay">
@@ -1602,7 +1612,7 @@
 <script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
 
 <script>
-    const swup = new Swup({
+    window.swup = new Swup({
         plugins: [
             new SwupScriptsPlugin({
                 optin: true,
@@ -1618,48 +1628,23 @@
         ],
         containers: ["#swup"],
     });
+
+    window.dispatchEvent(
+        new CustomEvent("redefine:swup:ready", {
+            detail: {
+                swup: window.swup,
+            },
+        }),
+    );
 </script>
 
 
 
 
 	
-<script src="/js/build/tools/imageViewer.js" type="module"></script>
-
-<script src="/js/build/utils.js" type="module"></script>
-
 <script src="/js/build/main.js" type="module"></script>
 
-<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
 
-<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
-
-<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
-
-<script src="/js/build/layouts/categoryList.js" type="module"></script>
-
-
-
-    
-<script src="/js/build/tools/localSearch.js" type="module"></script>
-
-
-
-
-    
-<script src="/js/build/tools/codeBlock.js" type="module"></script>
-
-
-
-
-    
-<script src="/js/build/layouts/lazyload.js" type="module"></script>
-
-
-
-
-    
-<script src="/js/build/tools/runtime.js"></script>
 
     
 <script src="/js/build/libs/odometer.min.js"></script>
@@ -1670,54 +1655,27 @@
 
 
 
+
+
+
   
 <script src="/js/build/libs/Typed.min.js"></script>
 
-  
-<script src="/js/build/plugins/typed.js" type="module"></script>
 
 
-
-
-
-
-    
-<script src="/js/build/libs/minimasonry.min.js"></script>
-
-    
-<script src="/js/build/plugins/masonry.js" type="module"></script>
-
-
-
-
-    
-<script src="/js/build/libs/anime.min.js"></script>
 
 
 
 
 
     
-<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
-
-<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
-
-<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+<script src="/js/build/libs/minimasonry.min.js" data-swup-reload-script=""></script>
 
 
 
 
 <script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
 
-
-<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
-
-
-
-
-
-    
-<script src="/js/build/layouts/bookmarkNav.js" type="module"></script>
 
 
 	
